@@ -6,18 +6,18 @@
  * Export this file and import it in the `@components/theme/index.tsx` file to use the merged theme.
  */
 // MUI Imports
-import { deepmerge } from '@mui/utils'
+import { deepmerge } from "@mui/utils";
 
 // Core Theme Imports
-import coreTheme from '@core/theme'
+import coreTheme from "@core/theme";
 
 const mergedTheme = (settings, mode, direction) => {
   // Vars
   const userTheme = {
     // Write your overrides here.
-  }
+  };
 
-  return deepmerge(coreTheme(settings, mode, direction), userTheme)
-}
+  return deepmerge(coreTheme(settings, mode, direction), userTheme);
+};
 
-export default mergedTheme
+export default mergedTheme;

@@ -1,29 +1,33 @@
-'use client'
+"use client";
 
 // React Imports
-import { createContext, useMemo, useState } from 'react'
+import { createContext, useMemo, useState } from "react";
 
-const HorizontalNavContext = createContext({})
+const HorizontalNavContext = createContext({});
 
 export const HorizontalNavProvider = ({ children }) => {
   // States
-  const [isBreakpointReached, setIsBreakpointReached] = useState(false)
+  const [isBreakpointReached, setIsBreakpointReached] = useState(false);
 
   // update isBreakpointReached value
-  const updateIsBreakpointReached = isBreakpointReached => {
-    setIsBreakpointReached(isBreakpointReached)
-  }
+  const updateIsBreakpointReached = (isBreakpointReached) => {
+    setIsBreakpointReached(isBreakpointReached);
+  };
 
   // Hooks
   const HorizontalNavProviderValue = useMemo(
     () => ({
       isBreakpointReached,
-      updateIsBreakpointReached
+      updateIsBreakpointReached,
     }),
-    [isBreakpointReached]
-  )
+    [isBreakpointReached],
+  );
 
-  return <HorizontalNavContext.Provider value={HorizontalNavProviderValue}>{children}</HorizontalNavContext.Provider>
-}
+  return (
+    <HorizontalNavContext.Provider value={HorizontalNavProviderValue}>
+      {children}
+    </HorizontalNavContext.Provider>
+  );
+};
 
-export default HorizontalNavContext
+export default HorizontalNavContext;

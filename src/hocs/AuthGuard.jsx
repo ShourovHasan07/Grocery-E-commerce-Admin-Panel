@@ -1,11 +1,11 @@
 // Third-party Imports
-import { getServerSession } from 'next-auth'
+import { getServerSession } from "next-auth";
 
 // Component Imports
-import AuthRedirect from '@/components/AuthRedirect'
+import AuthRedirect from "@/components/AuthRedirect";
 
-export default async function AuthGuard({ children, locale }) {
-  const session = await getServerSession()
+export default async function AuthGuard({ children }) {
+  const session = await getServerSession();
 
-  return <>{session ? children : <AuthRedirect lang={locale} />}</>
+  return <>{session ? children : <AuthRedirect />}</>;
 }

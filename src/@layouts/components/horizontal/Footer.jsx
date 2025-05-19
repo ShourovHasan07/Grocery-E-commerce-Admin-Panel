@@ -1,33 +1,33 @@
-'use client'
+"use client";
 
 // Third-party Imports
-import classnames from 'classnames'
+import classnames from "classnames";
 
 // Config Imports
-import themeConfig from '@configs/themeConfig'
+import themeConfig from "@configs/themeConfig";
 
 // Hook Imports
-import { useSettings } from '@core/hooks/useSettings'
+import { useSettings } from "@core/hooks/useSettings";
 
 // Util Imports
-import { horizontalLayoutClasses } from '@layouts/utils/layoutClasses'
+import { horizontalLayoutClasses } from "@layouts/utils/layoutClasses";
 
 // Styled Component Imports
-import StyledFooter from '@layouts/styles/horizontal/StyledFooter'
+import StyledFooter from "@layouts/styles/horizontal/StyledFooter";
 
-const Footer = props => {
+const Footer = (props) => {
   // Props
-  const { children, overrideStyles } = props
+  const { children, overrideStyles } = props;
 
   // Hooks
-  const { settings } = useSettings()
+  const { settings } = useSettings();
 
   // Vars
-  const { footerContentWidth } = settings
-  const footerStatic = themeConfig.footer.type === 'static'
-  const footerFixed = themeConfig.footer.type === 'fixed'
-  const footerContentCompact = footerContentWidth === 'compact'
-  const footerContentWide = footerContentWidth === 'wide'
+  const { footerContentWidth } = settings;
+  const footerStatic = themeConfig.footer.type === "static";
+  const footerFixed = themeConfig.footer.type === "fixed";
+  const footerContentCompact = footerContentWidth === "compact";
+  const footerContentWide = footerContentWidth === "wide";
 
   return (
     <StyledFooter
@@ -36,12 +36,14 @@ const Footer = props => {
         [horizontalLayoutClasses.footerStatic]: footerStatic,
         [horizontalLayoutClasses.footerFixed]: footerFixed,
         [horizontalLayoutClasses.footerContentCompact]: footerContentCompact,
-        [horizontalLayoutClasses.footerContentWide]: footerContentWide
+        [horizontalLayoutClasses.footerContentWide]: footerContentWide,
       })}
     >
-      <div className={horizontalLayoutClasses.footerContentWrapper}>{children}</div>
+      <div className={horizontalLayoutClasses.footerContentWrapper}>
+        {children}
+      </div>
     </StyledFooter>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

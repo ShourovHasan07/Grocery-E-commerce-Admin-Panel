@@ -1,10 +1,10 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import CurrentPlan from './CurrentPlan'
-import PaymentMethod from './PaymentMethod'
-import BillingAddress from './BillingAddress'
+import CurrentPlan from "./CurrentPlan";
+import PaymentMethod from "./PaymentMethod";
+import BillingAddress from "./BillingAddress";
 
 const BillingPlans = ({ data }) => {
   return (
@@ -19,7 +19,7 @@ const BillingPlans = ({ data }) => {
         <BillingAddress />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default BillingPlans
+export default BillingPlans;

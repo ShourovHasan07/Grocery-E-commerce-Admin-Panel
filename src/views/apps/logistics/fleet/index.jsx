@@ -1,117 +1,126 @@
-'use client'
+"use client";
 
 // React Imports
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react";
 
 // MUI Imports
-import Backdrop from '@mui/material/Backdrop'
-import useMediaQuery from '@mui/material/useMediaQuery'
+import Backdrop from "@mui/material/Backdrop";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 // Third-party Imports
-import classNames from 'classnames'
+import classNames from "classnames";
 
 //Components Imports
-import CustomIconButton from '@core/components/mui/IconButton'
-import FleetSidebar from './FleetSidebar'
-import FleetMap from './FleetMap'
+import CustomIconButton from "@core/components/mui/IconButton";
+import FleetSidebar from "./FleetSidebar";
+import FleetMap from "./FleetMap";
 
 // Hook Imports
-import { useSettings } from '@core/hooks/useSettings'
+import { useSettings } from "@core/hooks/useSettings";
 
 // Util Imports
-import { commonLayoutClasses } from '@layouts/utils/layoutClasses'
+import { commonLayoutClasses } from "@layouts/utils/layoutClasses";
 
 const geojson = {
-  type: 'FeatureCollection',
+  type: "FeatureCollection",
   features: [
     {
-      type: 'Feature',
+      type: "Feature",
       geometry: {
-        type: 'Point',
+        type: "Point",
         longitude: -73.999024,
-        latitude: 40.75249842
-      }
+        latitude: 40.75249842,
+      },
     },
     {
-      type: 'Feature',
+      type: "Feature",
       geometry: {
-        type: 'Point',
+        type: "Point",
         longitude: -74.03,
-        latitude: 40.75699842
-      }
+        latitude: 40.75699842,
+      },
     },
     {
-      type: 'Feature',
+      type: "Feature",
       geometry: {
-        type: 'Point',
+        type: "Point",
         longitude: -73.967524,
-        latitude: 40.7599842
-      }
+        latitude: 40.7599842,
+      },
     },
     {
-      type: 'Feature',
+      type: "Feature",
       geometry: {
-        type: 'Point',
+        type: "Point",
         longitude: -74.0325,
-        latitude: 40.742992
-      }
-    }
-  ]
-}
+        latitude: 40.742992,
+      },
+    },
+  ],
+};
 
 const Fleet = ({ mapboxAccessToken }) => {
   // States
-  const [backdropOpen, setBackdropOpen] = useState(false)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [expanded, setExpanded] = useState(0)
+  const [backdropOpen, setBackdropOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [expanded, setExpanded] = useState(0);
 
   const [viewState, setViewState] = useState({
     longitude: -73.999024,
     latitude: 40.75249842,
-    zoom: 12.5
-  })
+    zoom: 12.5,
+  });
 
   // Hooks
-  const { settings } = useSettings()
-  const isBelowLgScreen = useMediaQuery(theme => theme.breakpoints.down('lg'))
-  const isBelowMdScreen = useMediaQuery(theme => theme.breakpoints.down('md'))
-  const isBelowSmScreen = useMediaQuery(theme => theme.breakpoints.down('sm'))
+  const { settings } = useSettings();
+
+  const isBelowLgScreen = useMediaQuery((theme) =>
+    theme.breakpoints.down("lg"),
+  );
+
+  const isBelowMdScreen = useMediaQuery((theme) =>
+    theme.breakpoints.down("md"),
+  );
+
+  const isBelowSmScreen = useMediaQuery((theme) =>
+    theme.breakpoints.down("sm"),
+  );
 
   useEffect(() => {
     if (!isBelowMdScreen && backdropOpen && sidebarOpen) {
-      setBackdropOpen(false)
+      setBackdropOpen(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isBelowMdScreen])
+  }, [isBelowMdScreen]);
   useEffect(() => {
     if (!isBelowSmScreen && sidebarOpen) {
-      setBackdropOpen(true)
+      setBackdropOpen(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isBelowSmScreen])
+  }, [isBelowSmScreen]);
 
   return (
     <div
       className={classNames(
         commonLayoutClasses.contentHeightFixed,
-        'flex is-full overflow-hidden rounded-xl relative',
+        "flex is-full overflow-hidden rounded-xl relative",
         {
-          border: settings.skin === 'bordered',
-          'shadow-md': settings.skin !== 'bordered'
-        }
+          border: settings.skin === "bordered",
+          "shadow-md": settings.skin !== "bordered",
+        },
       )}
     >
       {isBelowMdScreen ? (
         <CustomIconButton
-          variant='contained'
-          color='primary'
-          className='absolute top-4 left-4 z-10 bg-backgroundPaper text-textPrimary shadow-xs shadow-gray-500 hover:bg-backgroundPaper focus:bg-backgroundPaper active:bg-backgroundPaper'
+          variant="contained"
+          color="primary"
+          className="absolute top-4 left-4 z-10 bg-backgroundPaper text-textPrimary shadow-xs shadow-gray-500 hover:bg-backgroundPaper focus:bg-backgroundPaper active:bg-backgroundPaper"
           onClick={() => {
-            setSidebarOpen(true)
-            setBackdropOpen(true)
+            setSidebarOpen(true);
+            setBackdropOpen(true);
           }}
         >
-          <i className='tabler-menu-2' />
+          <i className="tabler-menu-2" />
         </CustomIconButton>
       ) : null}
       <FleetSidebar
@@ -127,10 +136,19 @@ const Fleet = ({ mapboxAccessToken }) => {
         setViewState={setViewState}
         geojson={geojson}
       />
-      <FleetMap carIndex={expanded} viewState={viewState} geojson={geojson} mapboxAccessToken={mapboxAccessToken} />
-      <Backdrop open={backdropOpen} onClick={() => setBackdropOpen(false)} className='absolute z-10' />
+      <FleetMap
+        carIndex={expanded}
+        viewState={viewState}
+        geojson={geojson}
+        mapboxAccessToken={mapboxAccessToken}
+      />
+      <Backdrop
+        open={backdropOpen}
+        onClick={() => setBackdropOpen(false)}
+        className="absolute z-10"
+      />
     </div>
-  )
-}
+  );
+};
 
-export default Fleet
+export default Fleet;

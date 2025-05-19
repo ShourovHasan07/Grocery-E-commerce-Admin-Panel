@@ -1,8 +1,8 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Components Imports
-import HorizontalWithBorder from '@components/card-statistics/HorizontalWithBorder'
+import HorizontalWithBorder from "@components/card-statistics/HorizontalWithBorder";
 
 const LogisticsStatisticsCard = ({ data }) => {
   return (
@@ -15,7 +15,7 @@ const LogisticsStatisticsCard = ({ data }) => {
         ))}
       </Grid>
     )
-  )
-}
+  );
+};
 
-export default LogisticsStatisticsCard
+export default LogisticsStatisticsCard;

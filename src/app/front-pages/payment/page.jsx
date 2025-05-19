@@ -1,14 +1,14 @@
 // Component Imports
-import Payment from '@views/front-pages/Payment'
+import Payment from "@views/front-pages/Payment";
 
 // Data Imports
-import { getPricingData } from '@/app/server/actions'
+import { getPricingData } from "@/app/server/actions";
 
 const PaymentPage = async () => {
   // Vars
-  const data = await getPricingData()
+  const data = await getPricingData();
 
-  return <Payment data={data} />
-}
+  return <Payment data={data} />;
+};
 
-export default PaymentPage
+export default PaymentPage;

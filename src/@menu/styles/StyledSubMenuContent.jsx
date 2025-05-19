@@ -1,11 +1,12 @@
 // Third-party Imports
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 const StyledSubMenuContent = styled.div`
   display: none;
   overflow: hidden;
   z-index: 999;
-  transition: ${({ transitionDuration }) => `block-size ${transitionDuration}ms ease-in-out`};
+  transition: ${({ transitionDuration }) =>
+    `block-size ${transitionDuration}ms ease-in-out`};
   box-sizing: border-box;
 
   ${({ isCollapsed, level, isPopoutWhenCollapsed, isHovered }) =>
@@ -34,10 +35,12 @@ const StyledSubMenuContent = styled.div`
       transform: none !important;
       `}
 
-  ${({ browserScroll }) => browserScroll && `overflow-y: auto; max-block-size: calc((var(--vh, 1vh) * 100));`}
+  ${({ browserScroll }) =>
+    browserScroll &&
+    `overflow-y: auto; max-block-size: calc((var(--vh, 1vh) * 100));`}
 
 
   ${({ rootStyles }) => rootStyles};
-`
+`;
 
-export default StyledSubMenuContent
+export default StyledSubMenuContent;

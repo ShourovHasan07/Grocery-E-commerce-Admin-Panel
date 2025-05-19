@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import Profile from './Profile'
-import BillingInformation from './BillingInformation'
-import TimeZone from './TimeZone'
-import StoreCurrency from './StoreCurrency'
-import OrderIdFormat from './OrderIdFormat'
+import Profile from "./Profile";
+import BillingInformation from "./BillingInformation";
+import TimeZone from "./TimeZone";
+import StoreCurrency from "./StoreCurrency";
+import OrderIdFormat from "./OrderIdFormat";
 
 const StoreDetails = () => {
   return (
@@ -29,7 +29,7 @@ const StoreDetails = () => {
         <OrderIdFormat />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default StoreDetails
+export default StoreDetails;

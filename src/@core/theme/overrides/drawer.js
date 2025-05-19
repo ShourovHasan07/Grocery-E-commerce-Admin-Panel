@@ -1,20 +1,20 @@
-const drawer = skin => ({
+const drawer = (skin) => ({
   MuiDrawer: {
     defaultProps: {
-      ...(skin === 'bordered' && {
+      ...(skin === "bordered" && {
         PaperProps: {
-          elevation: 0
-        }
-      })
+          elevation: 0,
+        },
+      }),
     },
     styleOverrides: {
       paper: {
-        ...(skin !== 'bordered' && {
-          boxShadow: 'var(--mui-customShadows-lg)'
-        })
-      }
-    }
-  }
-})
+        ...(skin !== "bordered" && {
+          boxShadow: "var(--mui-customShadows-lg)",
+        }),
+      },
+    },
+  },
+});
 
-export default drawer
+export default drawer;

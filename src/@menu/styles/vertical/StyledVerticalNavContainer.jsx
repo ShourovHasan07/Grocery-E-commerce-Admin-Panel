@@ -1,8 +1,8 @@
 // Third-party Imports
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 // Util Imports
-import { verticalNavClasses } from '../../utils/menuClasses'
+import { verticalNavClasses } from "../../utils/menuClasses";
 
 const StyledVerticalNavContainer = styled.div`
   position: relative;
@@ -18,6 +18,6 @@ const StyledVerticalNavContainer = styled.div`
   transition-property: inline-size, inset-inline-start;
   transition-duration: ${({ transitionDuration }) => `${transitionDuration}ms`};
   transition-timing-function: ease-in-out;
-`
+`;
 
-export default StyledVerticalNavContainer
+export default StyledVerticalNavContainer;

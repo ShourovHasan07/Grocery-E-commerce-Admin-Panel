@@ -1,35 +1,39 @@
-const accordion = skin => ({
+const accordion = (skin) => ({
   MuiAccordion: {
     defaultProps: {
-      ...(skin === 'bordered' && {
-        variant: 'outlined'
-      })
+      ...(skin === "bordered" && {
+        variant: "outlined",
+      }),
     },
     styleOverrides: {
       root: ({ theme }) => ({
-        transition: theme.transitions.create(['margin', 'border-radius', 'box-shadow']),
-        '&:not(:last-child)': {
-          marginBlockEnd: theme.spacing(2)
+        transition: theme.transitions.create([
+          "margin",
+          "border-radius",
+          "box-shadow",
+        ]),
+        "&:not(:last-child)": {
+          marginBlockEnd: theme.spacing(2),
         },
-        borderRadius: 'var(--mui-shape-borderRadius)',
-        ...(skin !== 'bordered' && {
-          boxShadow: 'var(--mui-customShadows-xs)'
+        borderRadius: "var(--mui-shape-borderRadius)",
+        ...(skin !== "bordered" && {
+          boxShadow: "var(--mui-customShadows-xs)",
         }),
-        '&:before': {
-          content: 'none'
+        "&:before": {
+          content: "none",
         },
-        '&.Mui-expanded': {
-          ...(skin !== 'bordered' && {
-            boxShadow: 'var(--mui-customShadows-md)'
+        "&.Mui-expanded": {
+          ...(skin !== "bordered" && {
+            boxShadow: "var(--mui-customShadows-md)",
           }),
-          marginBlockStart: 0
-        }
-      })
-    }
+          marginBlockStart: 0,
+        },
+      }),
+    },
   },
   MuiAccordionSummary: {
     defaultProps: {
-      expandIcon: <i className='tabler-chevron-right' />
+      expandIcon: <i className="tabler-chevron-right" />,
     },
     styleOverrides: {
       root: ({ theme }) => ({
@@ -37,44 +41,44 @@ const accordion = skin => ({
         padding: theme.spacing(3, 5),
         paddingInlineStart: theme.spacing(6),
         gap: theme.spacing(2),
-        color: 'var(--mui-palette-text-primary)',
-        '&.Mui-expanded': {
+        color: "var(--mui-palette-text-primary)",
+        "&.Mui-expanded": {
           minHeight: 46,
-          '& .MuiAccordionSummary-expandIconWrapper': {
-            transform: 'rotate(90deg)'
-          }
+          "& .MuiAccordionSummary-expandIconWrapper": {
+            transform: "rotate(90deg)",
+          },
         },
-        '& .MuiAccordionSummary-expandIconWrapper': {
-          transform: theme.direction === 'rtl' && 'rotate(180deg)'
+        "& .MuiAccordionSummary-expandIconWrapper": {
+          transform: theme.direction === "rtl" && "rotate(180deg)",
         },
-        '& .MuiTypography-root': {
-          color: 'inherit',
-          fontWeight: theme.typography.fontWeightMedium
-        }
+        "& .MuiTypography-root": {
+          color: "inherit",
+          fontWeight: theme.typography.fontWeightMedium,
+        },
       }),
       content: {
-        margin: '0 !important'
+        margin: "0 !important",
       },
       expandIconWrapper: {
-        color: 'var(--mui-palette-text-primary)',
-        fontSize: '1.25rem',
-        '& i, & svg': {
-          fontSize: 'inherit'
-        }
-      }
-    }
+        color: "var(--mui-palette-text-primary)",
+        fontSize: "1.25rem",
+        "& i, & svg": {
+          fontSize: "inherit",
+        },
+      },
+    },
   },
   MuiAccordionDetails: {
     styleOverrides: {
       root: ({ theme }) => ({
         padding: theme.spacing(6),
         paddingTop: theme.spacing(0),
-        '& .MuiTypography-root': {
-          color: 'var(--mui-palette-text-secondary)'
-        }
-      })
-    }
-  }
-})
+        "& .MuiTypography-root": {
+          color: "var(--mui-palette-text-secondary)",
+        },
+      }),
+    },
+  },
+});
 
-export default accordion
+export default accordion;

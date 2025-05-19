@@ -1,48 +1,52 @@
 // MUI Imports
-import Card from '@mui/material/Card'
-import CardHeader from '@mui/material/CardHeader'
-import Typography from '@mui/material/Typography'
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import Typography from "@mui/material/Typography";
 
 // Style Imports
-import tableStyles from '@core/styles/table.module.css'
+import tableStyles from "@core/styles/table.module.css";
 
 // Vars
 const recentDeviceData = [
   {
-    device: 'Dell XPS 15',
-    location: 'United States',
-    browser: 'Chrome on Windows',
-    recentActivity: '10, Jan 2020 20:07',
-    browserIcon: <i className='tabler-brand-windows text-[22px] text-info' />
+    device: "Dell XPS 15",
+    location: "United States",
+    browser: "Chrome on Windows",
+    recentActivity: "10, Jan 2020 20:07",
+    browserIcon: <i className="tabler-brand-windows text-[22px] text-info" />,
   },
   {
-    location: 'Ghana',
-    device: 'Google Pixel 3a',
-    browser: 'Chrome on Android',
-    recentActivity: '11, Jan 2020 10:16',
-    browserIcon: <i className='tabler-brand-android text-[22px] text-success' />
+    location: "Ghana",
+    device: "Google Pixel 3a",
+    browser: "Chrome on Android",
+    recentActivity: "11, Jan 2020 10:16",
+    browserIcon: (
+      <i className="tabler-brand-android text-[22px] text-success" />
+    ),
   },
   {
-    location: 'Mayotte',
-    device: 'Apple iMac',
-    browser: 'Chrome on MacOS',
-    recentActivity: '11, Jan 2020 12:10',
-    browserIcon: <i className='tabler-brand-apple text-[22px] text-secondary' />
+    location: "Mayotte",
+    device: "Apple iMac",
+    browser: "Chrome on MacOS",
+    recentActivity: "11, Jan 2020 12:10",
+    browserIcon: (
+      <i className="tabler-brand-apple text-[22px] text-secondary" />
+    ),
   },
   {
-    location: 'Mauritania',
-    device: 'Apple iPhone XR',
-    browser: 'Chrome on iPhone',
-    recentActivity: '12, Jan 2020 8:29',
-    browserIcon: <i className='tabler-device-mobile text-[22px] text-error' />
-  }
-]
+    location: "Mauritania",
+    device: "Apple iPhone XR",
+    browser: "Chrome on iPhone",
+    recentActivity: "12, Jan 2020 8:29",
+    browserIcon: <i className="tabler-device-mobile text-[22px] text-error" />,
+  },
+];
 
 const RecentDevice = () => {
   return (
     <Card>
-      <CardHeader title='Recent Devices' />
-      <div className='overflow-x-auto'>
+      <CardHeader title="Recent Devices" />
+      <div className="overflow-x-auto">
         <table className={tableStyles.table}>
           <thead>
             <tr>
@@ -56,9 +60,11 @@ const RecentDevice = () => {
             {recentDeviceData.map((device, index) => (
               <tr key={index}>
                 <td>
-                  <div className='flex items-center gap-4'>
+                  <div className="flex items-center gap-4">
                     {device.browserIcon}
-                    <Typography color='text.primary'>{device.browser}</Typography>
+                    <Typography color="text.primary">
+                      {device.browser}
+                    </Typography>
                   </div>
                 </td>
                 <td>
@@ -76,7 +82,7 @@ const RecentDevice = () => {
         </table>
       </div>
     </Card>
-  )
-}
+  );
+};
 
-export default RecentDevice
+export default RecentDevice;

@@ -1,10 +1,10 @@
 // Third-party Imports
-import CredentialProvider from 'next-auth/providers/credentials'
-import GoogleProvider from 'next-auth/providers/google'
-import { PrismaAdapter } from '@auth/prisma-adapter'
-import { PrismaClient } from '@prisma/client'
+import CredentialProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
@@ -15,8 +15,8 @@ export const authOptions = {
     CredentialProvider({
       // ** The name to display on the sign in form (e.g. 'Sign in with...')
       // ** For more details on Credentials Provider, visit https://next-auth.js.org/providers/credentials
-      name: 'Credentials',
-      type: 'credentials',
+      name: "Credentials",
+      type: "credentials",
 
       /*
        * As we are using our own Sign-in page, we do not need to change
@@ -30,22 +30,22 @@ export const authOptions = {
          * For e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
          * You can also use the `req` object to obtain additional parameters (i.e., the request IP address)
          */
-        const { email, password } = credentials
+        const { email, password } = credentials;
 
         try {
           // ** Login API Call to match the user credentials and receive user data in response along with his role
           const res = await fetch(`${process.env.API_URL}/login`, {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json'
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify({ email, password })
-          })
+            body: JSON.stringify({ email, password }),
+          });
 
-          const data = await res.json()
+          const data = await res.json();
 
           if (res.status === 401) {
-            throw new Error(JSON.stringify(data))
+            throw new Error(JSON.stringify(data));
           }
 
           if (res.status === 200) {
@@ -54,19 +54,19 @@ export const authOptions = {
              * user data below. Below return statement will set the user object in the token and the same is set in
              * the session which will be accessible all over the app.
              */
-            return data
+            return data;
           }
 
-          return null
+          return null;
         } catch (e) {
-          throw new Error(e.message)
+          throw new Error(e.message);
         }
-      }
+      },
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET
-    })
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
 
     // ** ...add more providers here
   ],
@@ -83,15 +83,15 @@ export const authOptions = {
      * If you use a custom credentials provider, user accounts will not be persisted in a database by NextAuth.js (even if one is configured).
      * The option to use JSON Web Tokens for session tokens must be enabled to use a custom credentials provider.
      */
-    strategy: 'jwt',
+    strategy: "jwt",
 
     // ** Seconds - How long until an idle session expires and is no longer valid
-    maxAge: 30 * 24 * 60 * 60 // ** 30 days
+    maxAge: 30 * 24 * 60 * 60, // ** 30 days
   },
 
   // ** Please refer to https://next-auth.js.org/configuration/options#pages for more `pages` options
   pages: {
-    signIn: '/login'
+    signIn: "/login",
   },
 
   // ** Please refer to https://next-auth.js.org/configuration/options#callbacks for more `callbacks` options
@@ -107,18 +107,18 @@ export const authOptions = {
          * For adding custom parameters to user in session, we first need to add those parameters
          * in token which then will be available in the `session()` callback
          */
-        token.name = user.name
+        token.name = user.name;
       }
 
-      return token
+      return token;
     },
     async session({ session, token }) {
       if (session.user) {
         // ** Add custom params to user in session which are added in `jwt()` callback via `token` parameter
-        session.user.name = token.name
+        session.user.name = token.name;
       }
 
-      return session
-    }
-  }
-}
+      return session;
+    },
+  },
+};

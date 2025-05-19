@@ -1,14 +1,14 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import CurrentPlan from './CurrentPlan'
-import Address from './Address'
-import PaymentMethod from './PaymentMethod'
-import InvoiceListTable from './InvoiceListTable'
+import CurrentPlan from "./CurrentPlan";
+import Address from "./Address";
+import PaymentMethod from "./PaymentMethod";
+import InvoiceListTable from "./InvoiceListTable";
 
 // Data Imports
-import { getPricingData, getInvoiceData } from '@/app/server/actions'
+import { getPricingData, getInvoiceData } from "@/app/server/actions";
 
 /**
  * ! If you need data using an API call, uncomment the below API code, update the `process.env.API_URL` variable in the
@@ -38,8 +38,8 @@ import { getPricingData, getInvoiceData } from '@/app/server/actions'
 } */
 const BillingPlans = async () => {
   // Vars
-  const data = await getPricingData()
-  const invoiceData = await getInvoiceData()
+  const data = await getPricingData();
+  const invoiceData = await getInvoiceData();
 
   return (
     <Grid container spacing={6}>
@@ -56,7 +56,7 @@ const BillingPlans = async () => {
         <InvoiceListTable invoiceData={invoiceData} />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default BillingPlans
+export default BillingPlans;

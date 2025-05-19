@@ -1,8 +1,8 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import CardStatsSquare from '@components/card-statistics/CardStatsSquare'
+import CardStatsSquare from "@components/card-statistics/CardStatsSquare";
 
 const Square = ({ data }) => {
   if (data) {
@@ -14,8 +14,8 @@ const Square = ({ data }) => {
           </Grid>
         ))}
       </Grid>
-    )
+    );
   }
-}
+};
 
-export default Square
+export default Square;

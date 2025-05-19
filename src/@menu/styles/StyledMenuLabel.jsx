@@ -1,5 +1,5 @@
 // Third-party Imports
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 const StyledMenuLabel = styled.span`
   flex-grow: 1;
@@ -11,6 +11,6 @@ const StyledMenuLabel = styled.span`
       white-space: nowrap;
     `};
   ${({ rootStyles }) => rootStyles};
-`
+`;
 
-export default StyledMenuLabel
+export default StyledMenuLabel;

@@ -1,10 +1,10 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import ChangePassword from './ChangePassword'
-import TwoStepVerification from './TwoStepVerification'
-import RecentDevice from './RecentDevice'
+import ChangePassword from "./ChangePassword";
+import TwoStepVerification from "./TwoStepVerification";
+import RecentDevice from "./RecentDevice";
 
 const SecurityTab = () => {
   return (
@@ -19,7 +19,7 @@ const SecurityTab = () => {
         <RecentDevice />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default SecurityTab
+export default SecurityTab;

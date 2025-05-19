@@ -1,17 +1,17 @@
-'use client'
+"use client";
 
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import PreviewActions from './PreviewActions'
-import PreviewCard from './PreviewCard'
+import PreviewActions from "./PreviewActions";
+import PreviewCard from "./PreviewCard";
 
 const Preview = ({ invoiceData, id }) => {
   // Handle Print Button Click
   const handleButtonClick = () => {
-    window.print()
-  }
+    window.print();
+  };
 
   return (
     <Grid container spacing={6}>
@@ -22,7 +22,7 @@ const Preview = ({ invoiceData, id }) => {
         <PreviewActions id={id} onButtonClick={handleButtonClick} />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default Preview
+export default Preview;

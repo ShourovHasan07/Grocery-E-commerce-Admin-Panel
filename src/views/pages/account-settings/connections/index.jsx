@@ -1,82 +1,82 @@
 // Next Imports
-import Link from 'next/link'
+import Link from "next/link";
 
 // MUI Imports
-import Card from '@mui/material/Card'
-import CardHeader from '@mui/material/CardHeader'
-import CardContent from '@mui/material/CardContent'
-import Grid from '@mui/material/Grid2'
-import Typography from '@mui/material/Typography'
-import Switch from '@mui/material/Switch'
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import CardContent from "@mui/material/CardContent";
+import Grid from "@mui/material/Grid2";
+import Typography from "@mui/material/Typography";
+import Switch from "@mui/material/Switch";
 
 // Component Imports
-import CustomIconButton from '@core/components/mui/IconButton'
+import CustomIconButton from "@core/components/mui/IconButton";
 
 // Vars
 const connectedAccountsArr = [
   {
     checked: true,
-    title: 'Google',
-    logo: '/images/logos/google.png',
-    subtitle: 'Calendar and Contacts'
+    title: "Google",
+    logo: "/images/logos/google.png",
+    subtitle: "Calendar and Contacts",
   },
   {
     checked: false,
-    title: 'Slack',
-    logo: '/images/logos/slack.png',
-    subtitle: 'Communications'
+    title: "Slack",
+    logo: "/images/logos/slack.png",
+    subtitle: "Communications",
   },
   {
     checked: true,
-    title: 'Github',
-    logo: '/images/logos/github.png',
-    subtitle: 'Manage your Git repositories'
+    title: "Github",
+    logo: "/images/logos/github.png",
+    subtitle: "Manage your Git repositories",
   },
   {
     checked: true,
-    title: 'Mailchimp',
-    subtitle: 'Email marketing service',
-    logo: '/images/logos/mailchimp.png'
+    title: "Mailchimp",
+    subtitle: "Email marketing service",
+    logo: "/images/logos/mailchimp.png",
   },
   {
-    title: 'Asana',
+    title: "Asana",
     checked: false,
-    subtitle: 'Task Communication',
-    logo: '/images/logos/asana.png'
-  }
-]
+    subtitle: "Task Communication",
+    logo: "/images/logos/asana.png",
+  },
+];
 
 const socialAccountsArr = [
   {
-    title: 'Facebook',
+    title: "Facebook",
     isConnected: false,
-    logo: '/images/logos/facebook.png'
+    logo: "/images/logos/facebook.png",
   },
   {
-    title: 'Twitter',
+    title: "Twitter",
     isConnected: true,
-    username: '@Pixinvent',
-    logo: '/images/logos/twitter.png',
-    href: 'https://twitter.com/pixinvents'
+    username: "@AnnaNovas IT Ltd",
+    logo: "/images/logos/twitter.png",
+    href: "https://twitter.com/pixinvents",
   },
   {
-    title: 'Linkedin',
+    title: "Linkedin",
     isConnected: true,
-    username: '@Pixinvent',
-    logo: '/images/logos/linkedin.png',
-    href: 'https://in.linkedin.com/company/pixinvent'
+    username: "@AnnaNovas IT Ltd",
+    logo: "/images/logos/linkedin.png",
+    href: "https://in.linkedin.com/company/pixinvent",
   },
   {
-    title: 'Dribbble',
+    title: "Dribbble",
     isConnected: false,
-    logo: '/images/logos/dribbble.png'
+    logo: "/images/logos/dribbble.png",
   },
   {
-    title: 'Behance',
+    title: "Behance",
     isConnected: false,
-    logo: '/images/logos/behance.png'
-  }
-]
+    logo: "/images/logos/behance.png",
+  },
+];
 
 const Connections = () => {
   return (
@@ -84,17 +84,27 @@ const Connections = () => {
       <Grid container>
         <Grid size={{ xs: 12, md: 6 }}>
           <CardHeader
-            title='Connected Accounts'
-            subheader='Display content from your connected accounts on your site'
+            title="Connected Accounts"
+            subheader="Display content from your connected accounts on your site"
           />
-          <CardContent className='flex flex-col gap-4'>
+          <CardContent className="flex flex-col gap-4">
             {connectedAccountsArr.map((item, index) => (
-              <div key={index} className='flex items-center justify-between gap-4'>
-                <div className='flex flex-grow items-center gap-4'>
-                  <img height={32} width={32} src={item.logo} alt={item.title} />
-                  <div className='flex-grow'>
-                    <Typography className='text-textPrimary font-medium'>{item.title}</Typography>
-                    <Typography variant='body2'>{item.subtitle}</Typography>
+              <div
+                key={index}
+                className="flex items-center justify-between gap-4"
+              >
+                <div className="flex flex-grow items-center gap-4">
+                  <img
+                    height={32}
+                    width={32}
+                    src={item.logo}
+                    alt={item.title}
+                  />
+                  <div className="flex-grow">
+                    <Typography className="text-textPrimary font-medium">
+                      {item.title}
+                    </Typography>
+                    <Typography variant="body2">{item.subtitle}</Typography>
                   </div>
                 </div>
                 <Switch defaultChecked={item.checked} />
@@ -103,31 +113,51 @@ const Connections = () => {
           </CardContent>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
-          <CardHeader title='Social Accounts' subheader='Display content from social accounts on your site' />
-          <CardContent className='flex flex-col gap-4'>
+          <CardHeader
+            title="Social Accounts"
+            subheader="Display content from social accounts on your site"
+          />
+          <CardContent className="flex flex-col gap-4">
             {socialAccountsArr.map((item, index) => (
-              <div key={index} className='flex items-center justify-between gap-4'>
-                <div className='flex flex-grow items-center gap-4'>
-                  <img height={32} width={32} src={item.logo} alt={item.title} />
-                  <div className='flex-grow'>
-                    <Typography className='text-textPrimary font-medium'>{item.title}</Typography>
+              <div
+                key={index}
+                className="flex items-center justify-between gap-4"
+              >
+                <div className="flex flex-grow items-center gap-4">
+                  <img
+                    height={32}
+                    width={32}
+                    src={item.logo}
+                    alt={item.title}
+                  />
+                  <div className="flex-grow">
+                    <Typography className="text-textPrimary font-medium">
+                      {item.title}
+                    </Typography>
                     {item.isConnected ? (
                       <Typography
-                        variant='body2'
-                        color='primary.main'
+                        variant="body2"
+                        color="primary.main"
                         component={Link}
-                        href={item.href || '/'}
-                        target='_blank'
+                        href={item.href || "/"}
+                        target="_blank"
                       >
                         {item.username}
                       </Typography>
                     ) : (
-                      <Typography variant='body2'>Not Connected</Typography>
+                      <Typography variant="body2">Not Connected</Typography>
                     )}
                   </div>
                 </div>
-                <CustomIconButton variant='tonal' color={item.isConnected ? 'error' : 'secondary'}>
-                  <i className={item.isConnected ? 'tabler-trash' : 'tabler-link'} />
+                <CustomIconButton
+                  variant="tonal"
+                  color={item.isConnected ? "error" : "secondary"}
+                >
+                  <i
+                    className={
+                      item.isConnected ? "tabler-trash" : "tabler-link"
+                    }
+                  />
                 </CustomIconButton>
               </div>
             ))}
@@ -135,7 +165,7 @@ const Connections = () => {
         </Grid>
       </Grid>
     </Card>
-  )
-}
+  );
+};
 
-export default Connections
+export default Connections;

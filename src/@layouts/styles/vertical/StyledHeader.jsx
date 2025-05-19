@@ -1,11 +1,11 @@
 // Third-party Imports
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 // Config Imports
-import themeConfig from '@configs/themeConfig'
+import themeConfig from "@configs/themeConfig";
 
 // Util Imports
-import { verticalLayoutClasses } from '@layouts/utils/layoutClasses'
+import { verticalLayoutClasses } from "@layouts/utils/layoutClasses";
 
 const StyledHeader = styled.header`
   display: flex;
@@ -29,7 +29,10 @@ const StyledHeader = styled.header`
       .${verticalLayoutClasses.navbar},
       &.${verticalLayoutClasses.headerFixed}.${verticalLayoutClasses.headerDetached}
       .${verticalLayoutClasses.navbar} {
-      max-inline-size: calc(${themeConfig.compactContentWidth}px - ${2 * themeConfig.layoutPadding}px);
+      max-inline-size: calc(
+        ${themeConfig.compactContentWidth}px -
+          ${2 * themeConfig.layoutPadding}px
+      );
     }
 
     .${verticalLayoutClasses.navbar} {
@@ -42,16 +45,21 @@ const StyledHeader = styled.header`
     inset-block-start: 0;
     z-index: var(--header-z-index);
 
-    &:not(.${verticalLayoutClasses.headerBlur}).scrolled.${verticalLayoutClasses.headerAttached},
-      &:not(.${verticalLayoutClasses.headerBlur}).scrolled.${verticalLayoutClasses.headerDetached}
+    &:not(
+        .${verticalLayoutClasses.headerBlur}
+      ).scrolled.${verticalLayoutClasses.headerAttached},
+      &:not(
+        .${verticalLayoutClasses.headerBlur}
+      ).scrolled.${verticalLayoutClasses.headerDetached}
       .${verticalLayoutClasses.navbar} {
       background-color: var(--mui-palette-background-paper);
     }
 
-    &.${verticalLayoutClasses.headerDetached}.scrolled .${verticalLayoutClasses.navbar} {
+    &.${verticalLayoutClasses.headerDetached}.scrolled
+      .${verticalLayoutClasses.navbar} {
       box-shadow: var(--mui-customShadows-sm);
 
-      [data-skin='bordered'] & {
+      [data-skin="bordered"] & {
         box-shadow: none;
         border-inline: 1px solid var(--border-color);
         border-block-end: 1px solid var(--border-color);
@@ -62,7 +70,8 @@ const StyledHeader = styled.header`
       border-end-end-radius: var(--border-radius);
     }
 
-    &.${verticalLayoutClasses.headerDetached}, &.${verticalLayoutClasses.headerFloating} {
+    &.${verticalLayoutClasses.headerDetached},
+      &.${verticalLayoutClasses.headerFloating} {
       pointer-events: none;
 
       & .${verticalLayoutClasses.navbar} {
@@ -82,7 +91,7 @@ const StyledHeader = styled.header`
 
       &.${verticalLayoutClasses.headerFloating} {
         &:before {
-          content: '';
+          content: "";
           position: absolute;
           z-index: -1;
           inset-block-start: 0;
@@ -107,7 +116,7 @@ const StyledHeader = styled.header`
     &.${verticalLayoutClasses.headerAttached}.scrolled {
       box-shadow: var(--mui-customShadows-sm);
 
-      [data-skin='bordered'] & {
+      [data-skin="bordered"] & {
         box-shadow: none;
         border-block-end: 1px solid var(--border-color);
       }
@@ -115,15 +124,23 @@ const StyledHeader = styled.header`
 
     &.${verticalLayoutClasses.headerFloating}
       .${verticalLayoutClasses.navbar},
-      &:not(.${verticalLayoutClasses.headerFloating}).${verticalLayoutClasses.headerAttached},
-      &:not(.${verticalLayoutClasses.headerFloating}).${verticalLayoutClasses.headerDetached}
+      &:not(
+        .${verticalLayoutClasses.headerFloating}
+      ).${verticalLayoutClasses.headerAttached},
+      &:not(
+        .${verticalLayoutClasses.headerFloating}
+      ).${verticalLayoutClasses.headerDetached}
       .${verticalLayoutClasses.navbar} {
       ${({ theme }) =>
-        `transition: ${theme.transitions.create(['box-shadow', 'border-width', 'padding-inline', 'backdrop-filter'])}`};
+        `transition: ${theme.transitions.create(["box-shadow", "border-width", "padding-inline", "backdrop-filter"])}`};
     }
-    &:not(.${verticalLayoutClasses.headerFloating}).${verticalLayoutClasses.headerAttached}
+    &:not(
+        .${verticalLayoutClasses.headerFloating}
+      ).${verticalLayoutClasses.headerAttached}
       .${verticalLayoutClasses.navbar},
-      &:not(.${verticalLayoutClasses.headerFloating}).${verticalLayoutClasses.headerDetached}.scrolled
+      &:not(
+        .${verticalLayoutClasses.headerFloating}
+      ).${verticalLayoutClasses.headerDetached}.scrolled
       .${verticalLayoutClasses.navbar} {
       padding-inline: 16px;
     }
@@ -138,7 +155,7 @@ const StyledHeader = styled.header`
       padding-inline: 16px;
       box-shadow: var(--mui-customShadows-sm);
 
-      [data-skin='bordered'] & {
+      [data-skin="bordered"] & {
         box-shadow: none;
         border: 1px solid var(--border-color);
       }
@@ -152,7 +169,9 @@ const StyledHeader = styled.header`
     inline-size: calc(100% - ${2 * themeConfig.layoutPadding}px);
   }
 
-  &:not(.${verticalLayoutClasses.headerFloating}).${verticalLayoutClasses.headerStatic}
+  &:not(
+      .${verticalLayoutClasses.headerFloating}
+    ).${verticalLayoutClasses.headerStatic}
     .${verticalLayoutClasses.navbar} {
     padding-inline: 16px;
   }
@@ -164,6 +183,6 @@ const StyledHeader = styled.header`
   }
 
   ${({ overrideStyles }) => overrideStyles}
-`
+`;
 
-export default StyledHeader
+export default StyledHeader;

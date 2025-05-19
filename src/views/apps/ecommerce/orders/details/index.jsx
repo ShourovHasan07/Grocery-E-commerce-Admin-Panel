@@ -1,13 +1,13 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import OrderDetailHeader from './OrderDetailHeader'
-import OrderDetailsCard from './OrderDetailsCard'
-import ShippingActivity from './ShippingActivityCard'
-import CustomerDetails from './CustomerDetailsCard'
-import ShippingAddress from './ShippingAddressCard'
-import BillingAddress from './BillingAddressCard'
+import OrderDetailHeader from "./OrderDetailHeader";
+import OrderDetailsCard from "./OrderDetailsCard";
+import ShippingActivity from "./ShippingActivityCard";
+import CustomerDetails from "./CustomerDetailsCard";
+import ShippingAddress from "./ShippingAddressCard";
+import BillingAddress from "./BillingAddressCard";
 
 const OrderDetails = ({ orderData, order }) => {
   return (
@@ -39,7 +39,7 @@ const OrderDetails = ({ orderData, order }) => {
         </Grid>
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default OrderDetails
+export default OrderDetails;

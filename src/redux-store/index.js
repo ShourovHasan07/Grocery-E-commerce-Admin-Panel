@@ -1,18 +1,19 @@
 // Third-party Imports
-import { configureStore } from '@reduxjs/toolkit'
+import { configureStore } from "@reduxjs/toolkit";
 
 // Slice Imports
-import chatReducer from '@/redux-store/slices/chat'
-import calendarReducer from '@/redux-store/slices/calendar'
-import kanbanReducer from '@/redux-store/slices/kanban'
-import emailReducer from '@/redux-store/slices/email'
+import chatReducer from "@/redux-store/slices/chat";
+import calendarReducer from "@/redux-store/slices/calendar";
+import kanbanReducer from "@/redux-store/slices/kanban";
+import emailReducer from "@/redux-store/slices/email";
 
 export const store = configureStore({
   reducer: {
     chatReducer,
     calendarReducer,
     kanbanReducer,
-    emailReducer
+    emailReducer,
   },
-  middleware: getDefaultMiddleware => getDefaultMiddleware({ serializableCheck: false })
-})
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ serializableCheck: false }),
+});

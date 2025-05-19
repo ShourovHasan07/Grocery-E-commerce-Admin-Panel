@@ -1,9 +1,9 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import InvoiceListTable from './InvoiceListTable'
-import InvoiceCard from './InvoiceCard'
+import InvoiceListTable from "./InvoiceListTable";
+import InvoiceCard from "./InvoiceCard";
 
 const InvoiceList = ({ invoiceData }) => {
   return (
@@ -15,7 +15,7 @@ const InvoiceList = ({ invoiceData }) => {
         <InvoiceListTable invoiceData={invoiceData} />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default InvoiceList
+export default InvoiceList;

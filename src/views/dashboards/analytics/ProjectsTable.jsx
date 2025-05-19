@@ -1,20 +1,20 @@
-'use client'
+"use client";
 
 // React Imports
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from "react";
 
 // MUI Imports
-import AvatarGroup from '@mui/material/AvatarGroup'
-import Typography from '@mui/material/Typography'
-import LinearProgress from '@mui/material/LinearProgress'
-import Card from '@mui/material/Card'
-import Checkbox from '@mui/material/Checkbox'
-import CardHeader from '@mui/material/CardHeader'
-import TablePagination from '@mui/material/TablePagination'
+import AvatarGroup from "@mui/material/AvatarGroup";
+import Typography from "@mui/material/Typography";
+import LinearProgress from "@mui/material/LinearProgress";
+import Card from "@mui/material/Card";
+import Checkbox from "@mui/material/Checkbox";
+import CardHeader from "@mui/material/CardHeader";
+import TablePagination from "@mui/material/TablePagination";
 
 // Third-party Imports
-import classnames from 'classnames'
-import { rankItem } from '@tanstack/match-sorter-utils'
+import classnames from "classnames";
+import { rankItem } from "@tanstack/match-sorter-utils";
 import {
   createColumnHelper,
   flexRender,
@@ -25,71 +25,82 @@ import {
   getFacetedUniqueValues,
   getFacetedMinMaxValues,
   getPaginationRowModel,
-  getSortedRowModel
-} from '@tanstack/react-table'
+  getSortedRowModel,
+} from "@tanstack/react-table";
 
 // Component Imports
-import OptionMenu from '@core/components/option-menu'
-import CustomAvatar from '@core/components/mui/Avatar'
-import CustomTextField from '@core/components/mui/TextField'
-import TablePaginationComponent from '@/components/TablePaginationComponent'
+import OptionMenu from "@core/components/option-menu";
+import CustomAvatar from "@core/components/mui/Avatar";
+import CustomTextField from "@core/components/mui/TextField";
+import TablePaginationComponent from "@/components/TablePaginationComponent";
 
 // Style Imports
-import tableStyles from '@core/styles/table.module.css'
+import tableStyles from "@core/styles/table.module.css";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
-  const itemRank = rankItem(row.getValue(columnId), value)
+  const itemRank = rankItem(row.getValue(columnId), value);
 
   // Store the itemRank info
   addMeta({
-    itemRank
-  })
+    itemRank,
+  });
 
   // Return if the item should be filtered in/out
-  return itemRank.passed
-}
+  return itemRank.passed;
+};
 
-const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...props }) => {
+const DebouncedInput = ({
+  value: initialValue,
+  onChange,
+  debounce = 500,
+  ...props
+}) => {
   // States
-  const [value, setValue] = useState(initialValue)
+  const [value, setValue] = useState(initialValue);
 
   useEffect(() => {
-    setValue(initialValue)
-  }, [initialValue])
+    setValue(initialValue);
+  }, [initialValue]);
   useEffect(() => {
     const timeout = setTimeout(() => {
-      onChange(value)
-    }, debounce)
+      onChange(value);
+    }, debounce);
 
-    return () => clearTimeout(timeout)
+    return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
+  }, [value]);
 
-  return <CustomTextField {...props} value={value} onChange={e => setValue(e.target.value)} />
-}
+  return (
+    <CustomTextField
+      {...props}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+    />
+  );
+};
 
 // Column Definitions
-const columnHelper = createColumnHelper()
+const columnHelper = createColumnHelper();
 
 const ProjectTables = ({ projectTable }) => {
   // States
-  const [rowSelection, setRowSelection] = useState({})
+  const [rowSelection, setRowSelection] = useState({});
 
-  const [data, setData] = useState(...[projectTable])
-  const [globalFilter, setGlobalFilter] = useState('')
+  const [data, setData] = useState(...[projectTable]);
+  const [globalFilter, setGlobalFilter] = useState("");
 
   // Hooks
   const columns = useMemo(
     () => [
       {
-        id: 'select',
+        id: "select",
         header: ({ table }) => (
           <Checkbox
             {...{
               checked: table.getIsAllRowsSelected(),
               indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler()
+              onChange: table.getToggleAllRowsSelectedHandler(),
             }}
           />
         ),
@@ -99,83 +110,90 @@ const ProjectTables = ({ projectTable }) => {
               checked: row.getIsSelected(),
               disabled: !row.getCanSelect(),
               indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler()
+              onChange: row.getToggleSelectedHandler(),
             }}
           />
-        )
+        ),
       },
-      columnHelper.accessor('title', {
-        header: 'Project',
+      columnHelper.accessor("title", {
+        header: "Project",
         cell: ({ row }) => (
-          <div className='flex items-center gap-3'>
+          <div className="flex items-center gap-3">
             <CustomAvatar src={row.original.avatar} size={34} />
-            <div className='flex flex-col'>
-              <Typography className='font-medium' color='text.primary'>
+            <div className="flex flex-col">
+              <Typography className="font-medium" color="text.primary">
                 {row.original.title}
               </Typography>
-              <Typography variant='body2'>{row.original.subtitle}</Typography>
+              <Typography variant="body2">{row.original.subtitle}</Typography>
             </div>
           </div>
-        )
+        ),
       }),
-      columnHelper.accessor('leader', {
-        header: 'Leader',
-        cell: ({ row }) => <Typography color='text.primary'>{row.original.leader}</Typography>
-      }),
-      columnHelper.accessor('avatarGroup', {
-        header: 'Team',
+      columnHelper.accessor("leader", {
+        header: "Leader",
         cell: ({ row }) => (
-          <AvatarGroup max={4} className='flex items-center pull-up'>
+          <Typography color="text.primary">{row.original.leader}</Typography>
+        ),
+      }),
+      columnHelper.accessor("avatarGroup", {
+        header: "Team",
+        cell: ({ row }) => (
+          <AvatarGroup max={4} className="flex items-center pull-up">
             {row.original.avatarGroup.map((avatar, index) => (
               <CustomAvatar key={index} src={avatar} size={26} />
             ))}
           </AvatarGroup>
         ),
-        enableSorting: false
+        enableSorting: false,
       }),
-      columnHelper.accessor('status', {
-        header: 'Progress',
+      columnHelper.accessor("status", {
+        header: "Progress",
         cell: ({ row }) => (
-          <div className='flex items-center gap-3'>
-            <LinearProgress color='primary' value={row.original.status} variant='determinate' className='is-20' />
-            <Typography color='text.primary'>{`${row.original.status}%`}</Typography>
+          <div className="flex items-center gap-3">
+            <LinearProgress
+              color="primary"
+              value={row.original.status}
+              variant="determinate"
+              className="is-20"
+            />
+            <Typography color="text.primary">{`${row.original.status}%`}</Typography>
           </div>
-        )
+        ),
       }),
-      columnHelper.accessor('actions', {
-        header: 'Actions',
+      columnHelper.accessor("actions", {
+        header: "Actions",
         cell: () => (
           <OptionMenu
-            iconClassName='text-textSecondary'
+            iconClassName="text-textSecondary"
             options={[
-              'Details',
-              'Archive',
+              "Details",
+              "Archive",
               { divider: true },
-              { text: 'Delete', menuItemProps: { className: 'text-error' } }
+              { text: "Delete", menuItemProps: { className: "text-error" } },
             ]}
           />
         ),
-        enableSorting: false
-      })
+        enableSorting: false,
+      }),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  )
+    [],
+  );
 
   const table = useReactTable({
     data: data,
     columns,
     filterFns: {
-      fuzzy: fuzzyFilter
+      fuzzy: fuzzyFilter,
     },
     state: {
       rowSelection,
-      globalFilter
+      globalFilter,
     },
     initialState: {
       pagination: {
-        pageSize: 5
-      }
+        pageSize: 5,
+      },
     },
     enableRowSelection: true, //enable row selection for all rows
     // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
@@ -188,42 +206,46 @@ const ProjectTables = ({ projectTable }) => {
     getPaginationRowModel: getPaginationRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    getFacetedMinMaxValues: getFacetedMinMaxValues()
-  })
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
+  });
 
   return (
     <Card>
       <CardHeader
-        className='flex-wrap gap-x-4 gap-y-2'
-        title='Project List'
+        className="flex-wrap gap-x-4 gap-y-2"
+        title="Project List"
         action={
           <DebouncedInput
-            value={globalFilter ?? ''}
-            onChange={value => setGlobalFilter(String(value))}
-            placeholder='Search Project'
+            value={globalFilter ?? ""}
+            onChange={(value) => setGlobalFilter(String(value))}
+            placeholder="Search Project"
           />
         }
       />
 
-      <div className='overflow-x-auto'>
+      <div className="overflow-x-auto">
         <table className={tableStyles.table}>
           <thead>
-            {table.getHeaderGroups().map(headerGroup => (
+            {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
+                {headerGroup.headers.map((header) => (
                   <th key={header.id}>
                     {header.isPlaceholder ? null : (
                       <div
                         className={classnames({
-                          'flex items-center': header.column.getIsSorted(),
-                          'cursor-pointer select-none': header.column.getCanSort()
+                          "flex items-center": header.column.getIsSorted(),
+                          "cursor-pointer select-none":
+                            header.column.getCanSort(),
                         })}
                         onClick={header.column.getToggleSortingHandler()}
                       >
-                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                         {{
-                          asc: <i className='tabler-chevron-up text-xl' />,
-                          desc: <i className='tabler-chevron-down text-xl' />
+                          asc: <i className="tabler-chevron-up text-xl" />,
+                          desc: <i className="tabler-chevron-down text-xl" />,
                         }[header.column.getIsSorted()] ?? null}
                       </div>
                     )}
@@ -236,14 +258,22 @@ const ProjectTables = ({ projectTable }) => {
             {table
               .getRowModel()
               .rows.slice(0, table.getState().pagination.pageSize)
-              .map(row => {
+              .map((row) => {
                 return (
-                  <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
-                    {row.getVisibleCells().map(cell => (
-                      <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                  <tr
+                    key={row.id}
+                    className={classnames({ selected: row.getIsSelected() })}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
                     ))}
                   </tr>
-                )
+                );
               })}
           </tbody>
         </table>
@@ -255,11 +285,11 @@ const ProjectTables = ({ projectTable }) => {
         rowsPerPage={table.getState().pagination.pageSize}
         page={table.getState().pagination.pageIndex}
         onPageChange={(_, page) => {
-          table.setPageIndex(page)
+          table.setPageIndex(page);
         }}
       />
     </Card>
-  )
-}
+  );
+};
 
-export default ProjectTables
+export default ProjectTables;

@@ -1,9 +1,9 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import AccountDetails from './AccountDetails'
-import AccountDelete from './AccountDelete'
+import AccountDetails from "./AccountDetails";
+import AccountDelete from "./AccountDelete";
 
 const Account = () => {
   return (
@@ -15,7 +15,7 @@ const Account = () => {
         <AccountDelete />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default Account
+export default Account;

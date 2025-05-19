@@ -6,11 +6,11 @@
  * ! else you can use the server actions or third-party APIs to fetch the data from your database.
  */
 // Next Imports
-import { NextResponse } from 'next/server'
+import { NextResponse } from "next/server";
 
 // Data Imports
-import { db } from '@/fake-db/apps/permissions'
+import { db } from "@/fake-db/apps/permissions";
 
 export async function GET() {
-  return NextResponse.json(db)
+  return NextResponse.json(db);
 }

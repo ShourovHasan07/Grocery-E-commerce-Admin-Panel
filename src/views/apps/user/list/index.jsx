@@ -1,9 +1,9 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import UserListTable from './UserListTable'
-import UserListCards from './UserListCards'
+import UserListTable from "./UserListTable";
+import UserListCards from "./UserListCards";
 
 const UserList = ({ userData }) => {
   return (
@@ -15,7 +15,7 @@ const UserList = ({ userData }) => {
         <UserListTable tableData={userData} />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default UserList
+export default UserList;

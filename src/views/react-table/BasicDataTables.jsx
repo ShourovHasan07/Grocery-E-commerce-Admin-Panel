@@ -1,55 +1,60 @@
-'use client'
+"use client";
 
 // React Imports
-import { useState } from 'react'
+import { useState } from "react";
 
 // MUI Imports
-import Card from '@mui/material/Card'
-import CardHeader from '@mui/material/CardHeader'
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
 
 // Third-party Imports
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 
 // Style Imports
-import styles from '@core/styles/table.module.css'
+import styles from "@core/styles/table.module.css";
 
 // Data Imports
-import defaultData from './data'
+import defaultData from "./data";
 
 // Column Definitions
-const columnHelper = createColumnHelper()
+const columnHelper = createColumnHelper();
 
 const columns = [
-  columnHelper.accessor('id', {
-    cell: info => info.getValue(),
-    header: 'ID'
+  columnHelper.accessor("id", {
+    cell: (info) => info.getValue(),
+    header: "ID",
   }),
-  columnHelper.accessor('fullName', {
-    cell: info => info.getValue(),
-    header: 'Name'
+  columnHelper.accessor("fullName", {
+    cell: (info) => info.getValue(),
+    header: "Name",
   }),
-  columnHelper.accessor('email', {
-    cell: info => info.getValue(),
-    header: 'Email'
+  columnHelper.accessor("email", {
+    cell: (info) => info.getValue(),
+    header: "Email",
   }),
-  columnHelper.accessor('start_date', {
-    cell: info => info.getValue(),
-    header: 'Date'
+  columnHelper.accessor("start_date", {
+    cell: (info) => info.getValue(),
+    header: "Date",
   }),
-  columnHelper.accessor('experience', {
-    cell: info => info.getValue(),
-    header: 'Experience'
+  columnHelper.accessor("experience", {
+    cell: (info) => info.getValue(),
+    header: "Experience",
   }),
-  columnHelper.accessor('age', {
-    cell: info => info.getValue(),
-    header: 'Age'
-  })
-]
+  columnHelper.accessor("age", {
+    cell: (info) => info.getValue(),
+    header: "Age",
+  }),
+];
 
 const BasicDataTables = () => {
   // States
 
-  const [data, setData] = useState(() => [...defaultData])
+  const [data, setData] = useState(() => [...defaultData]);
 
   // Hooks
   const table = useReactTable({
@@ -57,21 +62,26 @@ const BasicDataTables = () => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     filterFns: {
-      fuzzy: () => false
-    }
-  })
+      fuzzy: () => false,
+    },
+  });
 
   return (
     <Card>
-      <CardHeader title='Basic Table' />
-      <div className='overflow-x-auto'>
+      <CardHeader title="Basic Table" />
+      <div className="overflow-x-auto">
         <table className={styles.table}>
           <thead>
-            {table.getHeaderGroups().map(headerGroup => (
+            {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
+                {headerGroup.headers.map((header) => (
                   <th key={header.id}>
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </th>
                 ))}
               </tr>
@@ -81,10 +91,15 @@ const BasicDataTables = () => {
             {table
               .getRowModel()
               .rows.slice(0, 10)
-              .map(row => (
+              .map((row) => (
                 <tr key={row.id}>
-                  {row.getVisibleCells().map(cell => (
-                    <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </td>
                   ))}
                 </tr>
               ))}
@@ -92,7 +107,7 @@ const BasicDataTables = () => {
         </table>
       </div>
     </Card>
-  )
-}
+  );
+};
 
-export default BasicDataTables
+export default BasicDataTables;

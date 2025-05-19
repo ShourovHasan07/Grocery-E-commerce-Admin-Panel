@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import AddressBook from './AddressBookCard'
-import PaymentMethod from './PaymentMethodCard'
+import AddressBook from "./AddressBookCard";
+import PaymentMethod from "./PaymentMethodCard";
 
 const AddressBilling = () => {
   return (
@@ -17,7 +17,7 @@ const AddressBilling = () => {
         <PaymentMethod />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default AddressBilling
+export default AddressBilling;

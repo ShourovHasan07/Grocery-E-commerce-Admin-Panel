@@ -1,8 +1,8 @@
 // Third-party Imports
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 // Util Imports
-import { menuClasses } from '../../utils/menuClasses'
+import { menuClasses } from "../../utils/menuClasses";
 
 const StyledVerticalMenu = styled.nav`
   & > ul > :first-of-type {
@@ -11,6 +11,6 @@ const StyledVerticalMenu = styled.nav`
   &.${menuClasses.root} {
     ${({ rootStyles }) => rootStyles}
   }
-`
+`;
 
-export default StyledVerticalMenu
+export default StyledVerticalMenu;

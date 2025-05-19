@@ -7,10 +7,10 @@ const badges = {
         borderRadius: 20,
         fontSize: theme.typography.subtitle2.fontSize,
         lineHeight: 1.23077,
-        padding: theme.spacing(1, 2)
-      })
-    }
-  }
-}
+        padding: theme.spacing(1, 2),
+      }),
+    },
+  },
+};
 
-export default badges
+export default badges;

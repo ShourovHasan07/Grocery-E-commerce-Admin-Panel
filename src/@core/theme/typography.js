@@ -1,84 +1,84 @@
-const typography = fontFamily => ({
+const typography = (fontFamily) => ({
   fontFamily:
-    typeof fontFamily === 'undefined' || fontFamily === ''
+    typeof fontFamily === "undefined" || fontFamily === ""
       ? [
           '"Public Sans"',
-          'sans-serif',
-          '-apple-system',
-          'BlinkMacSystemFont',
+          "sans-serif",
+          "-apple-system",
+          "BlinkMacSystemFont",
           '"Segoe UI"',
-          'Roboto',
+          "Roboto",
           '"Helvetica Neue"',
-          'Arial',
-          'sans-serif',
+          "Arial",
+          "sans-serif",
           '"Apple Color Emoji"',
           '"Segoe UI Emoji"',
-          '"Segoe UI Symbol"'
-        ].join(',')
+          '"Segoe UI Symbol"',
+        ].join(",")
       : fontFamily,
   fontSize: 13.125,
   h1: {
-    fontSize: '2.875rem',
+    fontSize: "2.875rem",
     fontWeight: 500,
-    lineHeight: 1.47826
+    lineHeight: 1.47826,
   },
   h2: {
-    fontSize: '2.375rem',
+    fontSize: "2.375rem",
     fontWeight: 500,
-    lineHeight: 1.47368421
+    lineHeight: 1.47368421,
   },
   h3: {
-    fontSize: '1.75rem',
+    fontSize: "1.75rem",
     fontWeight: 500,
-    lineHeight: 1.5
+    lineHeight: 1.5,
   },
   h4: {
-    fontSize: '1.5rem',
+    fontSize: "1.5rem",
     fontWeight: 500,
-    lineHeight: 1.58334
+    lineHeight: 1.58334,
   },
   h5: {
-    fontSize: '1.125rem',
+    fontSize: "1.125rem",
     fontWeight: 500,
-    lineHeight: 1.5556
+    lineHeight: 1.5556,
   },
   h6: {
-    fontSize: '0.9375rem',
+    fontSize: "0.9375rem",
     fontWeight: 500,
-    lineHeight: 1.46667
+    lineHeight: 1.46667,
   },
   subtitle1: {
-    fontSize: '0.9375rem',
-    lineHeight: 1.46667
+    fontSize: "0.9375rem",
+    lineHeight: 1.46667,
   },
   subtitle2: {
-    fontSize: '0.8125rem',
+    fontSize: "0.8125rem",
     fontWeight: 400,
-    lineHeight: 1.53846154
+    lineHeight: 1.53846154,
   },
   body1: {
-    fontSize: '0.9375rem',
-    lineHeight: 1.46667
+    fontSize: "0.9375rem",
+    lineHeight: 1.46667,
   },
   body2: {
-    fontSize: '0.8125rem',
-    lineHeight: 1.53846154
+    fontSize: "0.8125rem",
+    lineHeight: 1.53846154,
   },
   button: {
-    fontSize: '0.9375rem',
+    fontSize: "0.9375rem",
     lineHeight: 1.46667,
-    textTransform: 'none'
+    textTransform: "none",
   },
   caption: {
-    fontSize: '0.8125rem',
+    fontSize: "0.8125rem",
     lineHeight: 1.38462,
-    letterSpacing: '0.4px'
+    letterSpacing: "0.4px",
   },
   overline: {
-    fontSize: '0.75rem',
+    fontSize: "0.75rem",
     lineHeight: 1.16667,
-    letterSpacing: '0.8px'
-  }
-})
+    letterSpacing: "0.8px",
+  },
+});
 
-export default typography
+export default typography;

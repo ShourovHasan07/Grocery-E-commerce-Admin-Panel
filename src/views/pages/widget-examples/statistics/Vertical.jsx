@@ -1,8 +1,8 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import CardStatVertical from '@/components/card-statistics/Vertical'
+import CardStatVertical from "@/components/card-statistics/Vertical";
 
 const Vertical = ({ data }) => {
   if (data) {
@@ -14,8 +14,8 @@ const Vertical = ({ data }) => {
           </Grid>
         ))}
       </Grid>
-    )
+    );
   }
-}
+};
 
-export default Vertical
+export default Vertical;

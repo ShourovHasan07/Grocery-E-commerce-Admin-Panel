@@ -1,5 +1,5 @@
 // Third-party Imports
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 const StyledHorizontalSubMenuContent = styled.div`
   inline-size: 260px;
@@ -11,8 +11,9 @@ const StyledHorizontalSubMenuContent = styled.div`
   overflow: hidden;
 
   ${({ browserScroll, top }) =>
-    browserScroll && `overflow-y: auto; max-block-size: calc((var(--vh, 1vh) * 100) - ${top}px);`}
+    browserScroll &&
+    `overflow-y: auto; max-block-size: calc((var(--vh, 1vh) * 100) - ${top}px);`}
   ${({ rootStyles }) => rootStyles};
-`
+`;
 
-export default StyledHorizontalSubMenuContent
+export default StyledHorizontalSubMenuContent;

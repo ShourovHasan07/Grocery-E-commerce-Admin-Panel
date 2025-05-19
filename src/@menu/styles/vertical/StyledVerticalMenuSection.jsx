@@ -1,8 +1,8 @@
 // Third-party Imports
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 // Util Imports
-import { menuClasses } from '../../utils/menuClasses'
+import { menuClasses } from "../../utils/menuClasses";
 
 const StyledVerticalMenuSection = styled.li`
   display: flex;
@@ -18,6 +18,6 @@ const StyledVerticalMenuSection = styled.li`
 
   ${({ menuSectionStyles }) => menuSectionStyles};
   ${({ rootStyles }) => rootStyles};
-`
+`;
 
-export default StyledVerticalMenuSection
+export default StyledVerticalMenuSection;

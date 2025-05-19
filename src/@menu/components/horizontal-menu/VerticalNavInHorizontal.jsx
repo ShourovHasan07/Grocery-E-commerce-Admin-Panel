@@ -1,9 +1,15 @@
 // Component Imports
-import VerticalNav from '../../vertical-menu'
+import VerticalNav from "../../vertical-menu";
 
-const VerticalNavInHorizontal = props => {
+const VerticalNavInHorizontal = (props) => {
   // Props
-  const { children, className, breakpoint, customBreakpoint, verticalNavProps } = props
+  const {
+    children,
+    className,
+    breakpoint,
+    customBreakpoint,
+    verticalNavProps,
+  } = props;
 
   return (
     <VerticalNav
@@ -14,7 +20,7 @@ const VerticalNavInHorizontal = props => {
     >
       {children}
     </VerticalNav>
-  )
-}
+  );
+};
 
-export default VerticalNavInHorizontal
+export default VerticalNavInHorizontal;

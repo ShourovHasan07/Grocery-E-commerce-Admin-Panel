@@ -1,44 +1,48 @@
 // React Imports
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 
 // MUI Imports
-import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
-import IconButton from '@mui/material/IconButton'
-import CardContent from '@mui/material/CardContent'
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import CardContent from "@mui/material/CardContent";
 
 // Component Imports
-import OptionMenu from '@core/components/option-menu'
-import AvatarWithBadge from './AvatarWithBadge'
-import { statusObj } from './SidebarLeft'
-import ChatLog from './ChatLog'
-import SendMsgForm from './SendMsgForm'
-import UserProfileRight from './UserProfileRight'
-import CustomAvatar from '@core/components/mui/Avatar'
+import OptionMenu from "@core/components/option-menu";
+import AvatarWithBadge from "./AvatarWithBadge";
+import { statusObj } from "./SidebarLeft";
+import ChatLog from "./ChatLog";
+import SendMsgForm from "./SendMsgForm";
+import UserProfileRight from "./UserProfileRight";
+import CustomAvatar from "@core/components/mui/Avatar";
 
 // Renders the user avatar with badge and user information
-const UserAvatar = ({ activeUser, setUserProfileLeftOpen, setBackdropOpen }) => (
+const UserAvatar = ({
+  activeUser,
+  setUserProfileLeftOpen,
+  setBackdropOpen,
+}) => (
   <div
-    className='flex items-center gap-4 cursor-pointer'
+    className="flex items-center gap-4 cursor-pointer"
     onClick={() => {
-      setUserProfileLeftOpen(true)
-      setBackdropOpen(true)
+      setUserProfileLeftOpen(true);
+      setBackdropOpen(true);
     }}
   >
     <AvatarWithBadge
       alt={activeUser?.fullName}
       src={activeUser?.avatar}
       color={activeUser?.avatarColor}
-      badgeColor={statusObj[activeUser?.status || 'offline']}
+      badgeColor={statusObj[activeUser?.status || "offline"]}
     />
     <div>
-      <Typography color='text.primary'>{activeUser?.fullName}</Typography>
-      <Typography variant='body2'>{activeUser?.role}</Typography>
+      <Typography color="text.primary">{activeUser?.fullName}</Typography>
+      <Typography variant="body2">{activeUser?.role}</Typography>
     </div>
   </div>
-)
+);
 
-const ChatContent = props => {
+const ChatContent = (props) => {
   // Props
   const {
     chatStore,
@@ -49,35 +53,37 @@ const ChatContent = props => {
     isBelowMdScreen,
     isBelowSmScreen,
     isBelowLgScreen,
-    messageInputRef
-  } = props
+    messageInputRef,
+  } = props;
 
   // States
-  const [userProfileRightOpen, setUserProfileRightOpen] = useState(false)
+  const [userProfileRightOpen, setUserProfileRightOpen] = useState(false);
 
   // Vars
-  const { activeUser } = chatStore
+  const { activeUser } = chatStore;
 
   useEffect(() => {
     if (!backdropOpen && userProfileRightOpen) {
-      setUserProfileRightOpen(false)
+      setUserProfileRightOpen(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [backdropOpen])
+  }, [backdropOpen]);
 
   return !chatStore.activeUser ? (
-    <CardContent className='flex flex-col flex-auto items-center justify-center bs-full gap-[18px] bg-backgroundChat'>
-      <CustomAvatar variant='circular' size={98} color='primary' skin='light'>
-        <i className='tabler-message-2 text-[50px]' />
+    <CardContent className="flex flex-col flex-auto items-center justify-center bs-full gap-[18px] bg-backgroundChat">
+      <CustomAvatar variant="circular" size={98} color="primary" skin="light">
+        <i className="tabler-message-2 text-[50px]" />
       </CustomAvatar>
-      <Typography className='text-center'>Select a contact to start a conversation.</Typography>
+      <Typography className="text-center">
+        Select a contact to start a conversation.
+      </Typography>
       {isBelowMdScreen && (
         <Button
-          variant='contained'
-          className='rounded-full'
+          variant="contained"
+          className="rounded-full"
           onClick={() => {
-            setSidebarOpen(true)
-            isBelowSmScreen ? setBackdropOpen(false) : setBackdropOpen(true)
+            setSidebarOpen(true);
+            isBelowSmScreen ? setBackdropOpen(false) : setBackdropOpen(true);
           }}
         >
           Select Contact
@@ -87,18 +93,18 @@ const ChatContent = props => {
   ) : (
     <>
       {activeUser && (
-        <div className='flex flex-col flex-grow bs-full bg-backgroundChat'>
-          <div className='flex items-center justify-between border-be plb-[17px] pli-6 bg-backgroundPaper'>
+        <div className="flex flex-col flex-grow bs-full bg-backgroundChat">
+          <div className="flex items-center justify-between border-be plb-[17px] pli-6 bg-backgroundPaper">
             {isBelowMdScreen ? (
-              <div className='flex items-center gap-4'>
+              <div className="flex items-center gap-4">
                 <IconButton
-                  color='secondary'
+                  color="secondary"
                   onClick={() => {
-                    setSidebarOpen(true)
-                    setBackdropOpen(true)
+                    setSidebarOpen(true);
+                    setBackdropOpen(true);
                   }}
                 >
-                  <i className='tabler-menu-2' />
+                  <i className="tabler-menu-2" />
                 </IconButton>
                 <UserAvatar
                   activeUser={activeUser}
@@ -115,52 +121,52 @@ const ChatContent = props => {
             )}
             {isBelowMdScreen ? (
               <OptionMenu
-                iconButtonProps={{ size: 'medium' }}
-                iconClassName='text-secondary'
+                iconButtonProps={{ size: "medium" }}
+                iconClassName="text-secondary"
                 options={[
                   {
-                    text: 'View Contact',
+                    text: "View Contact",
                     menuItemProps: {
                       onClick: () => {
-                        setUserProfileRightOpen(true)
-                        setBackdropOpen(true)
-                      }
-                    }
+                        setUserProfileRightOpen(true);
+                        setBackdropOpen(true);
+                      },
+                    },
                   },
-                  'Mute Notifications',
-                  'Block Contact',
-                  'Clear Chat',
-                  'Block'
+                  "Mute Notifications",
+                  "Block Contact",
+                  "Clear Chat",
+                  "Block",
                 ]}
               />
             ) : (
-              <div className='flex items-center gap-1'>
-                <IconButton color='secondary'>
-                  <i className='tabler-phone' />
+              <div className="flex items-center gap-1">
+                <IconButton color="secondary">
+                  <i className="tabler-phone" />
                 </IconButton>
-                <IconButton color='secondary'>
-                  <i className='tabler-video' />
+                <IconButton color="secondary">
+                  <i className="tabler-video" />
                 </IconButton>
-                <IconButton color='secondary'>
-                  <i className='tabler-search' />
+                <IconButton color="secondary">
+                  <i className="tabler-search" />
                 </IconButton>
                 <OptionMenu
-                  iconButtonProps={{ size: 'medium' }}
-                  iconClassName='text-secondary'
+                  iconButtonProps={{ size: "medium" }}
+                  iconClassName="text-secondary"
                   options={[
                     {
-                      text: 'View Contact',
+                      text: "View Contact",
                       menuItemProps: {
                         onClick: () => {
-                          setUserProfileRightOpen(true)
-                          setBackdropOpen(true)
-                        }
-                      }
+                          setUserProfileRightOpen(true);
+                          setBackdropOpen(true);
+                        },
+                      },
                     },
-                    'Mute Notifications',
-                    'Block Contact',
-                    'Clear Chat',
-                    'Block'
+                    "Mute Notifications",
+                    "Block Contact",
+                    "Clear Chat",
+                    "Block",
                   ]}
                 />
               </div>
@@ -187,8 +193,8 @@ const ChatContent = props => {
         <UserProfileRight
           open={userProfileRightOpen}
           handleClose={() => {
-            setUserProfileRightOpen(false)
-            setBackdropOpen(false)
+            setUserProfileRightOpen(false);
+            setBackdropOpen(false);
           }}
           activeUser={activeUser}
           isBelowSmScreen={isBelowSmScreen}
@@ -196,7 +202,7 @@ const ChatContent = props => {
         />
       )}
     </>
-  )
-}
+  );
+};
 
-export default ChatContent
+export default ChatContent;

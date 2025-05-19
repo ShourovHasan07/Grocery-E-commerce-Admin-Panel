@@ -1,5 +1,5 @@
 // Third-party Imports
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 const StyledMenuSectionLabel = styled.span`
   ${({ textTruncate }) =>
@@ -14,8 +14,8 @@ const StyledMenuSectionLabel = styled.span`
       ? `
 flex-grow: 1;
 `
-      : ''}
+      : ""}
   ${({ rootStyles }) => rootStyles};
-`
+`;
 
-export default StyledMenuSectionLabel
+export default StyledMenuSectionLabel;

@@ -1,9 +1,9 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import CustomerDetails from './CustomerDetails'
-import CustomerPlan from './CustomerPlan'
+import CustomerDetails from "./CustomerDetails";
+import CustomerPlan from "./CustomerPlan";
 
 const CustomerLeftOverview = ({ customerData }) => {
   return (
@@ -15,7 +15,7 @@ const CustomerLeftOverview = ({ customerData }) => {
         <CustomerPlan />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default CustomerLeftOverview
+export default CustomerLeftOverview;

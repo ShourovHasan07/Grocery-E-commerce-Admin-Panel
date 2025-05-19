@@ -14,7 +14,7 @@
 const userTheme = (/* settings: Settings */) => {
   return {
     // Write your custom theme object here.
-  }
-}
+  };
+};
 
-export default userTheme
+export default userTheme;

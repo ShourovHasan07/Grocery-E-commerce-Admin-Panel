@@ -1,29 +1,45 @@
 // Next Imports
-import dynamic from 'next/dynamic'
+import dynamic from "next/dynamic";
 
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import CustomerDetailsHeader from './CustomerDetailsHeader'
-import CustomerLeftOverview from './customer-left-overview'
-import CustomerRight from './customer-right'
+import CustomerDetailsHeader from "./CustomerDetailsHeader";
+import CustomerLeftOverview from "./customer-left-overview";
+import CustomerRight from "./customer-right";
 
-const OverViewTab = dynamic(() => import('@views/apps/ecommerce/customers/details/customer-right/overview'))
-const SecurityTab = dynamic(() => import('@views/apps/ecommerce/customers/details/customer-right/security'))
-const NotificationsTab = dynamic(() => import('@views/apps/ecommerce/customers/details/customer-right/notification'))
+const OverViewTab = dynamic(
+  () =>
+    import("@views/apps/ecommerce/customers/details/customer-right/overview"),
+);
+
+const SecurityTab = dynamic(
+  () =>
+    import("@views/apps/ecommerce/customers/details/customer-right/security"),
+);
+
+const NotificationsTab = dynamic(
+  () =>
+    import(
+      "@views/apps/ecommerce/customers/details/customer-right/notification"
+    ),
+);
 
 const AddressBillingTab = dynamic(
-  () => import('@views/apps/ecommerce/customers/details/customer-right/address-billing')
-)
+  () =>
+    import(
+      "@views/apps/ecommerce/customers/details/customer-right/address-billing"
+    ),
+);
 
 // Vars
 const tabContentList = () => ({
   overview: <OverViewTab />,
   security: <SecurityTab />,
   addressBilling: <AddressBillingTab />,
-  notifications: <NotificationsTab />
-})
+  notifications: <NotificationsTab />,
+});
 
 const CustomerDetails = ({ customerData, customerId }) => {
   return (
@@ -38,7 +54,7 @@ const CustomerDetails = ({ customerData, customerId }) => {
         <CustomerRight tabContentList={tabContentList()} />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default CustomerDetails
+export default CustomerDetails;

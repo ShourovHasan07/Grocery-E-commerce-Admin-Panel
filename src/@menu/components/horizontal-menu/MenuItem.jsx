@@ -1,38 +1,38 @@
-'use client'
+"use client";
 
 // React Imports
-import { forwardRef, useContext, useEffect, useState } from 'react'
+import { forwardRef, useContext, useEffect, useState } from "react";
 
 // Next Imports
-import { usePathname } from 'next/navigation'
+import { usePathname } from "next/navigation";
 
 // Third-party Imports
-import classnames from 'classnames'
-import { useUpdateEffect } from 'react-use'
-import { useFloatingTree } from '@floating-ui/react'
+import classnames from "classnames";
+import { useUpdateEffect } from "react-use";
+import { useFloatingTree } from "@floating-ui/react";
 
 // Context Imports
-import { HorizontalSubMenuContext } from './SubMenu'
+import { HorizontalSubMenuContext } from "./SubMenu";
 
 // Component Imports
-import MenuButton from './MenuButton'
+import MenuButton from "./MenuButton";
 
 // Hook Imports
-import useHorizontalMenu from '../../hooks/useHorizontalMenu'
-import useVerticalNav from '../../hooks/useVerticalNav'
+import useHorizontalMenu from "../../hooks/useHorizontalMenu";
+import useVerticalNav from "../../hooks/useVerticalNav";
 
 // Util Imports
-import { renderMenuIcon } from '../../utils/menuUtils'
-import { menuClasses } from '../../utils/menuClasses'
+import { renderMenuIcon } from "../../utils/menuUtils";
+import { menuClasses } from "../../utils/menuClasses";
 
 // Styled Component Imports
-import StyledMenuLabel from '../../styles/StyledMenuLabel'
-import StyledMenuPrefix from '../../styles/StyledMenuPrefix'
-import StyledMenuSuffix from '../../styles/StyledMenuSuffix'
-import StyledHorizontalMenuItem from '../../styles/horizontal/StyledHorizontalMenuItem'
+import StyledMenuLabel from "../../styles/StyledMenuLabel";
+import StyledMenuPrefix from "../../styles/StyledMenuPrefix";
+import StyledMenuSuffix from "../../styles/StyledMenuSuffix";
+import StyledHorizontalMenuItem from "../../styles/horizontal/StyledHorizontalMenuItem";
 
 // Style Imports
-import styles from '../../styles/horizontal/horizontalUl.module.css'
+import styles from "../../styles/horizontal/horizontalUl.module.css";
 
 const MenuItem = (props, ref) => {
   // Props
@@ -50,61 +50,71 @@ const MenuItem = (props, ref) => {
     onActiveChange,
     rootStyles,
     ...rest
-  } = props
+  } = props;
 
   // States
-  const [active, setActive] = useState(false)
+  const [active, setActive] = useState(false);
 
   // Hooks
-  const tree = useFloatingTree()
-  const pathname = usePathname()
-  const { toggleVerticalNav, isToggled } = useVerticalNav()
-  const { getItemProps } = useContext(HorizontalSubMenuContext)
-  const { menuItemStyles, renderExpandedMenuItemIcon, textTruncate } = useHorizontalMenu()
+  const tree = useFloatingTree();
+  const pathname = usePathname();
+  const { toggleVerticalNav, isToggled } = useVerticalNav();
+  const { getItemProps } = useContext(HorizontalSubMenuContext);
 
-  const getMenuItemStyles = element => {
+  const { menuItemStyles, renderExpandedMenuItemIcon, textTruncate } =
+    useHorizontalMenu();
+
+  const getMenuItemStyles = (element) => {
     // If the menuItemStyles prop is provided, get the styles for the specified element.
     if (menuItemStyles) {
       // Define the parameters that are passed to the style functions.
-      const params = { level, disabled, active, isSubmenu: false }
+      const params = { level, disabled, active, isSubmenu: false };
 
       // Get the style function for the specified element.
-      const styleFunction = menuItemStyles[element]
+      const styleFunction = menuItemStyles[element];
 
       if (styleFunction) {
         // If the style function is a function, call it and return the result.
         // Otherwise, return the style function itself.
-        return typeof styleFunction === 'function' ? styleFunction(params) : styleFunction
+        return typeof styleFunction === "function"
+          ? styleFunction(params)
+          : styleFunction;
       }
     }
-  }
+  };
 
   // Handle the click event.
   const handleClick = () => {
     if (isToggled) {
-      toggleVerticalNav()
+      toggleVerticalNav();
     }
-  }
+  };
 
   // Change active state when the url changes
   useEffect(() => {
-    const href = rest.href || (component && typeof component !== 'string' && component.props.href)
+    const href =
+      rest.href ||
+      (component && typeof component !== "string" && component.props.href);
 
     if (href) {
       // Check if the current url matches any of the children urls
-      if (exactMatch ? pathname === href : activeUrl && pathname.includes(activeUrl)) {
-        setActive(true)
+      if (
+        exactMatch
+          ? pathname === href
+          : activeUrl && pathname.includes(activeUrl)
+      ) {
+        setActive(true);
       } else {
-        setActive(false)
+        setActive(false);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
+  }, [pathname]);
 
   // Call the onActiveChange callback when the active state changes.
   useUpdateEffect(() => {
-    onActiveChange?.(active)
-  }, [active])
+    onActiveChange?.(active);
+  }, [active]);
 
   return (
     <StyledHorizontalMenuItem
@@ -114,24 +124,26 @@ const MenuItem = (props, ref) => {
         { [menuClasses.active]: active },
         { [menuClasses.disabled]: disabled },
         styles.li,
-        className
+        className,
       )}
       level={level}
       disabled={disabled}
-      buttonStyles={getMenuItemStyles('button')}
-      menuItemStyles={getMenuItemStyles('root')}
+      buttonStyles={getMenuItemStyles("button")}
+      menuItemStyles={getMenuItemStyles("root")}
       rootStyles={rootStyles}
     >
       <MenuButton
-        className={classnames(menuClasses.button, { [menuClasses.active]: active })}
+        className={classnames(menuClasses.button, {
+          [menuClasses.active]: active,
+        })}
         component={component}
         tabIndex={disabled ? -1 : 0}
         onClick={handleClick}
         {...getItemProps({
           onClick(event) {
-            props.onClick?.(event)
-            tree?.events.emit('click')
-          }
+            props.onClick?.(event);
+            tree?.events.emit("click");
+          },
         })}
         {...rest}
       >
@@ -142,7 +154,7 @@ const MenuItem = (props, ref) => {
           active,
           disabled,
           renderExpandedMenuItemIcon,
-          styles: getMenuItemStyles('icon')
+          styles: getMenuItemStyles("icon"),
         })}
 
         {/* Menu Item Prefix */}
@@ -150,7 +162,7 @@ const MenuItem = (props, ref) => {
           <StyledMenuPrefix
             firstLevel={level === 0}
             className={menuClasses.prefix}
-            rootStyles={getMenuItemStyles('prefix')}
+            rootStyles={getMenuItemStyles("prefix")}
           >
             {prefix}
           </StyledMenuPrefix>
@@ -159,7 +171,7 @@ const MenuItem = (props, ref) => {
         {/* Menu Item Label */}
         <StyledMenuLabel
           className={menuClasses.label}
-          rootStyles={getMenuItemStyles('label')}
+          rootStyles={getMenuItemStyles("label")}
           textTruncate={textTruncate}
         >
           {children}
@@ -170,14 +182,14 @@ const MenuItem = (props, ref) => {
           <StyledMenuSuffix
             firstLevel={level === 0}
             className={menuClasses.suffix}
-            rootStyles={getMenuItemStyles('suffix')}
+            rootStyles={getMenuItemStyles("suffix")}
           >
             {suffix}
           </StyledMenuSuffix>
         )}
       </MenuButton>
     </StyledHorizontalMenuItem>
-  )
-}
+  );
+};
 
-export default forwardRef(MenuItem)
+export default forwardRef(MenuItem);

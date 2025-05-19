@@ -1,8 +1,8 @@
 // Component Imports
-import HelpCenterWrapper from '@views/front-pages/help-center'
+import HelpCenterWrapper from "@views/front-pages/help-center";
 
 function HelpCenterPage() {
-  return <HelpCenterWrapper />
+  return <HelpCenterWrapper />;
 }
 
-export default HelpCenterPage
+export default HelpCenterPage;

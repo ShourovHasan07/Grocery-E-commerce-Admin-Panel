@@ -1,12 +1,12 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import CustomerStatisticsCard from './CustomerStatisticsCard'
-import OrderListTable from './OrderListTable'
+import CustomerStatisticsCard from "./CustomerStatisticsCard";
+import OrderListTable from "./OrderListTable";
 
 // Data Imports
-import { getStatisticsData, getEcommerceData } from '@/app/server/actions'
+import { getStatisticsData, getEcommerceData } from "@/app/server/actions";
 
 /**
  * ! If you need data using an API call, uncomment the below API code, update the `process.env.API_URL` variable in the
@@ -42,8 +42,8 @@ import { getStatisticsData, getEcommerceData } from '@/app/server/actions'
 } */
 const Overview = async () => {
   // Vars
-  const data = await getStatisticsData()
-  const tableData = await getEcommerceData()
+  const data = await getStatisticsData();
+  const tableData = await getEcommerceData();
 
   return (
     <Grid container spacing={6}>
@@ -54,7 +54,7 @@ const Overview = async () => {
         <OrderListTable orderData={tableData?.orderData} />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default Overview
+export default Overview;

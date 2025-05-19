@@ -1,100 +1,102 @@
 // Third-party Imports
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit";
 
 // Data Imports
-import { db } from '@/fake-db/apps/kanban'
+import { db } from "@/fake-db/apps/kanban";
 
 export const kanbanSlice = createSlice({
-  name: 'kanban',
+  name: "kanban",
   initialState: db,
   reducers: {
     addColumn: (state, action) => {
-      const maxId = Math.max(...state.columns.map(column => column.id))
+      const maxId = Math.max(...state.columns.map((column) => column.id));
 
       const newColumn = {
         id: maxId + 1,
         title: action.payload,
-        taskIds: []
-      }
+        taskIds: [],
+      };
 
-      state.columns.push(newColumn)
+      state.columns.push(newColumn);
     },
     editColumn: (state, action) => {
-      const { id, title } = action.payload
-      const column = state.columns.find(column => column.id === id)
+      const { id, title } = action.payload;
+      const column = state.columns.find((column) => column.id === id);
 
       if (column) {
-        column.title = title
+        column.title = title;
       }
     },
     deleteColumn: (state, action) => {
-      const { columnId } = action.payload
-      const column = state.columns.find(column => column.id === columnId)
+      const { columnId } = action.payload;
+      const column = state.columns.find((column) => column.id === columnId);
 
-      state.columns = state.columns.filter(column => column.id !== columnId)
+      state.columns = state.columns.filter((column) => column.id !== columnId);
 
       if (column) {
-        state.tasks = state.tasks.filter(task => !column.taskIds.includes(task.id))
+        state.tasks = state.tasks.filter(
+          (task) => !column.taskIds.includes(task.id),
+        );
       }
     },
     updateColumns: (state, action) => {
-      state.columns = action.payload
+      state.columns = action.payload;
     },
     updateColumnTaskIds: (state, action) => {
-      const { id, tasksList } = action.payload
+      const { id, tasksList } = action.payload;
 
-      state.columns = state.columns.map(column => {
+      state.columns = state.columns.map((column) => {
         if (column.id === id) {
-          return { ...column, taskIds: tasksList.map(task => task.id) }
+          return { ...column, taskIds: tasksList.map((task) => task.id) };
         }
 
-        return column
-      })
+        return column;
+      });
     },
     addTask: (state, action) => {
-      const { columnId, title } = action.payload
+      const { columnId, title } = action.payload;
 
       const newTask = {
         id: state.tasks[state.tasks.length - 1].id + 1,
-        title
-      }
+        title,
+      };
 
-      const column = state.columns.find(column => column.id === columnId)
+      const column = state.columns.find((column) => column.id === columnId);
 
       if (column) {
-        column.taskIds.push(newTask.id)
+        column.taskIds.push(newTask.id);
       }
 
-      state.tasks.push(newTask)
+      state.tasks.push(newTask);
 
-      return state
+      return state;
     },
     editTask: (state, action) => {
-      const { id, title, badgeText, dueDate } = action.payload
-      const task = state.tasks.find(task => task.id === id)
+      const { id, title, badgeText, dueDate } = action.payload;
+      const task = state.tasks.find((task) => task.id === id);
 
       if (task) {
-        task.title = title
-        task.badgeText = badgeText
-        task.dueDate = dueDate
+        task.title = title;
+        task.badgeText = badgeText;
+        task.dueDate = dueDate;
       }
     },
     deleteTask: (state, action) => {
-      const taskId = action.payload
+      const taskId = action.payload;
 
-      state.tasks = state.tasks.filter(task => task.id !== taskId)
-      state.columns = state.columns.map(column => {
+      state.tasks = state.tasks.filter((task) => task.id !== taskId);
+      state.columns = state.columns.map((column) => {
         return {
           ...column,
-          taskIds: column.taskIds.filter(id => id !== taskId)
-        }
-      })
+          taskIds: column.taskIds.filter((id) => id !== taskId),
+        };
+      });
     },
     getCurrentTask: (state, action) => {
-      state.currentTaskId = action.payload
-    }
-  }
-})
+      state.currentTaskId = action.payload;
+    },
+  },
+});
 export const {
   addColumn,
   editColumn,
@@ -104,6 +106,6 @@ export const {
   addTask,
   editTask,
   deleteTask,
-  getCurrentTask
-} = kanbanSlice.actions
-export default kanbanSlice.reducer
+  getCurrentTask,
+} = kanbanSlice.actions;
+export default kanbanSlice.reducer;

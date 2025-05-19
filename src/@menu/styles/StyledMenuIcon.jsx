@@ -1,5 +1,5 @@
 // Third-party Imports
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 const StyledMenuIcon = styled.span`
   display: flex;
@@ -7,6 +7,6 @@ const StyledMenuIcon = styled.span`
   justify-content: center;
   margin-inline-end: 10px;
   ${({ rootStyles }) => rootStyles};
-`
+`;
 
-export default StyledMenuIcon
+export default StyledMenuIcon;

@@ -1,40 +1,42 @@
-'use client'
+"use client";
 
 // Next Imports
-import dynamic from 'next/dynamic'
+import dynamic from "next/dynamic";
 
 // MUI Imports
-import Grid from '@mui/material/Grid2'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import Chip from '@mui/material/Chip'
-import Typography from '@mui/material/Typography'
-import { useTheme } from '@mui/material/styles'
+import Grid from "@mui/material/Grid2";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Chip from "@mui/material/Chip";
+import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/material/styles";
 
 // Styled Component Imports
-const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexCharts'))
+const AppReactApexCharts = dynamic(
+  () => import("@/libs/styles/AppReactApexCharts"),
+);
 
 // Vars
-const series = [{ data: [32, 52, 72, 94, 116, 94, 72] }]
+const series = [{ data: [32, 52, 72, 94, 116, 94, 72] }];
 
 const ReviewsStatistics = () => {
   // Hook
-  const theme = useTheme()
+  const theme = useTheme();
 
   // Vars
-  const successLightOpacity = 'var(--mui-palette-success-lightOpacity)'
+  const successLightOpacity = "var(--mui-palette-success-lightOpacity)";
 
   const options = {
     chart: {
       parentHeightOffset: 0,
-      toolbar: { show: false }
+      toolbar: { show: false },
     },
     plotOptions: {
       bar: {
         borderRadius: 6,
         distributed: true,
-        columnWidth: '40%'
-      }
+        columnWidth: "40%",
+      },
     },
     legend: { show: false },
     tooltip: { enabled: false },
@@ -44,17 +46,17 @@ const ReviewsStatistics = () => {
       successLightOpacity,
       successLightOpacity,
       successLightOpacity,
-      'var(--mui-palette-success-main)',
+      "var(--mui-palette-success-main)",
       successLightOpacity,
-      successLightOpacity
+      successLightOpacity,
     ],
     states: {
       hover: {
-        filter: { type: 'none' }
+        filter: { type: "none" },
       },
       active: {
-        filter: { type: 'none' }
-      }
+        filter: { type: "none" },
+      },
     },
     grid: {
       show: false,
@@ -62,21 +64,21 @@ const ReviewsStatistics = () => {
         top: -30,
         left: 0,
         right: 0,
-        bottom: -12
-      }
+        bottom: -12,
+      },
     },
     xaxis: {
-      categories: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+      categories: ["M", "T", "W", "T", "F", "S", "S"],
       axisTicks: { show: false },
       axisBorder: { show: false },
-      tickPlacement: 'on',
+      tickPlacement: "on",
       labels: {
         style: {
-          colors: 'var(--mui-palette-text-disabled)',
+          colors: "var(--mui-palette-text-disabled)",
           fontFamily: theme.typography.fontFamily,
-          fontSize: theme.typography.body2.fontSize
-        }
-      }
+          fontSize: theme.typography.body2.fontSize,
+        },
+      },
     },
     yaxis: { show: false },
     responsive: [
@@ -84,41 +86,52 @@ const ReviewsStatistics = () => {
         breakpoint: 600,
         options: {
           chart: {
-            width: 275
-          }
-        }
-      }
-    ]
-  }
+            width: 275,
+          },
+        },
+      },
+    ],
+  };
 
   return (
     <Card>
       <CardContent>
         <Grid container spacing={6}>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <div className='bs-full flex flex-col items-start justify-between gap-6'>
-              <div className='flex flex-col items-start gap-2'>
-                <Typography variant='h5'>Reviews statistics</Typography>
-                <div className='flex items-center gap-2'>
+            <div className="bs-full flex flex-col items-start justify-between gap-6">
+              <div className="flex flex-col items-start gap-2">
+                <Typography variant="h5">Reviews statistics</Typography>
+                <div className="flex items-center gap-2">
                   <Typography>12 New reviews</Typography>
-                  <Chip label='+8.4%' variant='tonal' size='small' color='success' />
+                  <Chip
+                    label="+8.4%"
+                    variant="tonal"
+                    size="small"
+                    color="success"
+                  />
                 </div>
               </div>
-              <div className='flex flex-col items-start gap-2'>
-                <Typography color='text.primary'>
-                  <span className='text-success'>87%</span> Positive reviews
+              <div className="flex flex-col items-start gap-2">
+                <Typography color="text.primary">
+                  <span className="text-success">87%</span> Positive reviews
                 </Typography>
-                <Typography variant='body2'>Weekly Report</Typography>
+                <Typography variant="body2">Weekly Report</Typography>
               </div>
             </div>
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }} className='flex justify-center'>
-            <AppReactApexCharts type='bar' width='100%' height={156} series={series} options={options} />
+          <Grid size={{ xs: 12, sm: 6 }} className="flex justify-center">
+            <AppReactApexCharts
+              type="bar"
+              width="100%"
+              height={156}
+              series={series}
+              options={options}
+            />
           </Grid>
         </Grid>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default ReviewsStatistics
+export default ReviewsStatistics;

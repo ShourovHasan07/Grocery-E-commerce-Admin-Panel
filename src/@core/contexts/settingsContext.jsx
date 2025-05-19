@@ -1,18 +1,18 @@
-'use client'
-import { createContext, useMemo, useState } from 'react'
+"use client";
+import { createContext, useMemo, useState } from "react";
 
 // Config Imports
-import themeConfig from '@configs/themeConfig'
-import primaryColorConfig from '@configs/primaryColorConfig'
+import themeConfig from "@configs/themeConfig";
+import primaryColorConfig from "@configs/primaryColorConfig";
 
 // Hook Imports
-import { useObjectCookie } from '@core/hooks/useObjectCookie'
+import { useObjectCookie } from "@core/hooks/useObjectCookie";
 
 // Initial Settings Context
-export const SettingsContext = createContext(null)
+export const SettingsContext = createContext(null);
 
 // Settings Provider
-export const SettingsProvider = props => {
+export const SettingsProvider = (props) => {
   // Initial Settings
   const initialSettings = {
     mode: themeConfig.mode,
@@ -22,37 +22,41 @@ export const SettingsProvider = props => {
     navbarContentWidth: themeConfig.navbar.contentWidth,
     contentWidth: themeConfig.contentWidth,
     footerContentWidth: themeConfig.footer.contentWidth,
-    primaryColor: primaryColorConfig[0].main
-  }
+    primaryColor: primaryColorConfig[0].main,
+  };
 
   const updatedInitialSettings = {
     ...initialSettings,
-    mode: props.mode || themeConfig.mode
-  }
+    mode: props.mode || themeConfig.mode,
+  };
 
   // Cookies
   const [settingsCookie, updateSettingsCookie] = useObjectCookie(
     themeConfig.settingsCookieName,
-    JSON.stringify(props.settingsCookie) !== '{}' ? props.settingsCookie : updatedInitialSettings
-  )
+    JSON.stringify(props.settingsCookie) !== "{}"
+      ? props.settingsCookie
+      : updatedInitialSettings,
+  );
 
   // State
   const [_settingsState, _updateSettingsState] = useState(
-    JSON.stringify(settingsCookie) !== '{}' ? settingsCookie : updatedInitialSettings
-  )
+    JSON.stringify(settingsCookie) !== "{}"
+      ? settingsCookie
+      : updatedInitialSettings,
+  );
 
   const updateSettings = (settings, options) => {
-    const { updateCookie = true } = options || {}
+    const { updateCookie = true } = options || {};
 
-    _updateSettingsState(prev => {
-      const newSettings = { ...prev, ...settings }
+    _updateSettingsState((prev) => {
+      const newSettings = { ...prev, ...settings };
 
       // Update cookie if needed
-      if (updateCookie) updateSettingsCookie(newSettings)
+      if (updateCookie) updateSettingsCookie(newSettings);
 
-      return newSettings
-    })
-  }
+      return newSettings;
+    });
+  };
 
   /**
    * Updates the settings for page with the provided settings object.
@@ -66,22 +70,22 @@ export const SettingsProvider = props => {
    *     return updatePageSettings({ theme: 'dark' });
    * }, []);
    */
-  const updatePageSettings = settings => {
-    updateSettings(settings, { updateCookie: false })
+  const updatePageSettings = (settings) => {
+    updateSettings(settings, { updateCookie: false });
 
     // Returns a function to reset the page settings
-    return () => updateSettings(settingsCookie, { updateCookie: false })
-  }
+    return () => updateSettings(settingsCookie, { updateCookie: false });
+  };
 
   const resetSettings = () => {
-    updateSettings(initialSettings)
-  }
+    updateSettings(initialSettings);
+  };
 
   const isSettingsChanged = useMemo(
     () => JSON.stringify(initialSettings) !== JSON.stringify(_settingsState),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [_settingsState]
-  )
+    [_settingsState],
+  );
 
   return (
     <SettingsContext.Provider
@@ -90,10 +94,10 @@ export const SettingsProvider = props => {
         updateSettings,
         isSettingsChanged,
         resetSettings,
-        updatePageSettings
+        updatePageSettings,
       }}
     >
       {props.children}
     </SettingsContext.Provider>
-  )
-}
+  );
+};

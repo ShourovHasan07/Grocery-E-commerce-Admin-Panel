@@ -1,5 +1,5 @@
 // Third-party Imports
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 const StyledBackdrop = styled.div`
   position: fixed;
@@ -8,8 +8,9 @@ const StyledBackdrop = styled.div`
   inset-inline-end: 0;
   inset-block-end: 0;
   z-index: 1;
-  background-color: ${({ backdropColor }) => backdropColor || 'rgba(0, 0, 0, 0.3)'};
+  background-color: ${({ backdropColor }) =>
+    backdropColor || "rgba(0, 0, 0, 0.3)"};
   touch-action: none;
-`
+`;
 
-export default StyledBackdrop
+export default StyledBackdrop;

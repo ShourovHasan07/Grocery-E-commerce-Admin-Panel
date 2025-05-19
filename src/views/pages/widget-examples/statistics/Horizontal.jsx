@@ -1,8 +1,8 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import CardStatHorizontal from '@/components/card-statistics/Horizontal'
+import CardStatHorizontal from "@/components/card-statistics/Horizontal";
 
 const Horizontal = ({ data }) => {
   if (data) {
@@ -14,8 +14,8 @@ const Horizontal = ({ data }) => {
           </Grid>
         ))}
       </Grid>
-    )
+    );
   }
-}
+};
 
-export default Horizontal
+export default Horizontal;

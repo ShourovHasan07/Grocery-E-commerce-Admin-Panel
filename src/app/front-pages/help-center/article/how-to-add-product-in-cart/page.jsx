@@ -1,8 +1,8 @@
 // Component Imports
-import Questions from '@views/front-pages/help-center/Questions'
+import Questions from "@views/front-pages/help-center/Questions";
 
 const Article = () => {
-  return <Questions />
-}
+  return <Questions />;
+};
 
-export default Article
+export default Article;

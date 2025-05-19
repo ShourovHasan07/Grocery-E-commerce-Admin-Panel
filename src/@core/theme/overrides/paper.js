@@ -2,10 +2,10 @@ const paper = {
   MuiPaper: {
     styleOverrides: {
       root: {
-        backgroundImage: 'none'
-      }
-    }
-  }
-}
+        backgroundImage: "none",
+      },
+    },
+  },
+};
 
-export default paper
+export default paper;

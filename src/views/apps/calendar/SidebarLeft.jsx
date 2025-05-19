@@ -1,21 +1,25 @@
 // MUI Imports
-import Button from '@mui/material/Button'
-import Drawer from '@mui/material/Drawer'
-import Divider from '@mui/material/Divider'
-import Checkbox from '@mui/material/Checkbox'
-import Typography from '@mui/material/Typography'
-import FormControlLabel from '@mui/material/FormControlLabel'
+import Button from "@mui/material/Button";
+import Drawer from "@mui/material/Drawer";
+import Divider from "@mui/material/Divider";
+import Checkbox from "@mui/material/Checkbox";
+import Typography from "@mui/material/Typography";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 // Third-party imports
-import classnames from 'classnames'
+import classnames from "classnames";
 
 // Styled Component Imports
-import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
+import AppReactDatepicker from "@/libs/styles/AppReactDatepicker";
 
 // Slice Imports
-import { filterAllCalendarLabels, filterCalendarLabel, selectedEvent } from '@/redux-store/slices/calendar'
+import {
+  filterAllCalendarLabels,
+  filterCalendarLabel,
+  selectedEvent,
+} from "@/redux-store/slices/calendar";
 
-const SidebarLeft = props => {
+const SidebarLeft = (props) => {
   // Props
   const {
     mdAbove,
@@ -25,17 +29,17 @@ const SidebarLeft = props => {
     calendarApi,
     dispatch,
     handleLeftSidebarToggle,
-    handleAddEventSidebarToggle
-  } = props
+    handleAddEventSidebarToggle,
+  } = props;
 
   // Vars
-  const colorsArr = calendarsColor ? Object.entries(calendarsColor) : []
+  const colorsArr = calendarsColor ? Object.entries(calendarsColor) : [];
 
   const renderFilters = colorsArr.length
     ? colorsArr.map(([key, value]) => {
         return (
           <FormControlLabel
-            className='mbe-1'
+            className="mbe-1"
             key={key}
             label={key}
             control={
@@ -46,88 +50,100 @@ const SidebarLeft = props => {
               />
             }
           />
-        )
+        );
       })
-    : null
+    : null;
 
   const handleSidebarToggleSidebar = () => {
-    dispatch(selectedEvent(null))
-    handleAddEventSidebarToggle()
-  }
+    dispatch(selectedEvent(null));
+    handleAddEventSidebarToggle();
+  };
 
   if (renderFilters) {
     return (
       <Drawer
         open={leftSidebarOpen}
         onClose={handleLeftSidebarToggle}
-        variant={mdAbove ? 'permanent' : 'temporary'}
+        variant={mdAbove ? "permanent" : "temporary"}
         ModalProps={{
           disablePortal: true,
           disableAutoFocus: true,
           disableScrollLock: true,
-          keepMounted: true // Better open performance on mobile.
+          keepMounted: true, // Better open performance on mobile.
         }}
-        className={classnames('block', { static: mdAbove, absolute: !mdAbove })}
+        className={classnames("block", { static: mdAbove, absolute: !mdAbove })}
         PaperProps={{
-          className: classnames('items-start is-[280px] shadow-none rounded rounded-se-none rounded-ee-none', {
-            static: mdAbove,
-            absolute: !mdAbove
-          })
+          className: classnames(
+            "items-start is-[280px] shadow-none rounded rounded-se-none rounded-ee-none",
+            {
+              static: mdAbove,
+              absolute: !mdAbove,
+            },
+          ),
         }}
         sx={{
           zIndex: 3,
-          '& .MuiDrawer-paper': {
-            zIndex: mdAbove ? 2 : 'drawer'
+          "& .MuiDrawer-paper": {
+            zIndex: mdAbove ? 2 : "drawer",
           },
-          '& .MuiBackdrop-root': {
+          "& .MuiBackdrop-root": {
             borderRadius: 1,
-            position: 'absolute'
-          }
+            position: "absolute",
+          },
         }}
       >
-        <div className='is-full p-6'>
+        <div className="is-full p-6">
           <Button
             fullWidth
-            variant='contained'
+            variant="contained"
             onClick={handleSidebarToggleSidebar}
-            startIcon={<i className='tabler-plus' />}
+            startIcon={<i className="tabler-plus" />}
           >
             Add Event
           </Button>
         </div>
-        <Divider className='is-full' />
+        <Divider className="is-full" />
         <AppReactDatepicker
           inline
-          onChange={date => calendarApi.gotoDate(date)}
+          onChange={(date) => calendarApi.gotoDate(date)}
           boxProps={{
-            className: 'flex justify-center is-full',
-            sx: { '& .react-datepicker': { boxShadow: 'none !important', border: 'none !important' } }
+            className: "flex justify-center is-full",
+            sx: {
+              "& .react-datepicker": {
+                boxShadow: "none !important",
+                border: "none !important",
+              },
+            },
           }}
         />
-        <Divider className='is-full' />
+        <Divider className="is-full" />
 
-        <div className='flex flex-col p-6 is-full'>
-          <Typography variant='h5' className='mbe-4'>
+        <div className="flex flex-col p-6 is-full">
+          <Typography variant="h5" className="mbe-4">
             Event Filters
           </Typography>
           <FormControlLabel
-            className='mbe-1'
-            label='View All'
+            className="mbe-1"
+            label="View All"
             control={
               <Checkbox
-                color='secondary'
-                checked={calendarStore.selectedCalendars.length === colorsArr.length}
-                onChange={e => dispatch(filterAllCalendarLabels(e.target.checked))}
+                color="secondary"
+                checked={
+                  calendarStore.selectedCalendars.length === colorsArr.length
+                }
+                onChange={(e) =>
+                  dispatch(filterAllCalendarLabels(e.target.checked))
+                }
               />
             }
           />
           {renderFilters}
         </div>
       </Drawer>
-    )
+    );
   } else {
-    return null
+    return null;
   }
-}
+};
 
-export default SidebarLeft
+export default SidebarLeft;

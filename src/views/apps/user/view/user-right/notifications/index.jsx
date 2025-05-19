@@ -1,13 +1,13 @@
 // MUI Imports
-import Card from '@mui/material/Card'
-import CardHeader from '@mui/material/CardHeader'
-import CardActions from '@mui/material/CardActions'
-import Typography from '@mui/material/Typography'
-import Checkbox from '@mui/material/Checkbox'
-import Button from '@mui/material/Button'
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import CardActions from "@mui/material/CardActions";
+import Typography from "@mui/material/Typography";
+import Checkbox from "@mui/material/Checkbox";
+import Button from "@mui/material/Button";
 
 // Style Imports
-import tableStyles from '@core/styles/table.module.css'
+import tableStyles from "@core/styles/table.module.css";
 
 // Vars
 const tableData = [
@@ -15,33 +15,36 @@ const tableData = [
     app: false,
     email: true,
     browser: false,
-    type: 'New for you'
+    type: "New for you",
   },
   {
     app: true,
     email: false,
     browser: true,
-    type: 'Account activity'
+    type: "Account activity",
   },
   {
     app: true,
     email: true,
     browser: true,
-    type: 'A new browser used to sign in'
+    type: "A new browser used to sign in",
   },
   {
     app: false,
     email: false,
     browser: true,
-    type: 'A new device is linked'
-  }
-]
+    type: "A new device is linked",
+  },
+];
 
 const NotificationsTab = () => {
   return (
     <Card>
-      <CardHeader title='Notifications' subheader='You will receive notification for the below selected items' />
-      <div className='overflow-x-auto'>
+      <CardHeader
+        title="Notifications"
+        subheader="You will receive notification for the below selected items"
+      />
+      <div className="overflow-x-auto">
         <table className={tableStyles.table}>
           <thead>
             <tr>
@@ -51,11 +54,11 @@ const NotificationsTab = () => {
               <th>Browser</th>
             </tr>
           </thead>
-          <tbody className='border-be'>
+          <tbody className="border-be">
             {tableData.map((data, index) => (
               <tr key={index}>
                 <td>
-                  <Typography color='text.primary'>{data.type}</Typography>
+                  <Typography color="text.primary">{data.type}</Typography>
                 </td>
                 <td>
                   <Checkbox defaultChecked={data.app} />
@@ -71,16 +74,16 @@ const NotificationsTab = () => {
           </tbody>
         </table>
       </div>
-      <CardActions className='flex items-center'>
-        <Button variant='contained' type='submit'>
+      <CardActions className="flex items-center">
+        <Button variant="contained" type="submit">
           Save Changes
         </Button>
-        <Button variant='tonal' color='secondary' type='reset'>
+        <Button variant="tonal" color="secondary" type="reset">
           Discard
         </Button>
       </CardActions>
     </Card>
-  )
-}
+  );
+};
 
-export default NotificationsTab
+export default NotificationsTab;

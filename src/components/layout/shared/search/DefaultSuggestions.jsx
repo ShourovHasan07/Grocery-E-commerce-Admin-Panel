@@ -1,140 +1,139 @@
 // Next Imports
-import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import Link from "next/link";
 
 // Third-party Imports
-import classnames from 'classnames'
-
-// Util Imports
-import { getLocalizedUrl } from '@/utils/i18n'
+import classnames from "classnames";
 
 const defaultSuggestions = [
   {
-    sectionLabel: 'Popular Searches',
+    sectionLabel: "Popular Searches",
     items: [
       {
-        label: 'Analytics',
-        href: '/dashboards/analytics',
-        icon: 'tabler-trending-up'
+        label: "Analytics",
+        href: "/dashboards/analytics",
+        icon: "tabler-trending-up",
       },
       {
-        label: 'CRM',
-        href: '/dashboards/crm',
-        icon: 'tabler-chart-pie-2'
+        label: "CRM",
+        href: "/dashboards/crm",
+        icon: "tabler-chart-pie-2",
       },
       {
-        label: 'eCommerce',
-        href: '/dashboards/ecommerce',
-        icon: 'tabler-shopping-cart'
+        label: "eCommerce",
+        href: "/dashboards/ecommerce",
+        icon: "tabler-shopping-cart",
       },
       {
-        label: 'User List',
-        href: '/apps/user/list',
-        icon: 'tabler-file-description'
-      }
-    ]
+        label: "User List",
+        href: "/apps/user/list",
+        icon: "tabler-file-description",
+      },
+    ],
   },
   {
-    sectionLabel: 'Apps',
+    sectionLabel: "Apps",
     items: [
       {
-        label: 'Calendar',
-        href: '/apps/calendar',
-        icon: 'tabler-calendar'
+        label: "Calendar",
+        href: "/apps/calendar",
+        icon: "tabler-calendar",
       },
       {
-        label: 'Invoice List',
-        href: '/apps/invoice/list',
-        icon: 'tabler-file-info'
+        label: "Invoice List",
+        href: "/apps/invoice/list",
+        icon: "tabler-file-info",
       },
       {
-        label: 'User List',
-        href: '/apps/user/list',
-        icon: 'tabler-file-invoice'
+        label: "User List",
+        href: "/apps/user/list",
+        icon: "tabler-file-invoice",
       },
       {
-        label: 'Roles & Permissions',
-        href: '/apps/roles',
-        icon: 'tabler-lock'
-      }
-    ]
+        label: "Roles & Permissions",
+        href: "/apps/roles",
+        icon: "tabler-lock",
+      },
+    ],
   },
   {
-    sectionLabel: 'Pages',
+    sectionLabel: "Pages",
     items: [
       {
-        label: 'User Profile',
-        href: '/pages/user-profile',
-        icon: 'tabler-user'
+        label: "User Profile",
+        href: "/pages/user-profile",
+        icon: "tabler-user",
       },
       {
-        label: 'Account Settings',
-        href: '/pages/account-settings',
-        icon: 'tabler-settings'
+        label: "Account Settings",
+        href: "/pages/account-settings",
+        icon: "tabler-settings",
       },
       {
-        label: 'Pricing',
-        href: '/pages/pricing',
-        icon: 'tabler-currency-dollar'
+        label: "Pricing",
+        href: "/pages/pricing",
+        icon: "tabler-currency-dollar",
       },
       {
-        label: 'FAQ',
-        href: '/pages/faq',
-        icon: 'tabler-help-circle'
-      }
-    ]
+        label: "FAQ",
+        href: "/pages/faq",
+        icon: "tabler-help-circle",
+      },
+    ],
   },
   {
-    sectionLabel: 'Forms & Charts',
+    sectionLabel: "Forms & Charts",
     items: [
       {
-        label: 'Form Layouts',
-        href: '/forms/form-layouts',
-        icon: 'tabler-layout'
+        label: "Form Layouts",
+        href: "/forms/form-layouts",
+        icon: "tabler-layout",
       },
       {
-        label: 'Form Validation',
-        href: '/forms/form-validation',
-        icon: 'tabler-checkup-list'
+        label: "Form Validation",
+        href: "/forms/form-validation",
+        icon: "tabler-checkup-list",
       },
       {
-        label: 'Form Wizard',
-        href: '/forms/form-wizard',
-        icon: 'tabler-git-merge'
+        label: "Form Wizard",
+        href: "/forms/form-wizard",
+        icon: "tabler-git-merge",
       },
       {
-        label: 'Apex Charts',
-        href: '/charts/apex-charts',
-        icon: 'tabler-chart-ppf'
-      }
-    ]
-  }
-]
+        label: "Apex Charts",
+        href: "/charts/apex-charts",
+        icon: "tabler-chart-ppf",
+      },
+    ],
+  },
+];
 
 const DefaultSuggestions = ({ setOpen }) => {
   // Hooks
-  const { lang: locale } = useParams()
 
   return (
-    <div className='flex grow flex-wrap gap-x-[48px] gap-y-8 plb-14 pli-16 overflow-y-auto overflow-x-hidden bs-full'>
+    <div className="flex grow flex-wrap gap-x-[48px] gap-y-8 plb-14 pli-16 overflow-y-auto overflow-x-hidden bs-full">
       {defaultSuggestions.map((section, index) => (
         <div
           key={index}
-          className='flex flex-col justify-center overflow-x-hidden gap-4 basis-full sm:basis-[calc((100%-3rem)/2)]'
+          className="flex flex-col justify-center overflow-x-hidden gap-4 basis-full sm:basis-[calc((100%-3rem)/2)]"
         >
-          <p className='text-xs leading-[1.16667] uppercase text-textDisabled tracking-[0.8px]'>
+          <p className="text-xs leading-[1.16667] uppercase text-textDisabled tracking-[0.8px]">
             {section.sectionLabel}
           </p>
-          <ul className='flex flex-col gap-4'>
+          <ul className="flex flex-col gap-4">
             {section.items.map((item, i) => (
-              <li key={i} className='flex'>
+              <li key={i} className="flex">
                 <Link
-                  href={getLocalizedUrl(item.href, locale)}
-                  className='flex items-center overflow-x-hidden cursor-pointer gap-2 hover:text-primary focus-visible:text-primary focus-visible:outline-0'
+                  href={item.href}
+                  className="flex items-center overflow-x-hidden cursor-pointer gap-2 hover:text-primary focus-visible:text-primary focus-visible:outline-0"
                   onClick={() => setOpen(false)}
                 >
-                  {item.icon && <i className={classnames(item.icon, 'flex text-xl')} />}
-                  <p className='text-[15px] leading-[1.4667] truncate'>{item.label}</p>
+                  {item.icon && (
+                    <i className={classnames(item.icon, "flex text-xl")} />
+                  )}
+                  <p className="text-[15px] leading-[1.4667] truncate">
+                    {item.label}
+                  </p>
                 </Link>
               </li>
             ))}
@@ -142,7 +141,7 @@ const DefaultSuggestions = ({ setOpen }) => {
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default DefaultSuggestions
+export default DefaultSuggestions;

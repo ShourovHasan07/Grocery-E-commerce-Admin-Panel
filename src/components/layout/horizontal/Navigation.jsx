@@ -1,19 +1,19 @@
 // Third-party Imports
-import styled from '@emotion/styled'
-import classnames from 'classnames'
+import styled from "@emotion/styled";
+import classnames from "classnames";
 
 // Component Imports
-import HorizontalMenu from './HorizontalMenu'
+import HorizontalMenu from "./HorizontalMenu";
 
 // Config Imports
-import themeConfig from '@configs/themeConfig'
+import themeConfig from "@configs/themeConfig";
 
 // Hook Imports
-import { useSettings } from '@core/hooks/useSettings'
-import useHorizontalNav from '@menu/hooks/useHorizontalNav'
+import { useSettings } from "@core/hooks/useSettings";
+import useHorizontalNav from "@menu/hooks/useHorizontalNav";
 
 // Util Imports
-import { horizontalLayoutClasses } from '@layouts/utils/layoutClasses'
+import { horizontalLayoutClasses } from "@layouts/utils/layoutClasses";
 
 const StyledDiv = styled.div`
   ${({ isContentCompact, isBreakpointReached }) =>
@@ -29,33 +29,39 @@ const StyledDiv = styled.div`
     `
     }
   `}
-`
+`;
 
-const Navigation = ({ dictionary }) => {
+const Navigation = ({}) => {
   // Hooks
-  const { settings } = useSettings()
-  const { isBreakpointReached } = useHorizontalNav()
+  const { settings } = useSettings();
+  const { isBreakpointReached } = useHorizontalNav();
 
   // Vars
-  const headerContentCompact = settings.navbarContentWidth === 'compact'
+  const headerContentCompact = settings.navbarContentWidth === "compact";
 
   return (
     <div
       {...(!isBreakpointReached && {
-        className: classnames(horizontalLayoutClasses.navigation, 'relative flex border-bs')
+        className: classnames(
+          horizontalLayoutClasses.navigation,
+          "relative flex border-bs",
+        ),
       })}
     >
       <StyledDiv
         isContentCompact={headerContentCompact}
         isBreakpointReached={isBreakpointReached}
         {...(!isBreakpointReached && {
-          className: classnames(horizontalLayoutClasses.navigationContentWrapper, 'flex items-center is-full plb-2')
+          className: classnames(
+            horizontalLayoutClasses.navigationContentWrapper,
+            "flex items-center is-full plb-2",
+          ),
         })}
       >
-        <HorizontalMenu dictionary={dictionary} />
+        <HorizontalMenu />
       </StyledDiv>
     </div>
-  )
-}
+  );
+};
 
-export default Navigation
+export default Navigation;

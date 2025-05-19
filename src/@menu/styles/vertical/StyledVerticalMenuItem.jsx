@@ -1,11 +1,11 @@
 // Third-party Imports
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 // Util Imports
-import { menuClasses } from '../../utils/menuClasses'
+import { menuClasses } from "../../utils/menuClasses";
 
 // Style Imports
-import { menuButtonStyles } from '../../components/vertical-menu/MenuButton'
+import { menuButtonStyles } from "../../components/vertical-menu/MenuButton";
 
 const StyledVerticalMenuItem = styled.li`
   position: relative;
@@ -19,10 +19,10 @@ const StyledVerticalMenuItem = styled.li`
         level,
         disabled,
         isCollapsed,
-        isPopoutWhenCollapsed
+        isPopoutWhenCollapsed,
       })};
     ${({ buttonStyles }) => buttonStyles};
   }
-`
+`;
 
-export default StyledVerticalMenuItem
+export default StyledVerticalMenuItem;

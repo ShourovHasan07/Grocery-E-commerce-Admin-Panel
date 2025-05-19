@@ -1,39 +1,42 @@
-'use client'
+"use client";
 
 // React Imports
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from "react";
 
 // Third-party Imports
-import classnames from 'classnames'
+import classnames from "classnames";
 
 // Hook Imports
-import useMediaQuery from '../../hooks/useMediaQuery'
-import useVerticalNav from '../../hooks/useVerticalNav'
+import useMediaQuery from "../../hooks/useMediaQuery";
+import useVerticalNav from "../../hooks/useVerticalNav";
 
 // Util Imports
-import { verticalNavClasses } from '../../utils/menuClasses'
+import { verticalNavClasses } from "../../utils/menuClasses";
 
 // Styled Component Imports
-import StyledBackdrop from '../../styles/StyledBackdrop'
-import StyledVerticalNav from '../../styles/vertical/StyledVerticalNav'
-import StyledVerticalNavContainer from '../../styles/vertical/StyledVerticalNavContainer'
-import StyledVerticalNavBgColorContainer from '../../styles/vertical/StyledVerticalNavBgColorContainer'
+import StyledBackdrop from "../../styles/StyledBackdrop";
+import StyledVerticalNav from "../../styles/vertical/StyledVerticalNav";
+import StyledVerticalNavContainer from "../../styles/vertical/StyledVerticalNavContainer";
+import StyledVerticalNavBgColorContainer from "../../styles/vertical/StyledVerticalNavBgColorContainer";
 
 // Style Imports
-import styles from '../../styles/vertical/verticalNavBgImage.module.css'
+import styles from "../../styles/vertical/verticalNavBgImage.module.css";
 
 // Default Config Imports
-import { defaultBreakpoints, verticalNavToggleDuration } from '../../defaultConfigs'
+import {
+  defaultBreakpoints,
+  verticalNavToggleDuration,
+} from "../../defaultConfigs";
 
-const VerticalNav = props => {
+const VerticalNav = (props) => {
   // Props
   const {
     width = 260,
     collapsedWidth = 80,
     defaultCollapsed = false,
-    backgroundColor = 'white',
+    backgroundColor = "white",
     backgroundImage,
-    breakpoint = 'lg',
+    breakpoint = "lg",
     customBreakpoint,
     breakpoints,
     transitionDuration = verticalNavToggleDuration,
@@ -43,13 +46,13 @@ const VerticalNav = props => {
     customStyles,
     children,
     ...rest
-  } = props
+  } = props;
 
   // Vars
-  const mergedBreakpoints = { ...defaultBreakpoints, ...breakpoints }
+  const mergedBreakpoints = { ...defaultBreakpoints, ...breakpoints };
 
   // Refs
-  const verticalNavCollapsedRef = useRef(false)
+  const verticalNavCollapsedRef = useRef(false);
 
   // Hooks
   const {
@@ -63,11 +66,14 @@ const VerticalNav = props => {
     expanding: expandingContext,
     isScrollWithContent: isScrollWithContentContext,
     transitionDuration: transitionDurationContext,
-    isPopoutWhenCollapsed: isPopoutWhenCollapsedContext
-  } = useVerticalNav()
+    isPopoutWhenCollapsed: isPopoutWhenCollapsedContext,
+  } = useVerticalNav();
 
   // Find the breakpoint from which screen size responsive behavior should enable and if its reached or not
-  const breakpointReached = useMediaQuery(customBreakpoint ?? (breakpoint ? mergedBreakpoints[breakpoint] : breakpoint))
+  const breakpointReached = useMediaQuery(
+    customBreakpoint ??
+      (breakpoint ? mergedBreakpoints[breakpoint] : breakpoint),
+  );
 
   // UseEffect, update verticalNav state to set initial values and update values on change
   useEffect(() => {
@@ -76,67 +82,78 @@ const VerticalNav = props => {
       collapsedWidth,
       transitionDuration,
       isScrollWithContent: scrollWithContent,
-      isBreakpointReached: breakpointReached
-    })
+      isBreakpointReached: breakpointReached,
+    });
 
     if (!breakpointReached) {
-      updateVerticalNavState({ isToggled: false })
-      verticalNavCollapsedRef.current && updateVerticalNavState({ isCollapsed: true })
+      updateVerticalNavState({ isToggled: false });
+      verticalNavCollapsedRef.current &&
+        updateVerticalNavState({ isCollapsed: true });
     } else {
       if (isCollapsedContext && !verticalNavCollapsedRef.current) {
-        verticalNavCollapsedRef.current = true
+        verticalNavCollapsedRef.current = true;
       }
 
-      isCollapsedContext && updateVerticalNavState({ isCollapsed: false })
-      isHoveredContext && updateVerticalNavState({ isHovered: false })
+      isCollapsedContext && updateVerticalNavState({ isCollapsed: false });
+      isHoveredContext && updateVerticalNavState({ isHovered: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [width, collapsedWidth, scrollWithContent, breakpointReached, updateVerticalNavState])
+  }, [
+    width,
+    collapsedWidth,
+    scrollWithContent,
+    breakpointReached,
+    updateVerticalNavState,
+  ]);
   useEffect(() => {
     if (defaultCollapsed) {
       updateVerticalNavState({
         isCollapsed: defaultCollapsed,
-        isToggled: false
-      })
+        isToggled: false,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultCollapsed])
+  }, [defaultCollapsed]);
   useEffect(() => {
     setTimeout(() => {
       updateVerticalNavState({
         expanding: false,
-        collapsing: false
-      })
-    }, transitionDuration)
+        collapsing: false,
+      });
+    }, transitionDuration);
 
-    if (!isCollapsedContext && !breakpointReached && verticalNavCollapsedRef.current) {
-      verticalNavCollapsedRef.current = false
+    if (
+      !isCollapsedContext &&
+      !breakpointReached &&
+      verticalNavCollapsedRef.current
+    ) {
+      verticalNavCollapsedRef.current = false;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCollapsedContext])
+  }, [isCollapsedContext]);
 
   // Handle Backdrop(Content Overlay) Click
   const handleBackdropClick = () => {
     // Close the verticalNav
-    updateVerticalNavState({ isToggled: false })
-  }
+    updateVerticalNavState({ isToggled: false });
+  };
 
   // Handle VerticalNav Hover Event
   const handleVerticalNavHover = () => {
     /* If verticalNav is collapsed then only hover class should be added to verticalNav
           and hover functionality should work (expand verticalNav width) */
     if (isCollapsedContext && !isHoveredContext) {
-      updateVerticalNavState({ isHovered: true })
+      updateVerticalNavState({ isHovered: true });
     }
-  }
+  };
 
   // Handle VerticalNav Hover Out Event
   const handleVerticalNavHoverOut = () => {
     // If verticalNav is collapsed then only remove hover class should contract verticalNav width
     if (isCollapsedContext && isHoveredContext) {
-      updateVerticalNavState({ isHovered: false })
+      updateVerticalNavState({ isHovered: false });
     }
-  }
+  };
 
   return (
     <StyledVerticalNav
@@ -157,9 +174,9 @@ const VerticalNav = props => {
           [verticalNavClasses.breakpointReached]: isBreakpointReachedContext,
           [verticalNavClasses.scrollWithContent]: isScrollWithContentContext,
           [verticalNavClasses.collapsing]: collapsingContext,
-          [verticalNavClasses.expanding]: expandingContext
+          [verticalNavClasses.expanding]: expandingContext,
         },
-        className
+        className,
       )}
       {...rest}
     >
@@ -172,7 +189,7 @@ const VerticalNav = props => {
           isCollapsedContext &&
           !breakpointReached && {
             onMouseEnter: handleVerticalNavHover,
-            onMouseLeave: handleVerticalNavHoverOut
+            onMouseLeave: handleVerticalNavHoverOut,
           })}
       >
         {/* VerticalNav Container to apply styling like background */}
@@ -190,7 +207,7 @@ const VerticalNav = props => {
           <img
             className={classnames(verticalNavClasses.image, styles.root)}
             src={backgroundImage}
-            alt='verticalNav background'
+            alt="verticalNav background"
           />
         )}
       </StyledVerticalNavContainer>
@@ -200,9 +217,9 @@ const VerticalNav = props => {
         // eslint-disable-next-line lines-around-comment
         /* VerticalNav Backdrop */
         <StyledBackdrop
-          role='button'
+          role="button"
           tabIndex={0}
-          aria-label='backdrop'
+          aria-label="backdrop"
           onClick={handleBackdropClick}
           onKeyPress={handleBackdropClick}
           className={verticalNavClasses.backdrop}
@@ -210,7 +227,7 @@ const VerticalNav = props => {
         />
       )}
     </StyledVerticalNav>
-  )
-}
+  );
+};
 
-export default VerticalNav
+export default VerticalNav;

@@ -1,8 +1,8 @@
 // Component Imports
-import Checkout from '@views/front-pages/CheckoutPage'
+import Checkout from "@views/front-pages/CheckoutPage";
 
 const CheckoutPage = () => {
-  return <Checkout />
-}
+  return <Checkout />;
+};
 
-export default CheckoutPage
+export default CheckoutPage;

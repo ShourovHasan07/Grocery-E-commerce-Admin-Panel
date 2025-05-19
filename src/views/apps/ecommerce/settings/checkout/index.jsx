@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import CustomerContact from './CustomerContact'
-import CustomerInformation from './CustomerInformation'
+import CustomerContact from "./CustomerContact";
+import CustomerInformation from "./CustomerInformation";
 
 const Checkout = () => {
   return (
@@ -17,7 +17,7 @@ const Checkout = () => {
         <CustomerInformation />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default Checkout
+export default Checkout;

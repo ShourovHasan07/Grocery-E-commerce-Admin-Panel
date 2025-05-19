@@ -1,86 +1,99 @@
-'use client'
+"use client";
 
 // React Imports
-import { useState } from 'react'
+import { useState } from "react";
 
 // MUI Imports
-import Card from '@mui/material/Card'
-import CardHeader from '@mui/material/CardHeader'
-import Button from '@mui/material/Button'
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import Button from "@mui/material/Button";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 
 // Style Imports
-import styles from '@core/styles/table.module.css'
+import styles from "@core/styles/table.module.css";
 
 // Data Imports
-import defaultData from './data'
+import defaultData from "./data";
 
 // Column Definitions
-const columnHelper = createColumnHelper()
+const columnHelper = createColumnHelper();
 
 const defaultColumns = [
-  columnHelper.accessor('fullName', {
-    cell: info => info.getValue(),
-    header: 'Name'
+  columnHelper.accessor("fullName", {
+    cell: (info) => info.getValue(),
+    header: "Name",
   }),
-  columnHelper.accessor('email', {
-    cell: info => info.getValue(),
-    header: 'Email'
+  columnHelper.accessor("email", {
+    cell: (info) => info.getValue(),
+    header: "Email",
   }),
-  columnHelper.accessor('start_date', {
-    cell: info => info.getValue(),
-    header: 'Date'
+  columnHelper.accessor("start_date", {
+    cell: (info) => info.getValue(),
+    header: "Date",
   }),
-  columnHelper.accessor('experience', {
-    cell: info => info.getValue(),
-    header: 'Experience'
+  columnHelper.accessor("experience", {
+    cell: (info) => info.getValue(),
+    header: "Experience",
   }),
-  columnHelper.accessor('age', {
-    cell: info => info.getValue(),
-    header: 'Age'
-  })
-]
+  columnHelper.accessor("age", {
+    cell: (info) => info.getValue(),
+    header: "Age",
+  }),
+];
 
 const ColumnVisibility = () => {
   // States
 
-  const [data, setData] = useState(() => defaultData)
-  const [columns] = useState(() => [...defaultColumns])
-  const [columnVisibility, setColumnVisibility] = useState({})
+  const [data, setData] = useState(() => defaultData);
+  const [columns] = useState(() => [...defaultColumns]);
+  const [columnVisibility, setColumnVisibility] = useState({});
 
   const table = useReactTable({
     data,
     columns,
     state: {
-      columnVisibility
+      columnVisibility,
     },
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     filterFns: {
-      fuzzy: () => false
-    }
-  })
+      fuzzy: () => false,
+    },
+  });
 
   return (
     <Card>
       <CardHeader
-        title='Toggle Column Visibility'
-        className='gap-2 flex-col items-start sm:flex-row sm:items-center'
-        sx={{ '& .MuiCardHeader-action': { m: 0 } }}
+        title="Toggle Column Visibility"
+        className="gap-2 flex-col items-start sm:flex-row sm:items-center"
+        sx={{ "& .MuiCardHeader-action": { m: 0 } }}
         action={
-          <Button variant='contained' onClick={() => table.getAllLeafColumns()[1].toggleVisibility()}>
+          <Button
+            variant="contained"
+            onClick={() => table.getAllLeafColumns()[1].toggleVisibility()}
+          >
             Toggle Email Column Visibility
           </Button>
         }
       />
-      <div className='overflow-x-auto'>
+      <div className="overflow-x-auto">
         <table className={styles.table}>
           <thead>
-            {table.getHeaderGroups().map(headerGroup => (
+            {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
+                {headerGroup.headers.map((header) => (
                   <th key={header.id}>
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </th>
                 ))}
               </tr>
@@ -90,10 +103,15 @@ const ColumnVisibility = () => {
             {table
               .getRowModel()
               .rows.slice(0, 10)
-              .map(row => (
+              .map((row) => (
                 <tr key={row.id}>
-                  {row.getVisibleCells().map(cell => (
-                    <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </td>
                   ))}
                 </tr>
               ))}
@@ -101,7 +119,7 @@ const ColumnVisibility = () => {
         </table>
       </div>
     </Card>
-  )
-}
+  );
+};
 
-export default ColumnVisibility
+export default ColumnVisibility;

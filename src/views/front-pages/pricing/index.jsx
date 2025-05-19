@@ -1,26 +1,26 @@
-'use client'
+"use client";
 
 // React Imports
-import { useEffect } from 'react'
+import { useEffect } from "react";
 
 // Component Imports
-import PricingSection from '@views/front-pages/pricing/PricingSection'
-import FreeTrial from './FreeTrial'
-import Plans from './Plans'
-import Faqs from './Faqs'
-import { useSettings } from '@core/hooks/useSettings'
+import PricingSection from "@views/front-pages/pricing/PricingSection";
+import FreeTrial from "./FreeTrial";
+import Plans from "./Plans";
+import Faqs from "./Faqs";
+import { useSettings } from "@core/hooks/useSettings";
 
 const PricingWrapper = ({ data }) => {
   // Hooks
-  const { updatePageSettings } = useSettings()
+  const { updatePageSettings } = useSettings();
 
   // For Page specific settings
   useEffect(() => {
     return updatePageSettings({
-      skin: 'default'
-    })
+      skin: "default",
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   return (
     <>
@@ -29,7 +29,7 @@ const PricingWrapper = ({ data }) => {
       <Plans />
       <Faqs />
     </>
-  )
-}
+  );
+};
 
-export default PricingWrapper
+export default PricingWrapper;

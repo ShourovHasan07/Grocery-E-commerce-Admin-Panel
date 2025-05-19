@@ -1,8 +1,8 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import CardStatsWithAreaChart from '@components/card-statistics/StatsWithAreaChart'
+import CardStatsWithAreaChart from "@components/card-statistics/StatsWithAreaChart";
 
 const CardStatsLineAreaCharts = ({ data }) => {
   const renderData = data
@@ -11,13 +11,13 @@ const CardStatsLineAreaCharts = ({ data }) => {
           <CardStatsWithAreaChart {...item} />
         </Grid>
       ))
-    : null
+    : null;
 
   return (
     <Grid container spacing={6}>
       {renderData}
     </Grid>
-  )
-}
+  );
+};
 
-export default CardStatsLineAreaCharts
+export default CardStatsLineAreaCharts;

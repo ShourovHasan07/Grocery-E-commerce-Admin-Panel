@@ -1,67 +1,79 @@
 // React Imports
-import { useState } from 'react'
+import { useState } from "react";
 
 // MUI Imports
-import Chip from '@mui/material/Chip'
-import Switch from '@mui/material/Switch'
-import Typography from '@mui/material/Typography'
-import InputLabel from '@mui/material/InputLabel'
-import Grid from '@mui/material/Grid2'
-import { useTheme } from '@mui/material/styles'
+import Chip from "@mui/material/Chip";
+import Switch from "@mui/material/Switch";
+import Typography from "@mui/material/Typography";
+import InputLabel from "@mui/material/InputLabel";
+import Grid from "@mui/material/Grid2";
+import { useTheme } from "@mui/material/styles";
 
 // Third-party Imports
-import classnames from 'classnames'
+import classnames from "classnames";
 
 // Component Imports
-import PlanDetails from './PlanDetails'
-import DirectionalIcon from '@components/DirectionalIcon'
+import PlanDetails from "./PlanDetails";
+import DirectionalIcon from "@components/DirectionalIcon";
 
 const Pricing = ({ data }) => {
   // States
-  const [pricingPlan, setPricingPlan] = useState('annually')
+  const [pricingPlan, setPricingPlan] = useState("annually");
 
   // Hooks
-  const theme = useTheme()
+  const theme = useTheme();
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     if (e.target.checked) {
-      setPricingPlan('annually')
+      setPricingPlan("annually");
     } else {
-      setPricingPlan('monthly')
+      setPricingPlan("monthly");
     }
-  }
+  };
 
   return (
-    <div className='flex flex-col gap-6'>
-      <div className='flex flex-col justify-center items-center gap-2'>
-        <Typography variant='h3'>Pricing Plans</Typography>
-        <div className='flex items-center text-center flex-col  sm:mbe-[3.8rem]'>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col justify-center items-center gap-2">
+        <Typography variant="h3">Pricing Plans</Typography>
+        <div className="flex items-center text-center flex-col  sm:mbe-[3.8rem]">
           <Typography>
-            All plans include 40+ advanced tools and features to boost your product. Choose the best plan to fit your
-            needs.
+            All plans include 40+ advanced tools and features to boost your
+            product. Choose the best plan to fit your needs.
           </Typography>
         </div>
-        <div className='flex justify-center items-center relative mbs-0.5'>
-          <InputLabel htmlFor='pricing-switch' className='cursor-pointer'>
+        <div className="flex justify-center items-center relative mbs-0.5">
+          <InputLabel htmlFor="pricing-switch" className="cursor-pointer">
             Monthly
           </InputLabel>
-          <Switch id='pricing-switch' onChange={handleChange} checked={pricingPlan === 'annually'} />
-          <InputLabel htmlFor='pricing-switch' className='cursor-pointer'>
+          <Switch
+            id="pricing-switch"
+            onChange={handleChange}
+            checked={pricingPlan === "annually"}
+          />
+          <InputLabel htmlFor="pricing-switch" className="cursor-pointer">
             Annually
           </InputLabel>
 
           <div
-            className={classnames('flex absolute max-sm:hidden block-start-[-39px] translate-x-[35%]', {
-              'right-full': theme.direction === 'rtl',
-              'left-1/2': theme.direction !== 'rtl'
-            })}
+            className={classnames(
+              "flex absolute max-sm:hidden block-start-[-39px] translate-x-[35%]",
+              {
+                "right-full": theme.direction === "rtl",
+                "left-1/2": theme.direction !== "rtl",
+              },
+            )}
           >
             <DirectionalIcon
-              ltrIconClass='tabler-corner-left-down'
-              rtlIconClass='tabler-corner-right-down'
-              className='mbs-2 mie-1 text-textDisabled'
+              ltrIconClass="tabler-corner-left-down"
+              rtlIconClass="tabler-corner-right-down"
+              className="mbs-2 mie-1 text-textDisabled"
             />
-            <Chip label='Save up to 10%' size='small' variant='tonal' color='primary' />
+            <Chip
+              label="Save up to 10%"
+              size="small"
+              variant="tonal"
+              color="primary"
+            />
           </div>
         </div>
       </div>
@@ -73,7 +85,7 @@ const Pricing = ({ data }) => {
         ))}
       </Grid>
     </div>
-  )
-}
+  );
+};
 
-export default Pricing
+export default Pricing;

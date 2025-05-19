@@ -1,11 +1,11 @@
 // Third-party Imports
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 // Config Imports
-import themeConfig from '@configs/themeConfig'
+import themeConfig from "@configs/themeConfig";
 
 // Util Imports
-import { commonLayoutClasses } from '@layouts/utils/layoutClasses'
+import { commonLayoutClasses } from "@layouts/utils/layoutClasses";
 
 const StyledMain = styled.main`
   padding: ${themeConfig.layoutPadding}px;
@@ -20,6 +20,6 @@ const StyledMain = styled.main`
     display: flex;
     overflow: hidden;
   }
-`
+`;
 
-export default StyledMain
+export default StyledMain;

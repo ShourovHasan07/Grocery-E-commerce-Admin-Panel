@@ -1,24 +1,27 @@
 // Third-party Imports
-import classnames from 'classnames'
+import classnames from "classnames";
 
 // Component Imports
-import LayoutContent from './components/vertical/LayoutContent'
+import LayoutContent from "./components/vertical/LayoutContent";
 
 // Util Imports
-import { verticalLayoutClasses } from './utils/layoutClasses'
+import { verticalLayoutClasses } from "./utils/layoutClasses";
 
 // Styled Component Imports
-import StyledContentWrapper from './styles/vertical/StyledContentWrapper'
+import StyledContentWrapper from "./styles/vertical/StyledContentWrapper";
 
-const VerticalLayout = props => {
+const VerticalLayout = (props) => {
   // Props
-  const { navbar, footer, navigation, children } = props
+  const { navbar, footer, navigation, children } = props;
 
   return (
-    <div className={classnames(verticalLayoutClasses.root, 'flex flex-auto')}>
+    <div className={classnames(verticalLayoutClasses.root, "flex flex-auto")}>
       {navigation || null}
       <StyledContentWrapper
-        className={classnames(verticalLayoutClasses.contentWrapper, 'flex flex-col min-is-0 is-full')}
+        className={classnames(
+          verticalLayoutClasses.contentWrapper,
+          "flex flex-col min-is-0 is-full",
+        )}
       >
         {navbar || null}
         {/* Content */}
@@ -26,7 +29,7 @@ const VerticalLayout = props => {
         {footer || null}
       </StyledContentWrapper>
     </div>
-  )
-}
+  );
+};
 
-export default VerticalLayout
+export default VerticalLayout;

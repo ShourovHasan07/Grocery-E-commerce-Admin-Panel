@@ -1,10 +1,15 @@
-'use client'
+"use client";
 
-const FormComponent = props => {
+const FormComponent = (props) => {
   // Props
-  const { onSubmit, ...rest } = props
+  const { onSubmit, ...rest } = props;
 
-  return <form {...rest} onSubmit={onSubmit ? e => onSubmit(e) : e => e.preventDefault()} />
-}
+  return (
+    <form
+      {...rest}
+      onSubmit={onSubmit ? (e) => onSubmit(e) : (e) => e.preventDefault()}
+    />
+  );
+};
 
-export default FormComponent
+export default FormComponent;

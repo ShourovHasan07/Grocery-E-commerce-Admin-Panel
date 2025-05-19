@@ -1,32 +1,36 @@
 // React Imports
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from "react";
 
 // MUI Imports
-import { useTheme } from '@mui/material/styles'
-import 'bootstrap-icons/font/bootstrap-icons.css'
-import FullCalendar from '@fullcalendar/react'
-import listPlugin from '@fullcalendar/list'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import interactionPlugin from '@fullcalendar/interaction'
+import { useTheme } from "@mui/material/styles";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import FullCalendar from "@fullcalendar/react";
+import listPlugin from "@fullcalendar/list";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
 
 // Slice Imports
-import { filterEvents, selectedEvent, updateEvent } from '@/redux-store/slices/calendar'
+import {
+  filterEvents,
+  selectedEvent,
+  updateEvent,
+} from "@/redux-store/slices/calendar";
 
 const blankEvent = {
-  title: '',
-  start: '',
-  end: '',
+  title: "",
+  start: "",
+  end: "",
   allDay: false,
-  url: '',
+  url: "",
   extendedProps: {
-    calendar: '',
+    calendar: "",
     guests: [],
-    description: ''
-  }
-}
+    description: "",
+  },
+};
 
-const Calendar = props => {
+const Calendar = (props) => {
   // Props
   const {
     calendarStore,
@@ -35,36 +39,36 @@ const Calendar = props => {
     calendarsColor,
     dispatch,
     handleAddEventSidebarToggle,
-    handleLeftSidebarToggle
-  } = props
+    handleLeftSidebarToggle,
+  } = props;
 
   // Refs
-  const calendarRef = useRef()
+  const calendarRef = useRef();
 
   // Hooks
-  const theme = useTheme()
+  const theme = useTheme();
 
   useEffect(() => {
     if (calendarApi === null) {
       // @ts-ignore
-      setCalendarApi(calendarRef.current?.getApi())
+      setCalendarApi(calendarRef.current?.getApi());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   // calendarOptions(Props)
   const calendarOptions = {
     events: calendarStore.events,
     plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
-    initialView: 'dayGridMonth',
+    initialView: "dayGridMonth",
     headerToolbar: {
-      start: 'sidebarToggle, prev, next, title',
-      end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+      start: "sidebarToggle, prev, next, title",
+      end: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
     },
     views: {
       week: {
-        titleFormat: { year: 'numeric', month: 'short', day: 'numeric' }
-      }
+        titleFormat: { year: "numeric", month: "short", day: "numeric" },
+      },
     },
 
     /*
@@ -98,21 +102,22 @@ const Calendar = props => {
     navLinks: true,
     eventClassNames({ event: calendarEvent }) {
       // @ts-ignore
-      const colorName = calendarsColor[calendarEvent._def.extendedProps.calendar]
+      const colorName =
+        calendarsColor[calendarEvent._def.extendedProps.calendar];
 
       return [
         // Background Color
-        `event-bg-${colorName}`
-      ]
+        `event-bg-${colorName}`,
+      ];
     },
     eventClick({ event: clickedEvent, jsEvent }) {
-      jsEvent.preventDefault()
-      dispatch(selectedEvent(clickedEvent))
-      handleAddEventSidebarToggle()
+      jsEvent.preventDefault();
+      dispatch(selectedEvent(clickedEvent));
+      handleAddEventSidebarToggle();
 
       if (clickedEvent.url) {
         // Open the URL in a new tab
-        window.open(clickedEvent.url, '_blank')
+        window.open(clickedEvent.url, "_blank");
       }
 
       //* Only grab required field otherwise it goes in infinity loop
@@ -122,20 +127,20 @@ const Calendar = props => {
     },
     customButtons: {
       sidebarToggle: {
-        icon: 'tabler tabler-menu-2',
+        icon: "tabler tabler-menu-2",
         click() {
-          handleLeftSidebarToggle()
-        }
-      }
+          handleLeftSidebarToggle();
+        },
+      },
     },
     dateClick(info) {
-      const ev = { ...blankEvent }
+      const ev = { ...blankEvent };
 
-      ev.start = info.date
-      ev.end = info.date
-      ev.allDay = true
-      dispatch(selectedEvent(ev))
-      handleAddEventSidebarToggle()
+      ev.start = info.date;
+      ev.end = info.date;
+      ev.allDay = true;
+      dispatch(selectedEvent(ev));
+      handleAddEventSidebarToggle();
     },
 
     /*
@@ -144,8 +149,8 @@ const Calendar = props => {
           ? We can use `eventDragStop` but it doesn't return updated event so we have to use `eventDrop` which returns updated event
         */
     eventDrop({ event: droppedEvent }) {
-      dispatch(updateEvent(droppedEvent))
-      dispatch(filterEvents())
+      dispatch(updateEvent(droppedEvent));
+      dispatch(filterEvents());
     },
 
     /*
@@ -153,16 +158,16 @@ const Calendar = props => {
           ? Docs: https://fullcalendar.io/docs/eventResize
         */
     eventResize({ event: resizedEvent }) {
-      dispatch(updateEvent(resizedEvent))
-      dispatch(filterEvents())
+      dispatch(updateEvent(resizedEvent));
+      dispatch(filterEvents());
     },
 
     // @ts-ignore
     ref: calendarRef,
-    direction: theme.direction
-  }
+    direction: theme.direction,
+  };
 
-  return <FullCalendar {...calendarOptions} />
-}
+  return <FullCalendar {...calendarOptions} />;
+};
 
-export default Calendar
+export default Calendar;

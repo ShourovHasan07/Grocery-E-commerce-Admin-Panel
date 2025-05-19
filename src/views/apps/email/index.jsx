@@ -1,93 +1,110 @@
-'use client'
+"use client";
 
 // React Imports
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from "react";
 
 // MUI Imports
-import { useMediaQuery } from '@mui/material'
-import Backdrop from '@mui/material/Backdrop'
+import { useMediaQuery } from "@mui/material";
+import Backdrop from "@mui/material/Backdrop";
 
 // Third-party Imports
-import classnames from 'classnames'
-import { useDispatch, useSelector } from 'react-redux'
+import classnames from "classnames";
+import { useDispatch, useSelector } from "react-redux";
 
 // Slice Imports
-import { filterEmails } from '@/redux-store/slices/email'
+import { filterEmails } from "@/redux-store/slices/email";
 
 // Component Imports
-import SidebarLeft from './SidebarLeft'
-import MailContent from './MailContent'
+import SidebarLeft from "./SidebarLeft";
+import MailContent from "./MailContent";
 
 // Hook Imports
-import { useSettings } from '@core/hooks/useSettings'
+import { useSettings } from "@core/hooks/useSettings";
 
 // Util Imports
-import { commonLayoutClasses } from '@layouts/utils/layoutClasses'
+import { commonLayoutClasses } from "@layouts/utils/layoutClasses";
 
 const EmailWrapper = ({ folder, label }) => {
   // States
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [backdropOpen, setBackdropOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [backdropOpen, setBackdropOpen] = useState(false);
 
   // Refs
-  const isInitialMount = useRef(true)
+  const isInitialMount = useRef(true);
 
   // Hooks
-  const { settings } = useSettings()
-  const emailStore = useSelector(state => state.emailReducer)
-  const dispatch = useDispatch()
-  const isBelowLgScreen = useMediaQuery(theme => theme.breakpoints.down('lg'))
-  const isBelowMdScreen = useMediaQuery(theme => theme.breakpoints.down('md'))
-  const isBelowSmScreen = useMediaQuery(theme => theme.breakpoints.down('sm'))
+  const { settings } = useSettings();
+  const emailStore = useSelector((state) => state.emailReducer);
+  const dispatch = useDispatch();
+
+  const isBelowLgScreen = useMediaQuery((theme) =>
+    theme.breakpoints.down("lg"),
+  );
+
+  const isBelowMdScreen = useMediaQuery((theme) =>
+    theme.breakpoints.down("md"),
+  );
+
+  const isBelowSmScreen = useMediaQuery((theme) =>
+    theme.breakpoints.down("sm"),
+  );
 
   // Vars
-  const uniqueLabels = [...new Set(emailStore.emails.flatMap(email => email.labels))]
+  const uniqueLabels = [
+    ...new Set(emailStore.emails.flatMap((email) => email.labels)),
+  ];
 
   // Handle backdrop on click
   const handleBackdropClick = () => {
-    setSidebarOpen(false)
-    setBackdropOpen(false)
-  }
+    setSidebarOpen(false);
+    setBackdropOpen(false);
+  };
 
   // Set loading false on initial mount
   useEffect(() => {
     if (isInitialMount.current) {
-      isInitialMount.current = false
+      isInitialMount.current = false;
     }
-  }, [])
+  }, []);
 
   // Filter all emails based on folder and label
   useEffect(() => {
-    dispatch(filterEmails({ emails: emailStore.emails, folder, label, uniqueLabels }))
+    dispatch(
+      filterEmails({ emails: emailStore.emails, folder, label, uniqueLabels }),
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [emailStore.emails, folder, label])
+  }, [emailStore.emails, folder, label]);
 
   // Hide backdrop when left sidebar is closed
   useEffect(() => {
     if (backdropOpen && !sidebarOpen) {
-      setBackdropOpen(false)
+      setBackdropOpen(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sidebarOpen])
+  }, [sidebarOpen]);
 
   // Hide backdrop when screen size is above md
   useEffect(() => {
     if (backdropOpen && !isBelowMdScreen) {
-      setBackdropOpen(false)
+      setBackdropOpen(false);
     }
 
     if (sidebarOpen && !isBelowMdScreen) {
-      setSidebarOpen(false)
+      setSidebarOpen(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isBelowMdScreen])
+  }, [isBelowMdScreen]);
 
   return (
     <div
-      className={classnames(commonLayoutClasses.contentHeightFixed, 'flex is-full overflow-hidden rounded relative', {
-        border: settings.skin === 'bordered',
-        'shadow-md': settings.skin !== 'bordered'
-      })}
+      className={classnames(
+        commonLayoutClasses.contentHeightFixed,
+        "flex is-full overflow-hidden rounded relative",
+        {
+          border: settings.skin === "bordered",
+          "shadow-md": settings.skin !== "bordered",
+        },
+      )}
     >
       <SidebarLeft
         store={emailStore}
@@ -98,9 +115,13 @@ const EmailWrapper = ({ folder, label }) => {
         setSidebarOpen={setSidebarOpen}
         folder={folder}
         uniqueLabels={uniqueLabels}
-        label={label || ''}
+        label={label || ""}
       />
-      <Backdrop open={backdropOpen} onClick={handleBackdropClick} className='absolute z-10' />
+      <Backdrop
+        open={backdropOpen}
+        onClick={handleBackdropClick}
+        className="absolute z-10"
+      />
       <MailContent
         store={emailStore}
         dispatch={dispatch}
@@ -115,7 +136,7 @@ const EmailWrapper = ({ folder, label }) => {
         setBackdropOpen={setBackdropOpen}
       />
     </div>
-  )
-}
+  );
+};
 
-export default EmailWrapper
+export default EmailWrapper;

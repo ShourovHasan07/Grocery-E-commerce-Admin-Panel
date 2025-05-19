@@ -1,10 +1,10 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import PaymentProviders from './PaymentProviders'
-import SupportedMethods from './SupportedMethods'
-import ManualMethods from './ManualMethods'
+import PaymentProviders from "./PaymentProviders";
+import SupportedMethods from "./SupportedMethods";
+import ManualMethods from "./ManualMethods";
 
 const Payments = () => {
   return (
@@ -19,7 +19,7 @@ const Payments = () => {
         <ManualMethods />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default Payments
+export default Payments;

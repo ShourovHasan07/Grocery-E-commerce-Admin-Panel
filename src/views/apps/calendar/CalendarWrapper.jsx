@@ -1,40 +1,42 @@
-'use client'
+"use client";
 
 // React Imports
-import { useState } from 'react'
+import { useState } from "react";
 
 // MUI Imports
-import { useMediaQuery } from '@mui/material'
+import { useMediaQuery } from "@mui/material";
 
 // Third-party Imports
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from "react-redux";
 
 // Component Imports
-import Calendar from './Calendar'
-import SidebarLeft from './SidebarLeft'
-import AddEventSidebar from './AddEventSidebar'
+import Calendar from "./Calendar";
+import SidebarLeft from "./SidebarLeft";
+import AddEventSidebar from "./AddEventSidebar";
 
 // CalendarColors Object
 const calendarsColor = {
-  Personal: 'error',
-  Business: 'primary',
-  Family: 'warning',
-  Holiday: 'success',
-  ETC: 'info'
-}
+  Personal: "error",
+  Business: "primary",
+  Family: "warning",
+  Holiday: "success",
+  ETC: "info",
+};
 
 const AppCalendar = () => {
   // States
-  const [calendarApi, setCalendarApi] = useState(null)
-  const [leftSidebarOpen, setLeftSidebarOpen] = useState(false)
-  const [addEventSidebarOpen, setAddEventSidebarOpen] = useState(false)
+  const [calendarApi, setCalendarApi] = useState(null);
+  const [leftSidebarOpen, setLeftSidebarOpen] = useState(false);
+  const [addEventSidebarOpen, setAddEventSidebarOpen] = useState(false);
 
   // Hooks
-  const dispatch = useDispatch()
-  const calendarStore = useSelector(state => state.calendarReducer)
-  const mdAbove = useMediaQuery(theme => theme.breakpoints.up('md'))
-  const handleLeftSidebarToggle = () => setLeftSidebarOpen(!leftSidebarOpen)
-  const handleAddEventSidebarToggle = () => setAddEventSidebarOpen(!addEventSidebarOpen)
+  const dispatch = useDispatch();
+  const calendarStore = useSelector((state) => state.calendarReducer);
+  const mdAbove = useMediaQuery((theme) => theme.breakpoints.up("md"));
+  const handleLeftSidebarToggle = () => setLeftSidebarOpen(!leftSidebarOpen);
+
+  const handleAddEventSidebarToggle = () =>
+    setAddEventSidebarOpen(!addEventSidebarOpen);
 
   return (
     <>
@@ -48,7 +50,7 @@ const AppCalendar = () => {
         handleLeftSidebarToggle={handleLeftSidebarToggle}
         handleAddEventSidebarToggle={handleAddEventSidebarToggle}
       />
-      <div className='p-6 pbe-0 flex-grow overflow-visible bg-backgroundPaper rounded'>
+      <div className="p-6 pbe-0 flex-grow overflow-visible bg-backgroundPaper rounded">
         <Calendar
           dispatch={dispatch}
           calendarApi={calendarApi}
@@ -67,7 +69,7 @@ const AppCalendar = () => {
         handleAddEventSidebarToggle={handleAddEventSidebarToggle}
       />
     </>
-  )
-}
+  );
+};
 
-export default AppCalendar
+export default AppCalendar;

@@ -1,25 +1,25 @@
-'use client'
+"use client";
 
 // React Imports
-import { createContext, forwardRef, useMemo } from 'react'
+import { createContext, forwardRef, useMemo } from "react";
 
 // Third-party Imports
-import classnames from 'classnames'
-import { FloatingTree } from '@floating-ui/react'
+import classnames from "classnames";
+import { FloatingTree } from "@floating-ui/react";
 
 // Util Imports
-import { menuClasses } from '../../utils/menuClasses'
+import { menuClasses } from "../../utils/menuClasses";
 
 // Styled Component Imports
-import StyledHorizontalMenu from '../../styles/horizontal/StyledHorizontalMenu'
+import StyledHorizontalMenu from "../../styles/horizontal/StyledHorizontalMenu";
 
 // Style Imports
-import styles from '../../styles/horizontal/horizontalUl.module.css'
+import styles from "../../styles/horizontal/horizontalUl.module.css";
 
 // Default Config Imports
-import { horizontalSubMenuToggleDuration } from '../../defaultConfigs'
+import { horizontalSubMenuToggleDuration } from "../../defaultConfigs";
 
-export const HorizontalMenuContext = createContext({})
+export const HorizontalMenuContext = createContext({});
 
 const Menu = (props, ref) => {
   // Props
@@ -28,7 +28,7 @@ const Menu = (props, ref) => {
     className,
     rootStyles,
     menuItemStyles,
-    triggerPopout = 'hover',
+    triggerPopout = "hover",
     browserScroll = false,
     transitionDuration = horizontalSubMenuToggleDuration,
     renderExpandIcon,
@@ -37,7 +37,7 @@ const Menu = (props, ref) => {
     textTruncate = true,
     verticalMenuProps,
     ...rest
-  } = props
+  } = props;
 
   const providerValue = useMemo(
     () => ({
@@ -49,7 +49,7 @@ const Menu = (props, ref) => {
       transitionDuration,
       popoutMenuOffset,
       textTruncate,
-      verticalMenuProps
+      verticalMenuProps,
     }),
     [
       triggerPopout,
@@ -60,9 +60,9 @@ const Menu = (props, ref) => {
       transitionDuration,
       popoutMenuOffset,
       textTruncate,
-      verticalMenuProps
-    ]
-  )
+      verticalMenuProps,
+    ],
+  );
 
   return (
     <HorizontalMenuContext.Provider value={providerValue}>
@@ -77,7 +77,7 @@ const Menu = (props, ref) => {
         </StyledHorizontalMenu>
       </FloatingTree>
     </HorizontalMenuContext.Provider>
-  )
-}
+  );
+};
 
-export default forwardRef(Menu)
+export default forwardRef(Menu);

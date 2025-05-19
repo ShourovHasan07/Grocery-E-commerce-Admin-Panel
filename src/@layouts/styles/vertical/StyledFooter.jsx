@@ -1,11 +1,11 @@
 // Third-party Imports
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 // Config Imports
-import themeConfig from '@configs/themeConfig'
+import themeConfig from "@configs/themeConfig";
 
 // Util Imports
-import { verticalLayoutClasses } from '@layouts/utils/layoutClasses'
+import { verticalLayoutClasses } from "@layouts/utils/layoutClasses";
 
 const StyledFooter = styled.footer`
   &.${verticalLayoutClasses.footerContentCompact} {
@@ -14,7 +14,8 @@ const StyledFooter = styled.footer`
       max-inline-size: ${themeConfig.compactContentWidth}px;
     }
 
-    &.${verticalLayoutClasses.footerAttached} .${verticalLayoutClasses.footerContentWrapper} {
+    &.${verticalLayoutClasses.footerAttached}
+      .${verticalLayoutClasses.footerContentWrapper} {
       margin-inline: auto;
       max-inline-size: ${themeConfig.compactContentWidth}px;
     }
@@ -37,14 +38,16 @@ const StyledFooter = styled.footer`
 
       & .${verticalLayoutClasses.footerContentWrapper} {
         pointer-events: auto;
-        box-shadow: 0 3px 12px 0px rgb(var(--mui-mainColorChannels-lightShadow) / 0.14);
-        [data-mui-color-scheme='dark'] & {
-          box-shadow: 0 3px 12px 0px rgb(var(--mui-mainColorChannels-darkShadow) / 0.14);
+        box-shadow: 0 3px 12px 0px
+          rgb(var(--mui-mainColorChannels-lightShadow) / 0.14);
+        [data-mui-color-scheme="dark"] & {
+          box-shadow: 0 3px 12px 0px
+            rgb(var(--mui-mainColorChannels-darkShadow) / 0.14);
         }
         border-start-start-radius: var(--border-radius);
         border-start-end-radius: var(--border-radius);
 
-        [data-skin='bordered'] & {
+        [data-skin="bordered"] & {
           box-shadow: none;
           border-inline: 1px solid var(--border-color);
           border-block-start: 1px solid var(--border-color);
@@ -53,11 +56,13 @@ const StyledFooter = styled.footer`
     }
 
     &.${verticalLayoutClasses.footerAttached} {
-      box-shadow: 0 3px 12px 0px rgb(var(--mui-mainColorChannels-lightShadow) / 0.14);
-      [data-mui-color-scheme='dark'] & {
-        box-shadow: 0 3px 12px 0px rgb(var(--mui-mainColorChannels-darkShadow) / 0.14);
+      box-shadow: 0 3px 12px 0px
+        rgb(var(--mui-mainColorChannels-lightShadow) / 0.14);
+      [data-mui-color-scheme="dark"] & {
+        box-shadow: 0 3px 12px 0px
+          rgb(var(--mui-mainColorChannels-darkShadow) / 0.14);
       }
-      [data-skin='bordered'] & {
+      [data-skin="bordered"] & {
         box-shadow: none;
         border-block-start: 1px solid var(--border-color);
       }
@@ -70,6 +75,6 @@ const StyledFooter = styled.footer`
   }
 
   ${({ overrideStyles }) => overrideStyles}
-`
+`;
 
-export default StyledFooter
+export default StyledFooter;

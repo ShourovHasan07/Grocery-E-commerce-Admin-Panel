@@ -1,49 +1,58 @@
-'use client'
+"use client";
 
 // React Imports
-import { useMemo } from 'react'
+import { useMemo } from "react";
 
 // MUI Imports
-import { deepmerge } from '@mui/utils'
-import { ThemeProvider, lighten, darken, createTheme } from '@mui/material/styles'
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
-import CssBaseline from '@mui/material/CssBaseline'
+import { deepmerge } from "@mui/utils";
+import {
+  ThemeProvider,
+  lighten,
+  darken,
+  createTheme,
+} from "@mui/material/styles";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
+import CssBaseline from "@mui/material/CssBaseline";
 
 // Third-party Imports
-import { useMedia } from 'react-use'
-import stylisRTLPlugin from 'stylis-plugin-rtl'
+import { useMedia } from "react-use";
+import stylisRTLPlugin from "stylis-plugin-rtl";
 
 // Component Imports
-import ModeChanger from './ModeChanger'
+import ModeChanger from "./ModeChanger";
 
 // Config Imports
-import themeConfig from '@configs/themeConfig'
+import themeConfig from "@configs/themeConfig";
 
 // Hook Imports
-import { useSettings } from '@core/hooks/useSettings'
+import { useSettings } from "@core/hooks/useSettings";
 
 // Core Theme Imports
-import defaultCoreTheme from '@core/theme'
+import defaultCoreTheme from "@core/theme";
 
-const CustomThemeProvider = props => {
+const CustomThemeProvider = (props) => {
   // Props
-  const { children, direction, systemMode } = props
+  const { children, direction, systemMode } = props;
 
   // Hooks
-  const { settings } = useSettings()
-  const isDark = useMedia('(prefers-color-scheme: dark)', systemMode === 'dark')
+  const { settings } = useSettings();
+
+  const isDark = useMedia(
+    "(prefers-color-scheme: dark)",
+    systemMode === "dark",
+  );
 
   // Vars
-  const isServer = typeof window === 'undefined'
-  let currentMode
+  const isServer = typeof window === "undefined";
+  let currentMode;
 
   if (isServer) {
-    currentMode = systemMode
+    currentMode = systemMode;
   } else {
-    if (settings.mode === 'system') {
-      currentMode = isDark ? 'dark' : 'light'
+    if (settings.mode === "system") {
+      currentMode = isDark ? "dark" : "light";
     } else {
-      currentMode = settings.mode
+      currentMode = settings.mode;
     }
   }
 
@@ -56,45 +65,48 @@ const CustomThemeProvider = props => {
             primary: {
               main: settings.primaryColor,
               light: lighten(settings.primaryColor, 0.2),
-              dark: darken(settings.primaryColor, 0.1)
-            }
-          }
+              dark: darken(settings.primaryColor, 0.1),
+            },
+          },
         },
         dark: {
           palette: {
             primary: {
               main: settings.primaryColor,
               light: lighten(settings.primaryColor, 0.2),
-              dark: darken(settings.primaryColor, 0.1)
-            }
-          }
-        }
+              dark: darken(settings.primaryColor, 0.1),
+            },
+          },
+        },
       },
       cssVariables: {
-        colorSchemeSelector: 'data'
-      }
-    }
+        colorSchemeSelector: "data",
+      },
+    };
 
-    const coreTheme = deepmerge(defaultCoreTheme(settings, currentMode, direction), newTheme)
+    const coreTheme = deepmerge(
+      defaultCoreTheme(settings, currentMode, direction),
+      newTheme,
+    );
 
-    return createTheme(coreTheme)
+    return createTheme(coreTheme);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings.primaryColor, settings.skin, currentMode])
+  }, [settings.primaryColor, settings.skin, currentMode]);
 
   return (
     <AppRouterCacheProvider
       options={{
         prepend: true,
-        ...(direction === 'rtl' && {
-          key: 'rtl',
-          stylisPlugins: [stylisRTLPlugin]
-        })
+        ...(direction === "rtl" && {
+          key: "rtl",
+          stylisPlugins: [stylisRTLPlugin],
+        }),
       }}
     >
       <ThemeProvider
         theme={theme}
         defaultMode={systemMode}
-        modeStorageKey={`${themeConfig.templateName.toLowerCase().split(' ').join('-')}-mui-template-mode`}
+        modeStorageKey={`${themeConfig.templateName.toLowerCase().split(" ").join("-")}-mui-template-mode`}
       >
         <>
           <ModeChanger systemMode={systemMode} />
@@ -103,7 +115,7 @@ const CustomThemeProvider = props => {
         </>
       </ThemeProvider>
     </AppRouterCacheProvider>
-  )
-}
+  );
+};
 
-export default CustomThemeProvider
+export default CustomThemeProvider;

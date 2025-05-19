@@ -1,187 +1,214 @@
 // React Imports
-import { useEffect } from 'react'
+import { useEffect } from "react";
 
 // Mui Imports
-import MuiAccordion from '@mui/material/Accordion'
-import MuiAccordionDetails from '@mui/material/AccordionDetails'
-import MuiAccordionSummary from '@mui/material/AccordionSummary'
-import Drawer from '@mui/material/Drawer'
-import IconButton from '@mui/material/IconButton'
-import LinearProgress from '@mui/material/LinearProgress'
-import { styled } from '@mui/material/styles'
-import Typography from '@mui/material/Typography'
-import MuiTimeline from '@mui/lab/Timeline'
-import TimelineItem from '@mui/lab/TimelineItem'
-import TimelineSeparator from '@mui/lab/TimelineSeparator'
-import TimelineDot from '@mui/lab/TimelineDot'
-import TimelineConnector from '@mui/lab/TimelineConnector'
-import TimelineContent from '@mui/lab/TimelineContent'
+import MuiAccordion from "@mui/material/Accordion";
+import MuiAccordionDetails from "@mui/material/AccordionDetails";
+import MuiAccordionSummary from "@mui/material/AccordionSummary";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import LinearProgress from "@mui/material/LinearProgress";
+import { styled } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
+import MuiTimeline from "@mui/lab/Timeline";
+import TimelineItem from "@mui/lab/TimelineItem";
+import TimelineSeparator from "@mui/lab/TimelineSeparator";
+import TimelineDot from "@mui/lab/TimelineDot";
+import TimelineConnector from "@mui/lab/TimelineConnector";
+import TimelineContent from "@mui/lab/TimelineContent";
 
 // Third-party Imports
-import PerfectScrollbar from 'react-perfect-scrollbar'
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 // Components Imports
-import CustomAvatar from '@core/components/mui/Avatar'
+import CustomAvatar from "@core/components/mui/Avatar";
 
 // Styled component for Accordion component
 const Accordion = styled(MuiAccordion)({
-  boxShadow: 'none !important',
-  border: 'none',
-  '&:before': {
-    content: 'none'
+  boxShadow: "none !important",
+  border: "none",
+  "&:before": {
+    content: "none",
   },
-  marginBlockEnd: '0px !important'
-})
+  marginBlockEnd: "0px !important",
+});
 
 // Styled component for AccordionSummary component
 const AccordionSummary = styled(MuiAccordionSummary)(({ theme }) => ({
   paddingBlock: theme.spacing(0, 6),
-  paddingInline: theme.spacing(0)
-}))
+  paddingInline: theme.spacing(0),
+}));
 
 // Styled component for AccordionDetails component
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   paddingBlock: theme.spacing(0, 1),
-  paddingInline: theme.spacing(0)
-}))
+  paddingInline: theme.spacing(0),
+}));
 
 // Styled Timeline component
 const Timeline = styled(MuiTimeline)({
   paddingLeft: 0,
   paddingRight: 0,
-  '& .MuiTimelineItem-root': {
-    width: '100%',
-    '&:before': {
-      display: 'none'
-    }
+  "& .MuiTimelineItem-root": {
+    width: "100%",
+    "&:before": {
+      display: "none",
+    },
   },
-  '& .MuiTimelineDot-root': {
+  "& .MuiTimelineDot-root": {
     border: 0,
-    padding: 0
-  }
-})
+    padding: 0,
+  },
+});
 
 const vehicleTrackingData = [
   {
-    name: 'VOL-342808',
-    location: 'Chelsea, NY, USA',
+    name: "VOL-342808",
+    location: "Chelsea, NY, USA",
     progress: 88,
-    driverName: 'Veronica Herman',
-    passengerName: 'Helen Jacobs'
+    driverName: "Veronica Herman",
+    passengerName: "Helen Jacobs",
   },
   {
-    name: 'VOL-954784',
-    location: 'Lincoln Harbor, NY, USA',
+    name: "VOL-954784",
+    location: "Lincoln Harbor, NY, USA",
     progress: 90,
-    driverName: 'Myrtle Ullrich',
-    passengerName: 'William Miller'
+    driverName: "Myrtle Ullrich",
+    passengerName: "William Miller",
   },
   {
-    name: 'VOL-342808',
-    location: 'Midtown East, NY, USA',
+    name: "VOL-342808",
+    location: "Midtown East, NY, USA",
     progress: 60,
-    driverName: 'Barry Schowalter',
-    passengerName: 'Charles Anderson'
+    driverName: "Barry Schowalter",
+    passengerName: "Charles Anderson",
   },
   {
-    name: 'VOL-343908',
-    location: 'Hoboken, NY, USA',
+    name: "VOL-343908",
+    location: "Hoboken, NY, USA",
     progress: 28,
-    driverName: 'Frank Jones',
-    passengerName: 'Edward Smith'
-  }
-]
+    driverName: "Frank Jones",
+    passengerName: "Edward Smith",
+  },
+];
 
 const ScrollWrapper = ({ children, isBelowLgScreen }) => {
   if (isBelowLgScreen) {
-    return <div className='bs-full overflow-y-auto overflow-x-hidden pbe-6 pli-6'>{children}</div>
+    return (
+      <div className="bs-full overflow-y-auto overflow-x-hidden pbe-6 pli-6">
+        {children}
+      </div>
+    );
   } else {
     return (
-      <PerfectScrollbar options={{ wheelPropagation: false, suppressScrollX: true }} className='pbe-6 pli-6'>
+      <PerfectScrollbar
+        options={{ wheelPropagation: false, suppressScrollX: true }}
+        className="pbe-6 pli-6"
+      >
         {children}
       </PerfectScrollbar>
-    )
+    );
   }
-}
+};
 
-const VehicleTracking = ({ vehicleTrackingData, index, expanded, handleChange }) => {
+const VehicleTracking = ({
+  vehicleTrackingData,
+  index,
+  expanded,
+  handleChange,
+}) => {
   return (
     <Accordion expanded={expanded === index} onChange={handleChange(index)}>
       <AccordionSummary>
-        <div className='flex gap-4 items-center'>
-          <CustomAvatar skin='light' color='secondary'>
-            <i className='tabler-car' />
+        <div className="flex gap-4 items-center">
+          <CustomAvatar skin="light" color="secondary">
+            <i className="tabler-car" />
           </CustomAvatar>
-          <div className='flex flex-col gap-1'>
-            <Typography className='font-normal'>{vehicleTrackingData.name}</Typography>
-            <Typography className='font-normal !text-textSecondary'>{vehicleTrackingData.location}</Typography>
+          <div className="flex flex-col gap-1">
+            <Typography className="font-normal">
+              {vehicleTrackingData.name}
+            </Typography>
+            <Typography className="font-normal !text-textSecondary">
+              {vehicleTrackingData.location}
+            </Typography>
           </div>
         </div>
       </AccordionSummary>
       <AccordionDetails>
-        <div className='flex flex-col gap-1 plb-4'>
-          <div className='flex items-center justify-between'>
-            <Typography className='!text-textPrimary'>Delivery Process</Typography>
+        <div className="flex flex-col gap-1 plb-4">
+          <div className="flex items-center justify-between">
+            <Typography className="!text-textPrimary">
+              Delivery Process
+            </Typography>
             <Typography>{vehicleTrackingData.progress}%</Typography>
           </div>
-          <LinearProgress variant='determinate' value={vehicleTrackingData.progress} />
+          <LinearProgress
+            variant="determinate"
+            value={vehicleTrackingData.progress}
+          />
         </div>
-        <Timeline className='pbs-4'>
+        <Timeline className="pbs-4">
           <TimelineItem>
             <TimelineSeparator>
-              <TimelineDot variant='outlined' className='mlb-0'>
-                <i className='tabler-circle-check text-xl text-success' />
+              <TimelineDot variant="outlined" className="mlb-0">
+                <i className="tabler-circle-check text-xl text-success" />
               </TimelineDot>
               <TimelineConnector />
             </TimelineSeparator>
-            <TimelineContent className='flex flex-col gap-0.5 pbs-0 pis-4 pbe-5'>
-              <Typography variant='caption' className='uppercase !text-success'>
+            <TimelineContent className="flex flex-col gap-0.5 pbs-0 pis-4 pbe-5">
+              <Typography variant="caption" className="uppercase !text-success">
                 Tracking Number Created
               </Typography>
-              <Typography className='font-medium !text-textPrimary'>{vehicleTrackingData.driverName}</Typography>
-              <Typography variant='body2'>Sep 01, 7:53 AM</Typography>
+              <Typography className="font-medium !text-textPrimary">
+                {vehicleTrackingData.driverName}
+              </Typography>
+              <Typography variant="body2">Sep 01, 7:53 AM</Typography>
             </TimelineContent>
           </TimelineItem>
         </Timeline>
         <Timeline>
           <TimelineItem>
             <TimelineSeparator>
-              <TimelineDot variant='outlined' className='mlb-0'>
-                <i className='tabler-circle-check text-xl text-success' />
+              <TimelineDot variant="outlined" className="mlb-0">
+                <i className="tabler-circle-check text-xl text-success" />
               </TimelineDot>
               <TimelineConnector />
             </TimelineSeparator>
-            <TimelineContent className='flex flex-col gap-0.5 pbs-0 pis-4 pbe-5'>
-              <Typography variant='caption' className='uppercase !text-success'>
+            <TimelineContent className="flex flex-col gap-0.5 pbs-0 pis-4 pbe-5">
+              <Typography variant="caption" className="uppercase !text-success">
                 Out For Delivery
               </Typography>
-              <Typography className='font-medium !text-textPrimary'>{vehicleTrackingData.driverName}</Typography>
-              <Typography variant='body2'>Sep 03, 8:02 AM</Typography>
+              <Typography className="font-medium !text-textPrimary">
+                {vehicleTrackingData.driverName}
+              </Typography>
+              <Typography variant="body2">Sep 03, 8:02 AM</Typography>
             </TimelineContent>
           </TimelineItem>
         </Timeline>
         <Timeline>
           <TimelineItem>
             <TimelineSeparator>
-              <TimelineDot variant='outlined' className='mlb-0'>
-                <i className='tabler-map-pin text-xl text-primary' />
+              <TimelineDot variant="outlined" className="mlb-0">
+                <i className="tabler-map-pin text-xl text-primary" />
               </TimelineDot>
             </TimelineSeparator>
-            <TimelineContent className='flex flex-col gap-0.5 pbs-0 pis-4 pbe-5'>
-              <Typography variant='caption' className='uppercase !text-primary'>
+            <TimelineContent className="flex flex-col gap-0.5 pbs-0 pis-4 pbe-5">
+              <Typography variant="caption" className="uppercase !text-primary">
                 Arrived
               </Typography>
-              <Typography className='font-medium !text-textPrimary'>{vehicleTrackingData.passengerName}</Typography>
-              <Typography variant='body2'>Sep 03, 8:02 AM</Typography>
+              <Typography className="font-medium !text-textPrimary">
+                {vehicleTrackingData.passengerName}
+              </Typography>
+              <Typography variant="body2">Sep 03, 8:02 AM</Typography>
             </TimelineContent>
           </TimelineItem>
         </Timeline>
       </AccordionDetails>
     </Accordion>
-  )
-}
+  );
+};
 
-const FleetSidebar = props => {
+const FleetSidebar = (props) => {
   // Props
   const {
     backdropOpen,
@@ -194,62 +221,62 @@ const FleetSidebar = props => {
     expanded,
     setExpanded,
     setViewState,
-    geojson
-  } = props
+    geojson,
+  } = props;
 
-  const handleChange = panel => (event, isExpanded) => {
+  const handleChange = (panel) => (event, isExpanded) => {
     if (isExpanded) {
       setViewState({
         longitude: geojson.features[panel].geometry.longitude,
         latitude: geojson.features[panel].geometry.latitude,
-        zoom: 16
-      })
+        zoom: 16,
+      });
     }
 
-    setExpanded(isExpanded ? panel : false)
-  }
+    setExpanded(isExpanded ? panel : false);
+  };
 
   useEffect(() => {
     if (!backdropOpen && sidebarOpen) {
-      setSidebarOpen(false)
+      setSidebarOpen(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [backdropOpen])
+  }, [backdropOpen]);
 
   return (
     <Drawer
-      className='bs-full'
+      className="bs-full"
       open={sidebarOpen}
       onClose={() => setSidebarOpen(false)}
-      variant={!isBelowMdScreen ? 'permanent' : 'persistent'}
+      variant={!isBelowMdScreen ? "permanent" : "persistent"}
       ModalProps={{
         disablePortal: true,
-        keepMounted: true // Better open performance on mobile.
+        keepMounted: true, // Better open performance on mobile.
       }}
       sx={{
         zIndex: isBelowMdScreen && sidebarOpen ? 11 : 10,
-        position: !isBelowMdScreen ? 'static' : 'absolute',
-        ...(isBelowSmScreen && sidebarOpen && { width: '100%' }),
-        '& .MuiDrawer-paper': {
-          borderRight: 'none',
-          boxShadow: 'none',
-          overflow: 'hidden',
-          width: isBelowSmScreen ? '100%' : '360px',
-          position: !isBelowMdScreen ? 'static' : 'absolute'
-        }
+        position: !isBelowMdScreen ? "static" : "absolute",
+        ...(isBelowSmScreen && sidebarOpen && { width: "100%" }),
+        "& .MuiDrawer-paper": {
+          borderRight: "none",
+          boxShadow: "none",
+          overflow: "hidden",
+          width: isBelowSmScreen ? "100%" : "360px",
+          position: !isBelowMdScreen ? "static" : "absolute",
+        },
       }}
     >
-      <div className='flex justify-between items-center p-6'>
-        <Typography variant='h5'>Fleet</Typography>
+      <div className="flex justify-between items-center p-6">
+        <Typography variant="h5">Fleet</Typography>
 
         {isBelowMdScreen ? (
           <IconButton
             onClick={() => {
-              setSidebarOpen(false)
-              setBackdropOpen(false)
+              setSidebarOpen(false);
+              setBackdropOpen(false);
             }}
           >
-            <i className='tabler-x' />
+            <i className="tabler-x" />
           </IconButton>
         ) : null}
       </div>
@@ -265,7 +292,7 @@ const FleetSidebar = props => {
         ))}
       </ScrollWrapper>
     </Drawer>
-  )
-}
+  );
+};
 
-export default FleetSidebar
+export default FleetSidebar;

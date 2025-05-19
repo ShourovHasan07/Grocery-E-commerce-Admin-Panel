@@ -1,8 +1,8 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import CustomerStats from '@components/card-statistics/CustomerStats'
+import CustomerStats from "@components/card-statistics/CustomerStats";
 
 const CustomerStatisticsCard = ({ customerStatData }) => {
   return (
@@ -13,7 +13,7 @@ const CustomerStatisticsCard = ({ customerStatData }) => {
         </Grid>
       ))}
     </Grid>
-  )
-}
+  );
+};
 
-export default CustomerStatisticsCard
+export default CustomerStatisticsCard;

@@ -1,16 +1,16 @@
 // Third-party Imports
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 // Config Imports
-import themeConfig from '@configs/themeConfig'
+import themeConfig from "@configs/themeConfig";
 
 // Util Imports
-import { horizontalLayoutClasses } from '@layouts/utils/layoutClasses'
+import { horizontalLayoutClasses } from "@layouts/utils/layoutClasses";
 
 const StyledHeader = styled.header`
   box-shadow: var(--mui-customShadows-sm);
 
-  [data-skin='bordered'] & {
+  [data-skin="bordered"] & {
     box-shadow: none;
     border-block-end: 1px solid var(--border-color);
   }
@@ -30,7 +30,8 @@ const StyledHeader = styled.header`
     z-index: var(--header-z-index);
   }
 
-  &.${horizontalLayoutClasses.headerContentCompact} .${horizontalLayoutClasses.navbar} {
+  &.${horizontalLayoutClasses.headerContentCompact}
+    .${horizontalLayoutClasses.navbar} {
     margin-inline: auto;
     max-inline-size: ${themeConfig.compactContentWidth}px;
   }
@@ -43,6 +44,6 @@ const StyledHeader = styled.header`
   }
 
   ${({ overrideStyles }) => overrideStyles}
-`
+`;
 
-export default StyledHeader
+export default StyledHeader;

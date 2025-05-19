@@ -1,11 +1,11 @@
 // Third-party Imports
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 export const StyledHorizontalNavExpandIconWrapper = styled.span`
   display: flex;
   margin-inline-start: 5px;
   ${({ rootStyles }) => rootStyles};
-`
+`;
 
 const StyledHorizontalNavExpandIcon = styled.span`
   display: flex;
@@ -28,6 +28,6 @@ const StyledHorizontalNavExpandIcon = styled.span`
       transform: rotate(180deg);
     }
   `}
-`
+`;
 
-export default StyledHorizontalNavExpandIcon
+export default StyledHorizontalNavExpandIcon;

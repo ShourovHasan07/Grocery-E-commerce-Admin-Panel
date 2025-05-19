@@ -1,33 +1,40 @@
 // React Imports
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect } from "react";
 
 // Third-party Imports
-import { Map, Marker } from 'react-map-gl'
-import 'mapbox-gl/dist/mapbox-gl.css'
+import { Map, Marker } from "react-map-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 // Style Imports
-import './styles.css'
+import "./styles.css";
 
-const FleetMap = props => {
+const FleetMap = (props) => {
   // Vars
-  const { carIndex, viewState, geojson, mapboxAccessToken } = props
+  const { carIndex, viewState, geojson, mapboxAccessToken } = props;
 
   // Hooks
-  const mapRef = useRef()
+  const mapRef = useRef();
 
   useEffect(() => {
-    mapRef.current?.flyTo({ center: [viewState.longitude, viewState.latitude], zoom: 16 })
-  }, [viewState])
+    mapRef.current?.flyTo({
+      center: [viewState.longitude, viewState.latitude],
+      zoom: 16,
+    });
+  }, [viewState]);
 
   return (
-    <div className='is-full bs-full'>
+    <div className="is-full bs-full">
       <Map
         mapboxAccessToken={mapboxAccessToken}
         // eslint-disable-next-line lines-around-comment
         // @ts-ignore
         ref={mapRef}
-        initialViewState={{ longitude: -73.999024, latitude: 40.75249842, zoom: 12.5 }}
-        mapStyle='mapbox://styles/mapbox/light-v9'
+        initialViewState={{
+          longitude: -73.999024,
+          latitude: 40.75249842,
+          zoom: 12.5,
+        }}
+        mapStyle="mapbox://styles/mapbox/light-v9"
         attributionControl={false}
       >
         {geojson.features.map((item, index) => {
@@ -36,22 +43,25 @@ const FleetMap = props => {
               key={index}
               longitude={item.geometry.longitude}
               latitude={item.geometry.latitude}
-              style={{ display: 'flex' }}
+              style={{ display: "flex" }}
             >
               <img
-                src='/images/apps/logistics/fleet-car.png'
+                src="/images/apps/logistics/fleet-car.png"
                 height={42}
                 width={20}
                 {...(index === carIndex && {
-                  style: { filter: 'drop-shadow(0 0 7px var(--mui-palette-primary-main))' }
+                  style: {
+                    filter:
+                      "drop-shadow(0 0 7px var(--mui-palette-primary-main))",
+                  },
                 })}
               />
             </Marker>
-          )
+          );
         })}
       </Map>
     </div>
-  )
-}
+  );
+};
 
-export default FleetMap
+export default FleetMap;

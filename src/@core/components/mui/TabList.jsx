@@ -1,60 +1,60 @@
 // MUI Imports
-import MuiTabList from '@mui/lab/TabList'
-import { styled } from '@mui/material/styles'
+import MuiTabList from "@mui/lab/TabList";
+import { styled } from "@mui/material/styles";
 
 const TabList = styled(MuiTabList)(({ color, theme, pill, orientation }) => ({
-  ...(pill === 'true' && {
+  ...(pill === "true" && {
     minHeight: 38,
-    ...(orientation === 'vertical'
+    ...(orientation === "vertical"
       ? {
-          borderInlineEnd: 0
+          borderInlineEnd: 0,
         }
       : {
-          borderBlockEnd: 0
+          borderBlockEnd: 0,
         }),
-    '&, & .MuiTabs-scroller': {
-      ...(orientation === 'vertical' && {
-        boxSizing: 'content-box'
+    "&, & .MuiTabs-scroller": {
+      ...(orientation === "vertical" && {
+        boxSizing: "content-box",
       }),
       margin: `${theme.spacing(-1, -1, -1.5, -1)} !important`,
-      padding: theme.spacing(1, 1, 1.5, 1)
+      padding: theme.spacing(1, 1, 1.5, 1),
     },
-    '& .MuiTabs-indicator': {
-      display: 'none'
+    "& .MuiTabs-indicator": {
+      display: "none",
     },
-    '& .MuiTabs-flexContainer': {
-      gap: theme.spacing(1)
+    "& .MuiTabs-flexContainer": {
+      gap: theme.spacing(1),
     },
-    '& .Mui-selected': {
+    "& .Mui-selected": {
       backgroundColor: `var(--mui-palette-${color}-main) !important`,
       color: `var(--mui-palette-${color}-contrastText) !important`,
-      boxShadow: `var(--mui-customShadows-${color}-sm)`
+      boxShadow: `var(--mui-customShadows-${color}-sm)`,
     },
-    '& .MuiTab-root': {
+    "& .MuiTab-root": {
       minHeight: 38,
       padding: theme.spacing(2, 5),
-      borderRadius: 'var(--mui-shape-borderRadius)',
-      '&:hover': {
+      borderRadius: "var(--mui-shape-borderRadius)",
+      "&:hover": {
         border: 0,
         backgroundColor: `var(--mui-palette-${color}-lightOpacity)`,
         color: `var(--mui-palette-${color}-main)`,
-        ...(orientation === 'vertical'
+        ...(orientation === "vertical"
           ? {
-              paddingInlineEnd: theme.spacing(5)
+              paddingInlineEnd: theme.spacing(5),
             }
           : {
-              paddingBlockEnd: theme.spacing(2)
-            })
-      }
-    }
-  })
-}))
+              paddingBlockEnd: theme.spacing(2),
+            }),
+      },
+    },
+  }),
+}));
 
-const CustomTabList = props => {
+const CustomTabList = (props) => {
   // Props
-  const { color = 'primary', ...rest } = props
+  const { color = "primary", ...rest } = props;
 
-  return <TabList color={color} {...rest} />
-}
+  return <TabList color={color} {...rest} />;
+};
 
-export default CustomTabList
+export default CustomTabList;

@@ -1,9 +1,9 @@
 // MUI Imports
-import Grid from '@mui/material/Grid2'
+import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import LocationName from './LocationName'
-import Address from './Address'
+import LocationName from "./LocationName";
+import Address from "./Address";
 
 const Locations = () => {
   return (
@@ -15,7 +15,7 @@ const Locations = () => {
         <Address />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default Locations
+export default Locations;
