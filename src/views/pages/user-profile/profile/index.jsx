@@ -18,13 +18,6 @@ const ProfileTab = ({ data }) => {
           <Grid size={{ xs: 12 }}>
             <ActivityTimeline />
           </Grid>
-          <ConnectionsTeams
-            connections={data?.connections}
-            teamsTech={data?.teamsTech}
-          />
-          <Grid size={{ xs: 12 }}>
-            <ProjectsTable projectTable={data?.projectTable} />
-          </Grid>
         </Grid>
       </Grid>
     </Grid>

@@ -70,35 +70,10 @@ const AboutOverview = ({ data }) => {
               </Typography>
               {data?.contacts && renderList(data?.contacts)}
             </div>
-            <div className="flex flex-col gap-4">
-              <Typography
-                className="uppercase"
-                variant="body2"
-                color="text.disabled"
-              >
-                Teams
-              </Typography>
-              {data?.teams && renderTeams(data?.teams)}
-            </div>
           </CardContent>
         </Card>
       </Grid>
-      <Grid size={{ xs: 12 }}>
-        <Card>
-          <CardContent className="flex flex-col gap-6">
-            <div className="flex flex-col gap-4">
-              <Typography
-                className="uppercase"
-                variant="body2"
-                color="text.disabled"
-              >
-                Overview
-              </Typography>
-              {data?.overview && renderList(data?.overview)}
-            </div>
-          </CardContent>
-        </Card>
-      </Grid>
+
     </Grid>
   );
 };

@@ -17,9 +17,9 @@
  */
 const themeConfig = {
   templateName: "AskValor",
-  homePageUrl: "dashboards/crm",
-  settingsCookieName: "vuexy-mui-next-demo-1",
-  mode: "system", // 'system', 'light', 'dark'
+  homePageUrl: "/dashboard",
+  settingsCookieName: "ask_valor_next_app",
+  mode: "light", // 'system', 'light', 'dark'
   skin: "default", // 'default', 'bordered'
   semiDark: false, // true, false
   layout: "vertical", // 'vertical', 'collapsed', 'horizontal'

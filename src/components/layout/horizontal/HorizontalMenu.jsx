@@ -83,7 +83,7 @@ const HorizontalMenu = ({ }) => {
       >
         <SubMenu label="dashboards" icon={<i className="tabler-smart-home" />}>
           <MenuItem
-            href="/dashboards/crm"
+            href="/dashboard"
             icon={<i className="tabler-chart-pie-2" />}
           >
             crm

@@ -3,9 +3,10 @@ import ForgotPassword from "@views/ForgotPassword";
 
 // Server Action Imports
 import { getServerMode } from "@core/utils/serverHelpers";
+import themeConfig from "@configs/themeConfig";
 
 export const metadata = {
-  title: "Forgot Password",
+  title: `${themeConfig.templateName} - Forgot Password`,
   description: "Forgotten Password to your account",
 };
 

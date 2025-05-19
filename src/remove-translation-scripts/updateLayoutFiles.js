@@ -41,7 +41,7 @@ export const updateLayoutFile = async () => {
 // Update Private routes Layout file
 export const updateDashboardLayoutFile = async () => {
   consola.start("Updating dashboard layout file...");
-  const filePath = "src/app/(dashboard)/(private)/layout.jsx";
+  const filePath = "src/app/(admin)/layout.jsx";
   let content = await fs.promises.readFile(filePath, "utf8");
 
   // Add disableDirection to <Customizer> if not already present

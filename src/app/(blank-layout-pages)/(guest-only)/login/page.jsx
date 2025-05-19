@@ -1,11 +1,12 @@
 // Component Imports
 import Login from "@views/Login";
+import themeConfig from "@configs/themeConfig";
 
 // Server Action Imports
 import { getServerMode } from "@core/utils/serverHelpers";
 
 export const metadata = {
-  title: "Login",
+  title: `${themeConfig.templateName} - Login`,
   description: "Login to your account",
 };
 
