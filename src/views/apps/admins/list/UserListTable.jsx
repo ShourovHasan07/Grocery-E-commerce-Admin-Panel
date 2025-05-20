@@ -34,10 +34,11 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 
+// Util Imports
+import { formattedDate } from "@/utils/formatters";
+
 // Component Imports
 import TableFilters from "./TableFilters";
-import AddUserDrawer from "./AddUserDrawer";
-import OptionMenu from "@core/components/option-menu";
 import TablePaginationComponent from "@components/TablePaginationComponent";
 import CustomTextField from "@core/components/mui/TextField";
 import CustomAvatar from "@core/components/mui/Avatar";
@@ -157,50 +158,21 @@ const UserListTable = ({ tableData }) => {
         cell: ({ row }) => <Typography>{row.original.id}</Typography>,
       },
       columnHelper.accessor("fullName", {
-        header: "User",
-        cell: ({ row }) => (
-          <div className="flex items-center gap-4">
-            {getAvatar({
-              avatar: row.original.avatar,
-              fullName: row.original.fullName,
-            })}
-            <div className="flex flex-col">
-              <Typography color="text.primary" className="font-medium">
-                {row.original.fullName}
-              </Typography>
-              <Typography variant="body2">{row.original.username}</Typography>
-            </div>
-          </div>
-        ),
+        header: "Name",
+        cell: ({ row }) => <Typography>{row.original.fullName}</Typography>,
       }),
-      columnHelper.accessor("role", {
+      {
+        header: "Email",
+        cell: ({ row }) => <Typography>{row.original.email}</Typography>,
+      },
+      {
+        header: "Phone",
+        cell: ({ row }) => <Typography>{row.original.contact}</Typography>,
+      },
+      {
         header: "Role",
-        cell: ({ row }) => (
-          <div className="flex items-center gap-2">
-            <Icon
-              className={userRoleObj[row.original.role].icon}
-              sx={{
-                color: `var(--mui-palette-${userRoleObj[row.original.role].color}-main)`,
-              }}
-            />
-            <Typography className="capitalize" color="text.primary">
-              {row.original.role}
-            </Typography>
-          </div>
-        ),
-      }),
-      columnHelper.accessor("currentPlan", {
-        header: "Plan",
-        cell: ({ row }) => (
-          <Typography className="capitalize" color="text.primary">
-            {row.original.currentPlan}
-          </Typography>
-        ),
-      }),
-      columnHelper.accessor("billing", {
-        header: "Billing",
-        cell: ({ row }) => <Typography>{row.original.billing}</Typography>,
-      }),
+        cell: ({ row }) => <Typography>{row.original.role}</Typography>,
+      },
       columnHelper.accessor("status", {
         header: "Status",
         cell: ({ row }) => (
@@ -215,6 +187,18 @@ const UserListTable = ({ tableData }) => {
           </div>
         ),
       }),
+      columnHelper.accessor("createdAt", {
+        header: "Created At",
+        cell: ({ row }) => (
+          <Typography>{formattedDate(row.original.createdAt)}</Typography>
+        ),
+      }),
+      {
+        header: "Updated At",
+        cell: ({ row }) => (
+          <Typography>{formattedDate(row.original.updatedAt)}</Typography>
+        ),
+      },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [data, filteredData],

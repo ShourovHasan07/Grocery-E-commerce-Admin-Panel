@@ -1,5 +1,5 @@
 // Component Imports
-import UserList from "@/views/apps/admins/list";
+import UserCreate from "@/views/apps/admins/create";
 
 // Data Imports
 import { getUserData } from "@/app/server/actions";
@@ -22,9 +22,37 @@ import { getUserData } from "@/app/server/actions";
 } */
 const UserListApp = async () => {
   // Vars
-  const data = await getUserData();
+  // const data = await getUserData();
+  const data = {
+    'roles': [{
+      id: 1,
+      name: "Admin",
+      description: "Administrator role with full access"
+    }, {
+      id: 2,
+      name: "Editor",
+      description: "Editor role with limited access"
+    }, {
+      id: 3,
+      name: "Viewer",
+      description: "Viewer role with read-only access"
+    }],
+    'statuses': [{
+      id: 1,
+      name: "Active",
+      description: "User is active and has access"
+    }, {
+      id: 2,
+      name: "Inactive",
+      description: "User is inactive and does not have access"
+    }, {
+      id: 3,
+      name: "Pending",
+      description: "User is pending approval"
+    }],
+  };
 
-  return <UserList userData={data} />;
+  return <UserCreate userData={data} />;
 };
 
 export default UserListApp;
