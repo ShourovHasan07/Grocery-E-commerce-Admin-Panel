@@ -33,6 +33,8 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 
+import apiHelper from "@/utils/apiHelper";
+
 import AddDrawer from './AddDrawer'
 
 // Util Imports
@@ -104,7 +106,21 @@ const ListTable = ({ tableData }) => {
   const [globalFilter, setGlobalFilter] = useState("");
   const [addDrawerOpen, setAddDrawerOpen] = useState(false)
 
-  // Hooks
+  const handleDelete = async (id) => {
+    try {
+      // Sign out from the app
+      console.log("Deleting user with ID:", id);
+
+      // const result = await apiHelper.delete(`/categories/${id}`);
+
+      setData(data?.filter((item) => item.id !== id))
+    } catch (error) {
+      console.error(error);
+
+      // Show above error in a toast like following
+      // toastService.error((err as Error).message)
+    }
+  };
 
   const columns = useMemo(
     () => [
@@ -118,13 +134,7 @@ const ListTable = ({ tableData }) => {
               </Link>
             </IconButton>
 
-            <IconButton
-              onClick={() =>
-                setData(
-                  data?.filter((item) => item.id !== row.original.id),
-                )
-              }
-            >
+            <IconButton onClick={() => handleDelete(row.original.id)}>
               <i className="tabler-trash text-textSecondary" />
             </IconButton>
           </div>
