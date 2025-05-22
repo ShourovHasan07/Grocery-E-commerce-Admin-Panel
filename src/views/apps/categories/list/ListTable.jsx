@@ -97,7 +97,7 @@ const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
   // States
-  const dataObj = tableData.categories;
+  const dataObj = tableData?.categories || [];
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState(...[dataObj]);
   const [filteredData, setFilteredData] = useState(data);

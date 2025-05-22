@@ -28,6 +28,33 @@ export const isToday = date => {
     && date.getFullYear() === today.getFullYear())
 }
 
+// 👉 isJWT
+export const isJWT = token => {
+  return token && token.split('.').length === 3;
+}
+
+// 👉 parseJWT
+export const parseJWT = token => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+
+
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    // console.error('JWT parsing error:', error);
+
+    return null;
+  }
+}
+
 // 👉 Status
 export const activeStatusLabel = status => {
   switch (status) {
