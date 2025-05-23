@@ -4,7 +4,6 @@ import { authOptions } from "@/libs/auth";
 
 class ApiHelper {
   constructor() {
-    this.baseUrl = process.env.ADMIN_API_BASE_URL;
     this.defaultHeaders = {
       'Content-Type': 'application/json',
     };
@@ -56,6 +55,10 @@ class ApiHelper {
   // Generic API call method
   async makeApiCall(endpoint, options = {}, session = null) {
     try {
+      const baseUrl = process.env.NEXT_PUBLIC_ADMIN_API_BASE_URL;
+
+      // console.log('Base URL:', baseUrl);
+
       const {
         method = 'GET',
         body = null,
@@ -65,7 +68,7 @@ class ApiHelper {
       } = options;
 
       // Build URL with query parameters
-      const url = new URL(`${this.baseUrl}${endpoint}`);
+      const url = new URL(`${endpoint}`, `${baseUrl}/`);
 
       Object.keys(queryParams).forEach(key => {
         if (queryParams[key] !== undefined && queryParams[key] !== null) {
@@ -207,31 +210,3 @@ const apiHelper = new ApiHelper();
 // Export both the class and instance
 export { ApiHelper };
 export default apiHelper;
-
-// Alternative functional approach
-export const api = {
-  // Simple wrapper functions
-  async call(endpoint, options = {}, session = null) {
-    return apiHelper.makeApiCall(endpoint, options, session);
-  },
-
-  async get(endpoint, params = {}, session = null) {
-    return apiHelper.get(endpoint, params, session);
-  },
-
-  async post(endpoint, data = null, session = null) {
-    return apiHelper.post(endpoint, data, session);
-  },
-
-  async put(endpoint, data = null, session = null) {
-    return apiHelper.put(endpoint, data, session);
-  },
-
-  async patch(endpoint, data = null, session = null) {
-    return apiHelper.patch(endpoint, data, session);
-  },
-
-  async delete(endpoint, session = null) {
-    return apiHelper.delete(endpoint, session);
-  }
-};

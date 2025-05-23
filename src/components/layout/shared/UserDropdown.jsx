@@ -21,6 +21,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 
 // Third-party Imports
+import { toast } from "react-toastify";
 import { signOut, useSession } from "next-auth/react";
 
 // Hook Imports
@@ -72,7 +73,7 @@ const UserDropdown = () => {
       console.error(error);
 
       // Show above error in a toast like following
-      // toastService.error((err as Error).message)
+      toast.error(error.message)
     }
   };
 

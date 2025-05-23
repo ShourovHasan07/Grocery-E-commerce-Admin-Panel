@@ -28,7 +28,7 @@ export const checkTokenExpiration = async (session) => {
     }
 
     // Method 2: Make a verification request to your external API
-    const response = await fetch(`${process.env.API_BASE_URL}/auth/profile`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${apiToken}`,

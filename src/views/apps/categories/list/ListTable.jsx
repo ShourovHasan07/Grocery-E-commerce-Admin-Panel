@@ -18,6 +18,7 @@ import MenuItem from "@mui/material/MenuItem";
 
 
 // Third-party Imports
+import { toast } from "react-toastify";
 import classnames from "classnames";
 import { rankItem } from "@tanstack/match-sorter-utils";
 import {
@@ -104,21 +105,30 @@ const ListTable = ({ tableData }) => {
   const [data, setData] = useState(...[dataObj]);
   const [filteredData, setFilteredData] = useState(data);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [addDrawerOpen, setAddDrawerOpen] = useState(false)
+  const [addDrawerOpen, setAddDrawerOpen] = useState(false);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (itemId) => {
     try {
-      // Sign out from the app
-      console.log("Deleting user with ID:", id);
+      const deleteEndpoint = `categories/${itemId}`;
 
-      // const result = await apiHelper.delete(`/categories/${id}`);
+      // call the delete API
+      const res = await apiHelper.delete(deleteEndpoint);
 
-      setData(data?.filter((item) => item.id !== id))
+      // console.log('Delete result:', res);
+
+      // Update the data state after successful deletion
+      if (res?.success && res?.data?.success) {
+        setData(prevData => prevData.filter((item) => item.id !== itemId));
+        setFilteredData(prevData => prevData.filter((item) => item.id !== itemId));
+
+        toast.success("Deleted successfully");
+      }
+
     } catch (error) {
-      console.error(error);
+      console.error('Delete failed:', error);
 
-      // Show above error in a toast like following
-      // toastService.error((err as Error).message)
+      // Show error in toast
+      toast.error(error.message)
     }
   };
 

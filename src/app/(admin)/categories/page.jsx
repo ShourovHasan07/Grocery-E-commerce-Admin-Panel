@@ -13,21 +13,7 @@ const getCategoryData = async () => {
   if (session.accessToken) {
     try {
       // Fetching the categories data
-
-      // const res = await fetch(`${process.env.ADMIN_API_BASE_URL}/categories?pageSize=200`, {
-      //   method: 'GET',
-      //   headers: {
-      //     'Authorization': `Bearer ${session.accessToken}`,
-      //     'Content-Type': 'application/json'
-      //   }
-      // });
-
-      // if (res.ok) {
-      //   return res.json();
-      // }
-
-      // Using the API helper - much cleaner!
-      const result = await apiHelper.get('/categories', { pageSize: 200 }, session);
+      const result = await apiHelper.get('categories', { pageSize: 200 }, session);
 
       if (result.success) {
         return result.data;
