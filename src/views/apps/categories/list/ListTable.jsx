@@ -34,6 +34,8 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 
+import ConfirmDialog from "@components/dialogs/ConfirmDialog";
+
 import apiHelper from "@/utils/apiHelper";
 
 import AddDrawer from './AddDrawer'
@@ -106,6 +108,11 @@ const ListTable = ({ tableData }) => {
   const [filteredData, setFilteredData] = useState(data);
   const [globalFilter, setGlobalFilter] = useState("");
 
+  const [dialogOpen, setDialogOpen] = useState({
+    open: false,
+    data: {},
+  });
+
   const [addDrawerOpen, setAddDrawerOpen] = useState({
     open: false,
     type: "create",
@@ -127,6 +134,12 @@ const ListTable = ({ tableData }) => {
       if (res?.success && res?.data?.success) {
         setData(prevData => prevData.filter((item) => item.id !== itemId));
         setFilteredData(prevData => prevData.filter((item) => item.id !== itemId));
+
+        setDialogOpen((prevState) => ({
+          ...prevState,
+          open: !prevState.open,
+          data: {},
+        }));
 
         toast.success("Deleted successfully");
       }
@@ -156,7 +169,11 @@ const ListTable = ({ tableData }) => {
               <i className="tabler-edit text-textPrimary" />
             </IconButton>
 
-            <IconButton onClick={() => handleDelete(row.original.id)}>
+            <IconButton onClick={() => setDialogOpen((prevState) => ({
+              ...prevState,
+              open: !prevState.open,
+              data: row.original
+            }))}>
               <i className="tabler-trash text-textSecondary" />
             </IconButton>
           </div>
@@ -358,6 +375,16 @@ const ListTable = ({ tableData }) => {
         userData={data}
         setData={setData}
         setType={addDrawerOpen.type}
+      />
+
+      <ConfirmDialog
+        dialogData={dialogOpen}
+        handleCloseDialog={() => setDialogOpen((prevState) => ({
+          ...prevState,
+          open: !prevState.open,
+          data: {},
+        }))}
+        handleDelete={() => { handleDelete(dialogOpen.data.id); }}
       />
     </>
   );
