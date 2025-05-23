@@ -11,6 +11,35 @@ export const isNullOrUndefined = value => {
   return value === null || value === undefined
 }
 
+export const stringToBoolean = (stringValue) => {
+  if (stringValue === null || stringValue === undefined) {
+    return false;
+  }
+
+  if (typeof stringValue === 'boolean') {
+    return stringValue;
+  }
+
+  switch (stringValue?.toLowerCase()?.trim()) {
+    case "true":
+    case "yes":
+    case "1":
+    case 1:
+      return true;
+
+    case "false":
+    case "no":
+    case "0":
+    case 0:
+    case null:
+    case undefined:
+      return false;
+
+    default:
+      return false;
+  }
+}
+
 // 👉 IsEmptyArray
 export const isEmptyArray = arr => {
   return Array.isArray(arr) && arr.length === 0

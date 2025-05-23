@@ -24,5 +24,5 @@ export const formattedDate = (value, dateFormat = 'yyyy-MM-dd HH:mm:ss') => {
   if (!value)
     return value
 
-  return format(new TZDate(value, "+00:00"), dateFormat);
+  return format(new TZDate(value, "+06:00"), dateFormat);
 }

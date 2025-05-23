@@ -105,7 +105,14 @@ const ListTable = ({ tableData }) => {
   const [data, setData] = useState(...[dataObj]);
   const [filteredData, setFilteredData] = useState(data);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [addDrawerOpen, setAddDrawerOpen] = useState(false);
+
+  const [addDrawerOpen, setAddDrawerOpen] = useState({
+    open: false,
+    type: "create",
+    data: {},
+  });
+
+  // console.log("Data: ", addDrawerOpen.open);
 
   const handleDelete = async (itemId) => {
     try {
@@ -138,10 +145,15 @@ const ListTable = ({ tableData }) => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-            <IconButton>
-              <Link href="#" className="flex">
-                <i className="tabler-edit text-textPrimary" />
-              </Link>
+            <IconButton
+              onClick={() => setAddDrawerOpen((prevState) => ({
+                ...prevState,
+                open: !prevState.open,
+                type: "edit",
+                data: row.original
+              }))}
+            >
+              <i className="tabler-edit text-textPrimary" />
             </IconButton>
 
             <IconButton onClick={() => handleDelete(row.original.id)}>
@@ -222,7 +234,7 @@ const ListTable = ({ tableData }) => {
   return (
     <>
       <Card>
-        <CardHeader title="Admin List" className="pbe-4" />
+        <CardHeader title="Category List" className="pbe-4" />
         <TableFilters setData={setFilteredData} tableData={data} />
         <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
           <CustomTextField
@@ -239,7 +251,12 @@ const ListTable = ({ tableData }) => {
             <Button
               variant='contained'
               startIcon={<i className='tabler-plus' />}
-              onClick={() => setAddDrawerOpen(!addDrawerOpen)}
+              onClick={() => setAddDrawerOpen((prevState) => ({
+                ...prevState,
+                open: !prevState.open,
+                type: "create",
+                data: {}
+              }))}
               className='max-sm:is-full'
             >
               Add New Category
@@ -331,10 +348,16 @@ const ListTable = ({ tableData }) => {
         />
       </Card>
       <AddDrawer
-        open={addDrawerOpen}
-        handleClose={() => setAddDrawerOpen(!addDrawerOpen)}
+        drawerData={addDrawerOpen}
+        handleClose={() => setAddDrawerOpen((prevState) => ({
+          ...prevState,
+          open: !prevState.open,
+          type: prevState.type,
+          data: {},
+        }))}
         userData={data}
         setData={setData}
+        setType={addDrawerOpen.type}
       />
     </>
   );

@@ -6,6 +6,8 @@ import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid2";
 import MenuItem from "@mui/material/MenuItem";
 
+import { stringToBoolean } from "@/utils/helpers";
+
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
 
@@ -17,7 +19,7 @@ const TableFilters = ({ setData, tableData }) => {
   useEffect(() => {
     const filteredData = tableData?.filter((item) => {
       if (search && !item.name.toLowerCase().includes(search.toLowerCase())) return false;
-      if (status && item.status !== status) return false;
+      if (status && status != '' && item.status !== stringToBoolean(status)) return false;
 
       return true;
     });
