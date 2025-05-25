@@ -1,10 +1,7 @@
 "use client";
 
 // React Imports
-import { useEffect, useState, useMemo } from "react";
-
-// Next Imports
-import Link from "next/link";
+import { useState, useMemo } from "react";
 
 // MUI Imports
 import Card from "@mui/material/Card";
@@ -15,6 +12,8 @@ import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
 import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
+import CustomAvatar from "@core/components/mui/Avatar";// Util Imports
+import { getInitials } from "@/utils/getInitials";
 
 
 // Third-party Imports
@@ -65,36 +64,6 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 
   // Return if the item should be filtered in/out
   return itemRank.passed;
-};
-
-const DebouncedInput = ({
-  value: initialValue,
-  onChange,
-  debounce = 500,
-  ...props
-}) => {
-  // States
-  const [value, setValue] = useState(initialValue);
-
-  useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value);
-    }, debounce);
-
-    return () => clearTimeout(timeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
-
-  return (
-    <CustomTextField
-      {...props}
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-    />
-  );
 };
 
 // Column Definitions
@@ -188,6 +157,17 @@ const ListTable = ({ tableData }) => {
         header: "Name",
         cell: ({ row }) => <Typography>{row.original.name}</Typography>,
       },
+      columnHelper.accessor("image", {
+        header: "Image",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-3">
+            {getAvatar({
+              avatar: row.original.image,
+              name: row.original.name,
+            })}
+          </div>
+        ),
+      }),
       columnHelper.accessor("status", {
         header: "Status",
         cell: ({ row }) => (
@@ -247,6 +227,16 @@ const ListTable = ({ tableData }) => {
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
   });
+
+  const getAvatar = (params) => {
+    const { avatar, name } = params;
+
+    if (avatar) {
+      return <CustomAvatar src={avatar} size={34} />;
+    } else {
+      return <CustomAvatar size={34}>{getInitials(name)}</CustomAvatar>;
+    }
+  };
 
   return (
     <>

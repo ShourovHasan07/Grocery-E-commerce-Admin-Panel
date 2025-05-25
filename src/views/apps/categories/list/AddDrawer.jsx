@@ -1,5 +1,5 @@
 // React Imports
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // MUI Imports
 import Button from "@mui/material/Button";
@@ -7,16 +7,15 @@ import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 
 import { useForm, Controller } from "react-hook-form";
+// Zod Imports
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 
 // Third-party Imports
 import { toast } from "react-toastify";
-
-import consola from "consola";
 
 import apiHelper from "@/utils/apiHelper";
 
@@ -30,6 +29,26 @@ const initialData = {
   image: "",
 };
 
+// Add validation schema
+const schema = z.object({
+  name: z.string().min(1, "Name is required"),
+  active: z.boolean().default(true),
+  image: z
+    .any()
+    .refine((file) => !file || (file instanceof FileList && file.length > 0), {
+      message: "Image is required",
+    })
+    .refine(
+      (file) =>
+        !file ||
+        (file instanceof FileList &&
+          ["image/jpeg", "image/png"].includes(file[0]?.type)),
+      {
+        message: "Only .jpg, .jpeg, and .png formats are supported",
+      }
+    ),
+});
+
 const AddDrawer = (props) => {
   // Props
   const { drawerData, handleClose, userData, setData, setType } = props;
@@ -38,6 +57,8 @@ const AddDrawer = (props) => {
 
   // States
   const [formData, setFormData] = useState(initialData);
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
 
   // Hooks
   const {
@@ -47,6 +68,7 @@ const AddDrawer = (props) => {
     formState: { errors },
     setError,
   } = useForm({
+    resolver: zodResolver(schema),
     defaultValues: formData,
   });
 
@@ -60,97 +82,116 @@ const AddDrawer = (props) => {
 
       setFormData(newFormData);
       resetForm(newFormData); // This will update the form fields
+      setImagePreview(null);
     } else {
       setFormData(initialData);
       resetForm(initialData);
+      setImagePreview(null);
+    }
+
+    if (data?.image) {
+      setImagePreview(data.image);
+    } else {
+      setImagePreview(null);
     }
   }, [data, resetForm]);
 
-  const onSubmit = async (formData) => {
-    consola.log("Form data submitted:", formData);
-
-    // Convert the active status to a string
-
-    try {
-      const createData = {
-        name: formData.name.trim(),
-        status: formData.active.toString(),
+  const handleImageChange = (files, onChange) => {
+    if (files?.[0]) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target.result);
       };
+      reader.readAsDataURL(files[0]);
+    } else {
+      setImagePreview(null);
+    }
+    onChange(files);
+  };
+
+  // Replace existing onSubmit function
+  const onSubmit = async (formData) => {
+    try {
+      const form = new FormData();
+      form.append("name", formData.name.trim());
+      form.append("status", formData.active.toString());
+
+      // Append image if exists
+      if (formData.image?.[0]) {
+        form.append("image", formData.image[0]);
+      }
 
       let res, toastMessage;
+      const headerConfig = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      };
 
       if (setType === 'edit') {
-        // call the edit API
-        res = await apiHelper.put(`categories/${data.id}`, createData);
+        res = await apiHelper.put(`categories/${data.id}`, form, null, headerConfig);
         toastMessage = "Category updated successfully";
       } else {
-        // call the create API
-        res = await apiHelper.post('categories', createData);
+        res = await apiHelper.post('categories', form, null, headerConfig);
         toastMessage = "Category created successfully";
       }
 
       if (!res?.success && (res?.status === 400 || res?.status === 404)) {
-
         if (res?.status === 404) {
           toast.error("Category not found");
-
           return;
         }
 
         let errors = res?.data?.errors || [];
-
         if (errors) {
           Object.keys(errors).forEach(key => {
             setError(key, {
               type: "server",
               message: errors[key]
-            })
-          })
+            });
+          });
         }
-
         return;
       }
 
-
-      // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {
         if (setType === 'edit') {
-          // update existing data
           const updatedData = userData.map(item =>
             item.id === res?.data?.category?.id
               ? { ...item, ...res?.data?.category }
               : item
           );
-
           setData(updatedData);
         } else {
-          // Add the new category to the existing data
           setData([res?.data?.category, ...(userData ?? [])]);
         }
 
         handleClose();
         setFormData(initialData);
-        resetForm({
-          name: "",
-          active: true,
-          image: "",
-        });
-
+        setImagePreview(null);
+        resetForm(initialData);
+        // Reset file input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
         toast.success(toastMessage);
       }
 
     } catch (error) {
-      // console.error('Created failed:', error);
-
-      // Show error in toast
-      toast.error(error.message)
+      console.error('Operation failed:', error);
+      toast.error(error.message || 'Something went wrong');
     }
-
   };
 
   const handleReset = () => {
     handleClose();
     setFormData(initialData);
+    setImagePreview(null);
+    resetForm(initialData);
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -191,38 +232,38 @@ const AddDrawer = (props) => {
               />
             )}
           />
+
           <Controller
             name="image"
             control={control}
-            render={({ field }) => (
-              <CustomTextField
-                {...field}
-                fullWidth
-                label="Upload Image"
-                variant="outlined"
-                size="small"
-                type="file"
-                className="hidden"
-              />
-            )}
-          />
-
-          <Controller
-            name="active"
-            control={control}
-            render={({ field }) => {
-              return (
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={Boolean(field.value)}
-                      onChange={(e) => field.onChange(e.target.checked)}
-                    />
-                  }
-                  label="Active"
+            render={({ field: { onChange, value, ...field } }) => (
+              <div className="space-y-2">
+                <CustomTextField
+                  {...field}
+                  type="file"
+                  fullWidth
+                  label="Upload Image"
+                  variant="outlined"
+                  size="small"
+                  inputRef={fileInputRef}
+                  inputProps={{
+                    accept: "image/*",
+                    onChange: (e) => handleImageChange(e.target.files, onChange),
+                  }}
+                  error={!!errors.image}
+                  helperText={errors.image?.message}
                 />
-              );
-            }}
+                {imagePreview && (
+                  <div className="mt-2">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="max-h-[100px] rounded-md"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
           />
 
           <div className="flex items-center gap-4">
