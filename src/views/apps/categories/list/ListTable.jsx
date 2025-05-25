@@ -214,8 +214,7 @@ const ListTable = ({ tableData }) => {
         pageSize: 10,
       },
     },
-    enableRowSelection: true, //enable row selection for all rows
-    // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
+    enableRowSelection: true,
     globalFilterFn: fuzzyFilter,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
@@ -232,9 +231,9 @@ const ListTable = ({ tableData }) => {
     const { avatar, name } = params;
 
     if (avatar) {
-      return <CustomAvatar src={avatar} size={34} />;
+      return <CustomAvatar src={avatar} size={50} />;
     } else {
-      return <CustomAvatar size={34}>{getInitials(name)}</CustomAvatar>;
+      return <CustomAvatar size={50}>{getInitials(name)}</CustomAvatar>;
     }
   };
 

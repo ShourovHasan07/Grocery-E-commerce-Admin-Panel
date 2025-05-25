@@ -1,7 +1,7 @@
 "use client";
 
 // React Imports
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 
 // Next Imports
 import Link from "next/link";
@@ -12,7 +12,6 @@ import CardHeader from "@mui/material/CardHeader";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
-import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 import { styled } from "@mui/material/styles";
 import TablePagination from "@mui/material/TablePagination";
@@ -65,44 +64,6 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
   return itemRank.passed;
 };
 
-const DebouncedInput = ({
-  value: initialValue,
-  onChange,
-  debounce = 500,
-  ...props
-}) => {
-  // States
-  const [value, setValue] = useState(initialValue);
-
-  useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value);
-    }, debounce);
-
-    return () => clearTimeout(timeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
-
-  return (
-    <CustomTextField
-      {...props}
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-    />
-  );
-};
-
-// Vars
-const userRoleObj = {
-  admin: { icon: "tabler-crown", color: "error" },
-  author: { icon: "tabler-device-desktop", color: "warning" },
-  editor: { icon: "tabler-edit", color: "info" },
-  maintainer: { icon: "tabler-chart-pie", color: "success" },
-  subscriber: { icon: "tabler-user", color: "primary" },
-};
 
 const userStatusObj = {
   active: "success",

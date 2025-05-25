@@ -55,10 +55,12 @@ const AddDrawer = (props) => {
 
   const { data } = drawerData;
 
+  // refs
+  const fileInputRef = useRef(null);
   // States
   const [formData, setFormData] = useState(initialData);
   const [imagePreview, setImagePreview] = useState(null);
-  const fileInputRef = useRef(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Hooks
   const {
@@ -81,12 +83,10 @@ const AddDrawer = (props) => {
       };
 
       setFormData(newFormData);
-      resetForm(newFormData); // This will update the form fields
-      setImagePreview(null);
+      resetForm(newFormData);
     } else {
       setFormData(initialData);
       resetForm(initialData);
-      setImagePreview(null);
     }
 
     if (data?.image) {
@@ -109,8 +109,9 @@ const AddDrawer = (props) => {
     onChange(files);
   };
 
-  // Replace existing onSubmit function
+  // form submission
   const onSubmit = async (formData) => {
+    setIsSubmitting(true);
     try {
       const form = new FormData();
       form.append("name", formData.name.trim());
@@ -178,8 +179,9 @@ const AddDrawer = (props) => {
       }
 
     } catch (error) {
-      console.error('Operation failed:', error);
       toast.error(error.message || 'Something went wrong');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -267,14 +269,24 @@ const AddDrawer = (props) => {
           />
 
           <div className="flex items-center gap-4">
-            <Button variant="contained" type="submit">
+            <Button
+              variant="contained"
+              type="submit"
+              disabled={isSubmitting}
+              endIcon={
+                isSubmitting ? (
+                  <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' />
+                ) : null
+              }
+            >
               Submit
             </Button>
             <Button
               variant="tonal"
               color="error"
               type="reset"
-              onClick={() => handleReset()}
+              onClick={handleReset}
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
