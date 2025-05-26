@@ -72,21 +72,21 @@ const StyledSubMenu = styled.li`
 
   > .${menuClasses.button} {
     ${({
+  level,
+  disabled,
+  active,
+  children,
+  isCollapsed,
+  isPopoutWhenCollapsed,
+}) =>
+    menuButtonStyles({
       level,
-      disabled,
       active,
+      disabled,
       children,
       isCollapsed,
       isPopoutWhenCollapsed,
-    }) =>
-      menuButtonStyles({
-        level,
-        active,
-        disabled,
-        children,
-        isCollapsed,
-        isPopoutWhenCollapsed,
-      })};
+    })};
     ${({ buttonStyles }) => buttonStyles};
   }
 `;

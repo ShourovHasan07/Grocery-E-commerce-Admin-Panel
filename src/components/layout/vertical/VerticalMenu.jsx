@@ -73,7 +73,7 @@ const VerticalMenu = ({ scrollMenu }) => {
           Dashboard
         </MenuItem>
 
-        <SubMenu label="Admin" icon={<i className="tabler-users" />}>
+        <SubMenu label="Admins" icon={<i className="tabler-users" />}>
           <MenuItem href="/admins/create">New Admin</MenuItem>
           <MenuItem href="/admins">Admin List</MenuItem>
         </SubMenu>
@@ -81,6 +81,11 @@ const VerticalMenu = ({ scrollMenu }) => {
         <MenuItem href="/categories" icon={<i className="tabler-smart-home" />}>
           Categories
         </MenuItem>
+
+        <SubMenu label="Experts" icon={<i className="tabler-users" />}>
+          <MenuItem href="/experts/create">New Expert</MenuItem>
+          <MenuItem href="/experts">Expert List</MenuItem>
+        </SubMenu>
 
       </Menu>
     </ScrollWrapper>
