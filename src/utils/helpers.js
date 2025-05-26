@@ -107,3 +107,23 @@ export const activeStatusColor = status => {
       return 'secondary'
   }
 }
+
+// 👉 Popular Status
+export const popularStatusLabel = popular => {
+  switch (popular) {
+    case true:
+      return 'Yes'
+    default:
+      return 'No'
+  }
+}
+
+// 👉 Popular Color
+export const popularStatusColor = popular => {
+  switch (popular) {
+    case true:
+      return 'success'
+    default:
+      return 'secondary'
+  }
+}

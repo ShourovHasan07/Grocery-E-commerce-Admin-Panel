@@ -2,11 +2,15 @@
 import { useEffect, useRef, useState } from "react";
 
 // MUI Imports
+import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Switch from '@mui/material/Switch'
 
 import { useForm, Controller } from "react-hook-form";
 // Zod Imports
@@ -26,6 +30,7 @@ import CustomTextField from "@core/components/mui/TextField";
 const initialData = {
   name: "",
   active: true,
+  isPopular: false,
   image: "",
 };
 
@@ -33,6 +38,7 @@ const initialData = {
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
   active: z.boolean().default(true),
+  isPopular: z.boolean().default(false),
   image: z
     .any()
     .refine((file) => !file || (file instanceof FileList && file.length > 0), {
@@ -79,6 +85,7 @@ const AddDrawer = (props) => {
       const newFormData = {
         name: data?.name || "",
         active: data?.status,
+        isPopular: data?.isPopular,
         image: "",
       };
 
@@ -116,6 +123,7 @@ const AddDrawer = (props) => {
       const form = new FormData();
       form.append("name", formData.name.trim());
       form.append("status", formData.active.toString());
+      form.append("isPopular", formData.isPopular.toString());
 
       // Append image if exists
       if (formData.image?.[0]) {
@@ -267,6 +275,48 @@ const AddDrawer = (props) => {
               </div>
             )}
           />
+
+          <Grid container spacing={4}>
+            <Grid size={{ xs: 6 }}>
+              <Controller
+                name="isPopular"
+                control={control}
+                render={({ field }) => {
+                  return (
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          color='success'
+                          checked={Boolean(field.value)}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                        />
+                      }
+                      label="Popular"
+                    />
+                  );
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 6 }}>
+              <Controller
+                name="active"
+                control={control}
+                render={({ field }) => {
+                  return (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={Boolean(field.value)}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                        />
+                      }
+                      label="Active"
+                    />
+                  );
+                }}
+              />
+            </Grid>
+          </Grid>
 
           <div className="flex items-center gap-4">
             <Button

@@ -48,7 +48,7 @@ import TablePaginationComponent from "@components/TablePaginationComponent";
 import CustomTextField from "@core/components/mui/TextField";
 
 // Util Imports
-import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
+import { activeStatusLabel, activeStatusColor, popularStatusLabel, popularStatusColor } from "@/utils/helpers";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
@@ -165,6 +165,20 @@ const ListTable = ({ tableData }) => {
               avatar: row.original.image,
               name: row.original.name,
             })}
+          </div>
+        ),
+      }),
+      columnHelper.accessor("isPopular", {
+        header: "Is Popular",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-3">
+            <Chip
+              variant="tonal"
+              label={popularStatusLabel(row.original.isPopular)}
+              size="small"
+              color={popularStatusColor(row.original.isPopular)}
+              className="capitalize"
+            />
           </div>
         ),
       }),
