@@ -13,6 +13,7 @@ import Checkbox from "@mui/material/Checkbox";
 import Switch from '@mui/material/Switch'
 
 import { useForm, Controller } from "react-hook-form";
+
 // Zod Imports
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -63,6 +64,7 @@ const AddDrawer = (props) => {
 
   // refs
   const fileInputRef = useRef(null);
+
   // States
   const [formData, setFormData] = useState(initialData);
   const [imagePreview, setImagePreview] = useState(null);
@@ -106,21 +108,26 @@ const AddDrawer = (props) => {
   const handleImageChange = (files, onChange) => {
     if (files?.[0]) {
       const reader = new FileReader();
+
       reader.onload = (e) => {
         setImagePreview(e.target.result);
       };
+
       reader.readAsDataURL(files[0]);
     } else {
       setImagePreview(null);
     }
+
     onChange(files);
   };
 
   // form submission
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
+
     try {
       const form = new FormData();
+
       form.append("name", formData.name.trim());
       form.append("status", formData.active.toString());
       form.append("isPopular", formData.isPopular.toString());
@@ -131,6 +138,7 @@ const AddDrawer = (props) => {
       }
 
       let res, toastMessage;
+
       const headerConfig = {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -148,10 +156,12 @@ const AddDrawer = (props) => {
       if (!res?.success && (res?.status === 400 || res?.status === 404)) {
         if (res?.status === 404) {
           toast.error("Category not found");
-          return;
+          
+return;
         }
 
         let errors = res?.data?.errors || [];
+
         if (errors) {
           Object.keys(errors).forEach(key => {
             setError(key, {
@@ -160,7 +170,9 @@ const AddDrawer = (props) => {
             });
           });
         }
-        return;
+
+        
+return;
       }
 
       if (res?.success && res?.data?.success) {
@@ -170,6 +182,7 @@ const AddDrawer = (props) => {
               ? { ...item, ...res?.data?.category }
               : item
           );
+
           setData(updatedData);
         } else {
           setData([res?.data?.category, ...(userData ?? [])]);
@@ -179,10 +192,13 @@ const AddDrawer = (props) => {
         setFormData(initialData);
         setImagePreview(null);
         resetForm(initialData);
+
+
         // Reset file input
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
+
         toast.success(toastMessage);
       }
 
@@ -198,6 +214,8 @@ const AddDrawer = (props) => {
     setFormData(initialData);
     setImagePreview(null);
     resetForm(initialData);
+
+
     // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';

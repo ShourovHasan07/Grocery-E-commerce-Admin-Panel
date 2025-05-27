@@ -2,6 +2,7 @@
 
 // React Imports
 import { useRef, useState } from "react";
+
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
 
@@ -22,14 +23,16 @@ import { toast } from "react-toastify";
 import { Controller, useForm } from "react-hook-form";
 
 // Components Imports
+import { z } from "zod";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import CustomTextField from "@core/components/mui/TextField";
 import CustomAutocomplete from '@core/components/mui/Autocomplete'
 
 import apiHelper from "@/utils/apiHelper";
 
 // Zod Imports
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 
 const schema = z.object({
   name: z
@@ -126,13 +129,16 @@ const CreateForm = ({ categoryData }) => {
   const handleImageChange = (files, onChange) => {
     if (files?.[0]) {
       const reader = new FileReader();
+
       reader.onload = (e) => {
         setImagePreview(e.target.result);
       };
+
       reader.readAsDataURL(files[0]);
     } else {
       setImagePreview(null);
     }
+
     onChange(files);
   };
 
@@ -142,8 +148,10 @@ const CreateForm = ({ categoryData }) => {
   // form submission
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
+
     try {
       const form = new FormData();
+
       form.append("name", formData.name.trim());
       form.append("email", formData.email.trim());
       form.append("status", formData.status.toString());
@@ -153,6 +161,8 @@ const CreateForm = ({ categoryData }) => {
       form.append("title", formData.title.trim());
       form.append("hourlyRate", formData.hourlyRate);
       form.append("rating", formData.rating);
+
+
       // Append image if exists
       if (formData.image?.[0]) {
         form.append("image", formData.image[0]);
@@ -163,6 +173,7 @@ const CreateForm = ({ categoryData }) => {
       });
 
       let res;
+
       const headerConfig = {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -174,6 +185,7 @@ const CreateForm = ({ categoryData }) => {
       if (!res?.success && res?.status === 400) {
 
         let errors = res?.data?.errors || [];
+
         if (errors) {
           Object.keys(errors).forEach(key => {
             setError(key, {
@@ -182,12 +194,15 @@ const CreateForm = ({ categoryData }) => {
             });
           });
         }
-        return;
+
+        
+return;
       }
 
       if (res?.success && res?.data?.success) {
         handleReset();
         toast.success("Expert created successfully");
+
         // Optionally, redirect or perform other actions after successful creation
         router.push("/experts");
       }
@@ -202,6 +217,8 @@ const CreateForm = ({ categoryData }) => {
   const handleReset = () => {
     setImagePreview(null);
     reset();
+
+
     // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';

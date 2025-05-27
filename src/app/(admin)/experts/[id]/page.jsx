@@ -1,10 +1,12 @@
 // Next Imports
 import { getServerSession } from "next-auth/next";
+
+import Grid from "@mui/material/Grid2";
+
 import { authOptions } from "@/libs/auth";
 import apiHelper from "@/utils/apiHelper";
 
 // MUI Imports
-import Grid from "@mui/material/Grid2";
 
 // Component Imports
 import LeftOverview from "@/views/apps/experts/view/left-overview";
@@ -33,6 +35,7 @@ const getExpertData = async (id) => {
 
   return null;
 }
+
 const ExpertView = async ({ params }) => {
   // Vars
   const { id } = await params

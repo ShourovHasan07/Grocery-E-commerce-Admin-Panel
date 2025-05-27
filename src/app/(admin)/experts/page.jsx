@@ -1,7 +1,8 @@
 // Component Imports
+import { getServerSession } from 'next-auth';
+
 import ExpertList from "@/views/apps/experts/list";
 
-import { getServerSession } from 'next-auth';
 
 import { authOptions } from "@/libs/auth";
 
@@ -30,6 +31,7 @@ const getExpertData = async () => {
 
   return null;
 }
+
 const ExpertListApp = async () => {
   // Vars
   const data = await getExpertData();
