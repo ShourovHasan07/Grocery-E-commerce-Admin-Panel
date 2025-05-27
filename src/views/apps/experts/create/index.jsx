@@ -3,11 +3,11 @@ import Grid from "@mui/material/Grid2";
 
 import CreateForm from "./CreateForm";
 
-const ExpertCreate = ({ userData }) => {
+const ExpertCreate = ({ categoryData }) => {
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>
-        <CreateForm tableData={userData} />
+        <CreateForm categoryData={categoryData} />
       </Grid>
     </Grid>
   );

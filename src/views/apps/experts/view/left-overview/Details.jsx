@@ -11,21 +11,6 @@ import CustomAvatar from "@core/components/mui/Avatar";
 
 import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
 
-// Vars
-const expertData = {
-  firstName: "Seth",
-  lastName: "Hallam",
-  userName: "@shallamb",
-  billingEmail: "shallamb@gmail.com",
-  status: "active",
-  role: "Subscriber",
-  taxId: "Tax-8894",
-  contact: "+1 (234) 464-0600",
-  language: ["English"],
-  country: "France",
-  useAsBillingAddress: true,
-};
-
 const Details = ({ expertData }) => {
 
   return (

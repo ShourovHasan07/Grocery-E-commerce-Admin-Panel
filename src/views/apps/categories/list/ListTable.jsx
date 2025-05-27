@@ -14,6 +14,8 @@ import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
 import CustomAvatar from "@core/components/mui/Avatar";// Util Imports
 import { getInitials } from "@/utils/getInitials";
+import ConfirmDialog from "@components/dialogs/ConfirmDialog";
+import AddDrawer from './AddDrawer'
 
 
 // Third-party Imports
@@ -33,12 +35,7 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 
-import ConfirmDialog from "@components/dialogs/ConfirmDialog";
-
 import apiHelper from "@/utils/apiHelper";
-
-import AddDrawer from './AddDrawer'
-
 // Util Imports
 import { formattedDate } from "@/utils/formatters";
 
@@ -114,7 +111,7 @@ const ListTable = ({ tableData }) => {
       }
 
     } catch (error) {
-      console.error('Delete failed:', error);
+      // console.error('Delete failed:', error);
 
       // Show error in toast
       toast.error(error.message)

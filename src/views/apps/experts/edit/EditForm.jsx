@@ -1,7 +1,7 @@
 "use client";
 
 // React Imports
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
 
@@ -11,8 +11,6 @@ import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Chip from '@mui/material/Chip'
@@ -40,14 +38,6 @@ const schema = z.object({
     .string()
     .min(1, "This field is required")
     .email("Please enter a valid email address"),
-  password: z
-    .string()
-    .min(1, "This field is required")
-    .min(6, "Password must be at least 6 characters long"),
-  confirm_password: z
-    .string()
-    .min(1, "This field is required")
-    .min(6, "Confirm Password must be at least 6 characters long"),
   hourlyRate: z
     .string()
     .min(1, "This field is required")
@@ -87,14 +77,13 @@ const schema = z.object({
   ).default([]),
 });
 
-const CreateForm = ({ categoryData }) => {
+const EditForm = ({ expertData, categoryData }) => {
+  // console.log('expertData: ', expertData);
+
+
   // States
-  const [isPasswordShown, setIsPasswordShown] = useState(false);
-  const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   // Hooks
-
   const router = useRouter();
 
   const {
@@ -105,23 +94,19 @@ const CreateForm = ({ categoryData }) => {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirm_password: "",
-      phone: "",
-      address: "",
-      title: "",
+      ...expertData,
       image: "",
-      hourlyRate: "",
-      rating: "",
-      status: true,
-      categories: [],
-    },
-  });
+      categories: expertData.categories
+        ?.filter(expertCat =>
+          categoryData.some(availableCat => availableCat.id === expertCat.id)
+        )
+        .map(cat => ({
+          id: cat.id,
+          name: cat.name
+        })) || [],
+    }
 
-  const handleClickShowPassword = () => setIsPasswordShown((show) => !show);
-  const handleClickShowConfirmPassword = () => setIsConfirmPasswordShown((show) => !show);
+  });
 
   const handleImageChange = (files, onChange) => {
     if (files?.[0]) {
@@ -147,7 +132,6 @@ const CreateForm = ({ categoryData }) => {
       form.append("name", formData.name.trim());
       form.append("email", formData.email.trim());
       form.append("status", formData.status.toString());
-      form.append("password", formData.password.trim());
       form.append("phone", formData.phone.trim());
       form.append("address", formData.address.trim());
       form.append("title", formData.title.trim());
@@ -169,7 +153,7 @@ const CreateForm = ({ categoryData }) => {
         }
       };
 
-      res = await apiHelper.post('experts', form, null, headerConfig);
+      res = await apiHelper.put(`experts/${expertData.id}`, form, null, headerConfig);
 
       if (!res?.success && res?.status === 400) {
 
@@ -186,8 +170,7 @@ const CreateForm = ({ categoryData }) => {
       }
 
       if (res?.success && res?.data?.success) {
-        handleReset();
-        toast.success("Expert created successfully");
+        toast.success("Expert updated successfully");
         // Optionally, redirect or perform other actions after successful creation
         router.push("/experts");
       }
@@ -199,18 +182,9 @@ const CreateForm = ({ categoryData }) => {
     }
   };
 
-  const handleReset = () => {
-    setImagePreview(null);
-    reset();
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
   return (
     <Card>
-      <CardHeader title="New Expert Info" />
+      <CardHeader title="Update Expert Info" />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={{ md: 6 }}>
@@ -255,92 +229,6 @@ const CreateForm = ({ categoryData }) => {
               />
 
               <Controller
-                name="password"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    className="mb-4"
-                    label="Password"
-                    placeholder="············"
-                    id="form-validation-scheme-password"
-                    type={isPasswordShown ? "text" : "password"}
-                    slotProps={{
-                      input: {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              edge="end"
-                              onClick={handleClickShowPassword}
-                              onMouseDown={(e) => e.preventDefault()}
-                              aria-label="toggle password visibility"
-                            >
-                              <i
-                                className={
-                                  isPasswordShown
-                                    ? "tabler-eye-off"
-                                    : "tabler-eye"
-                                }
-                              />
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      },
-                    }}
-                    {...(errors.password && {
-                      error: true,
-                      helperText: errors.password.message,
-                    })}
-                  />
-                )}
-              />
-
-              <Controller
-                name="confirm_password"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    className="mb-4"
-                    label="Confirm Password"
-                    placeholder="············"
-                    id="form-validation-scheme-password-confirmed"
-                    type={isConfirmPasswordShown ? "text" : "password"}
-                    slotProps={{
-                      input: {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              edge="end"
-                              onClick={handleClickShowConfirmPassword}
-                              onMouseDown={(e) => e.preventDefault()}
-                              aria-label="toggle password visibility"
-                            >
-                              <i
-                                className={
-                                  isConfirmPasswordShown
-                                    ? "tabler-eye-off"
-                                    : "tabler-eye"
-                                }
-                              />
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      },
-                    }}
-                    {...(errors.confirm_password && {
-                      error: true,
-                      helperText: errors.confirm_password.message,
-                    })}
-                  />
-                )}
-              />
-
-              <Controller
                 name="image"
                 control={control}
                 render={({ field: { onChange, value, ...field } }) => (
@@ -352,6 +240,7 @@ const CreateForm = ({ categoryData }) => {
                       label="Upload Image"
                       variant="outlined"
                       size="small"
+                      className="mb-4"
                       inputRef={fileInputRef}
                       inputProps={{
                         accept: "image/*",
@@ -373,9 +262,6 @@ const CreateForm = ({ categoryData }) => {
                 )}
               />
 
-            </Grid>
-
-            <Grid size={{ md: 6 }}>
               <Controller
                 name="phone"
                 control={control}
@@ -394,6 +280,10 @@ const CreateForm = ({ categoryData }) => {
                   />
                 )}
               />
+
+            </Grid>
+
+            <Grid size={{ md: 6 }}>
 
               <Controller
                 name="address"
@@ -560,16 +450,6 @@ const CreateForm = ({ categoryData }) => {
 
               <Button
                 variant="tonal"
-                color="secondary"
-                type="reset"
-                onClick={handleReset}
-                disabled={isSubmitting}
-              >
-                Reset
-              </Button>
-
-              <Button
-                variant="tonal"
                 color="error"
                 component={Link}
                 href={"/experts"}
@@ -584,4 +464,4 @@ const CreateForm = ({ categoryData }) => {
   );
 };
 
-export default CreateForm;
+export default EditForm;

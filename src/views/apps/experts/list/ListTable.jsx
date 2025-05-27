@@ -5,6 +5,9 @@ import { useState, useMemo } from "react";
 
 // Next Imports
 import Link from "next/link";
+import { toast } from "react-toastify";
+
+import apiHelper from "@/utils/apiHelper";
 
 // Util Imports
 import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
@@ -18,6 +21,7 @@ import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
 import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
+import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 
 // Third-party Imports
 import classnames from "classnames";
@@ -74,6 +78,11 @@ const ListTable = ({ tableData }) => {
   const [filteredData, setFilteredData] = useState(data);
   const [globalFilter, setGlobalFilter] = useState("");
 
+  const [dialogOpen, setDialogOpen] = useState({
+    open: false,
+    id: null,
+  });
+
   // Hooks
 
   const columns = useMemo(
@@ -94,12 +103,11 @@ const ListTable = ({ tableData }) => {
               </Link>
             </IconButton>
 
-            <IconButton
-              onClick={() =>
-                setData(
-                  data?.filter((item) => item.id !== row.original.id),
-                )
-              }
+            <IconButton onClick={() => setDialogOpen((prevState) => ({
+              ...prevState,
+              open: !prevState.open,
+              id: row.original.id,
+            }))}
             >
               <i className="tabler-trash text-textSecondary" />
             </IconButton>
@@ -209,6 +217,36 @@ const ListTable = ({ tableData }) => {
       return <CustomAvatar src={avatar} size={50} />;
     } else {
       return <CustomAvatar size={50}>{getInitials(name)}</CustomAvatar>;
+    }
+  };
+
+  const handleDelete = async (itemId) => {
+    try {
+      const deleteEndpoint = `experts/${itemId}`;
+
+      // call the delete API
+      const res = await apiHelper.delete(deleteEndpoint);
+
+      // console.log('Delete result:', res);
+
+      // Update the data state after successful deletion
+      if (res?.success && res?.data?.success) {
+        setData(prevData => prevData.filter((item) => item.id !== itemId));
+        setFilteredData(prevData => prevData.filter((item) => item.id !== itemId));
+
+        setDialogOpen((prevState) => ({
+          ...prevState,
+          open: !prevState.open,
+        }));
+
+        toast.success("Deleted successfully");
+      }
+
+    } catch (error) {
+      // console.error('Delete failed:', error);
+
+      // Show error in toast
+      toast.error(error.message)
     }
   };
 
@@ -324,6 +362,16 @@ const ListTable = ({ tableData }) => {
           }}
         />
       </Card>
+
+      <ConfirmDialog
+        dialogData={dialogOpen}
+        handleCloseDialog={() => setDialogOpen((prevState) => ({
+          ...prevState,
+          open: !prevState.open,
+          id: null,
+        }))}
+        handleDelete={() => { handleDelete(dialogOpen.id); }}
+      />
     </>
   );
 };

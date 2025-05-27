@@ -1,58 +1,40 @@
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/libs/auth";
+import apiHelper from "@/utils/apiHelper";
+
 // Component Imports
 import ExpertCreate from "@/views/apps/experts/create";
 
-// Data Imports
-import { getUserData } from "@/app/server/actions";
-
-/**
- * ! If you need data using an API call, uncomment the below API code, update the `process.env.API_URL` variable in the
- * ! `.env` file found at root of your project and also update the API endpoints like `/apps/user-list` in below example.
- * ! Also, remove the above server action import and the action itself from the `src/app/server/actions.ts` file to clean up unused code
- * ! because we've used the server action for getting our static data.
- */
-/* const getUserData = async () => {
+// expert category options data
+const getCategoryData = async () => {
   // Vars
-  const res = await fetch(`${process.env.API_URL}/apps/user-list`)
+  const session = await getServerSession(authOptions)
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch userData')
+  if (session.accessToken) {
+    try {
+      // Fetching the categories data
+      const result = await apiHelper.get('experts/create/options', session);
+
+      if (result.success) {
+        return result.data;
+      }
+
+      return null;
+    } catch (error) {
+      // console.error('Error fetching categories:', error);
+
+      return null;
+    }
   }
 
-  return res.json()
-} */
-const UserListApp = async () => {
+  return null;
+}
+const ExpertCreateApp = async () => {
+  //
   // Vars
-  // const data = await getUserData();
-  const data = {
-    'roles': [{
-      id: 1,
-      name: "Admin",
-      description: "Administrator role with full access"
-    }, {
-      id: 2,
-      name: "Editor",
-      description: "Editor role with limited access"
-    }, {
-      id: 3,
-      name: "Viewer",
-      description: "Viewer role with read-only access"
-    }],
-    'statuses': [{
-      id: 1,
-      name: "Active",
-      description: "User is active and has access"
-    }, {
-      id: 2,
-      name: "Inactive",
-      description: "User is inactive and does not have access"
-    }, {
-      id: 3,
-      name: "Pending",
-      description: "User is pending approval"
-    }],
-  };
+  const { categories } = await getCategoryData();
 
-  return <ExpertCreate userData={data} />;
+  return <ExpertCreate categoryData={categories} />;
 };
 
-export default UserListApp;
+export default ExpertCreateApp;
