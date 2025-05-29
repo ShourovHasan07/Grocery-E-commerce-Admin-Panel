@@ -17,6 +17,10 @@ import ActivityTimeline from "@views/dashboards/crm/ActivityTimeline";
 // Server Action Imports
 import { getServerMode } from "@core/utils/serverHelpers";
 
+export const metadata = {
+  title: "Dashboard - AskValor",
+};
+
 const DashboardCRM = async () => {
   // Vars
   const serverMode = await getServerMode();

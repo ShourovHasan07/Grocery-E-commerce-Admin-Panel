@@ -23,9 +23,8 @@ import "@/app/globals.css";
 import "@assets/iconify-icons/generated-icons.css";
 
 export const metadata = {
-  title: "AskValor - Dashboard",
-  description:
-    "AskValor - Dashboard",
+  title: "AskValor",
+  description: "Welcome to AskValor",
 };
 
 const Layout = async ({ children }) => {

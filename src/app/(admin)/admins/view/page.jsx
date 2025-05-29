@@ -56,6 +56,9 @@ const tabContentList = (data) => ({
 
   return res.json()
 } */
+export const metadata = {
+  title: "Admins - AskValor",
+};
 const UserViewTab = async () => {
   // Vars
   const data = await getPricingData();

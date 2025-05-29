@@ -68,7 +68,10 @@ class ApiHelper {
       } = options;
 
       // Build URL with query parameters
-      const url = new URL(`${endpoint}`, `${baseUrl}/`);
+      const url = new URL(
+        endpoint.startsWith('/') ? endpoint.slice(1) : endpoint,
+        baseUrl
+      );
 
       Object.keys(queryParams).forEach(key => {
         if (queryParams[key] !== undefined && queryParams[key] !== null) {

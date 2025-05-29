@@ -31,6 +31,10 @@ const getCategoryData = async () => {
   return null;
 }
 
+export const metadata = {
+  title: "Experts - AskValor",
+};
+
 const ExpertCreateApp = async () => {
   //
   // Vars

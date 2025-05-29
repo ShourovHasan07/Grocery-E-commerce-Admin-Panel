@@ -32,6 +32,10 @@ const getExpertData = async () => {
   return null;
 }
 
+export const metadata = {
+  title: "Experts - AskValor",
+};
+
 const ExpertListApp = async () => {
   // Vars
   const data = await getExpertData();

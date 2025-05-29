@@ -73,9 +73,9 @@ const schema = z.object({
       (file) =>
         !file ||
         (file instanceof FileList &&
-          ["image/jpeg", "image/png"].includes(file[0]?.type)),
+          ["image/jpeg", "image/png", "image/svg+xml"].includes(file[0]?.type)),
       {
-        message: "Only .jpg, .jpeg, and .png formats are supported",
+        message: "Only .jpg, .jpeg, .png, and .svg formats are supported",
       }
     ),
   status: z.boolean().default(true),
@@ -195,8 +195,8 @@ const CreateForm = ({ categoryData }) => {
           });
         }
 
-        
-return;
+
+        return;
       }
 
       if (res?.success && res?.data?.success) {

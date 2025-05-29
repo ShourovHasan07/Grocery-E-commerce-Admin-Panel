@@ -6,6 +6,10 @@ import { authOptions } from "@/libs/auth";
 import CategoryList from "@/views/apps/categories/list";
 import apiHelper from "@/utils/apiHelper";
 
+export const metadata = {
+  title: "Categories - AskValor",
+};
+
 const getCategoryData = async () => {
 
   const session = await getServerSession(authOptions)

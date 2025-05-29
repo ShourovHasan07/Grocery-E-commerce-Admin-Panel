@@ -19,6 +19,11 @@ import AuthGuard from "@/hocs/AuthGuard";
 // Util Imports
 import { getMode, getSystemMode } from "@core/utils/serverHelpers";
 
+export const metadata = {
+  title: "AskValor",
+  description: "Welcome to AskValor",
+};
+
 const Layout = async (props) => {
   const { children } = props;
 

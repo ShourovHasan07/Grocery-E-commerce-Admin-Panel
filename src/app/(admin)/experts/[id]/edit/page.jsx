@@ -55,6 +55,10 @@ const getCategoryData = async () => {
   return null;
 }
 
+export const metadata = {
+  title: "Experts - AskValor",
+};
+
 const ExpertEditApp = async ({ params }) => {
   // Vars
   const { id } = await params;
