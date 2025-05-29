@@ -11,7 +11,7 @@ export const useObjectCookie = (key, fallback) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const value = useMemo(
     () => (valStr ? JSON.parse(valStr) : fallback),
-    [valStr],
+    [valStr, fallback],
   );
 
   const updateValue = (newVal) => {

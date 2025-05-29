@@ -23,6 +23,7 @@ import { getUserData } from "@/app/server/actions";
 export const metadata = {
   title: "Admins - AskValor",
 };
+
 const UserListApp = async () => {
   // Vars
   // const data = await getUserData();
