@@ -19,6 +19,8 @@ const getCategoryData = async () => {
       // Fetching the categories data
       const result = await apiHelper.get('categories', { pageSize: 200 }, session);
 
+      console.log(result)
+
       if (result.success) {
         return result.data;
       }
@@ -38,7 +40,7 @@ const ListApp = async () => {
 
   const dataCategories = await getCategoryData();
 
-  // console.log(dataCategories);
+  console.log(dataCategories);
 
   return <CategoryList tData={dataCategories} />;
 };

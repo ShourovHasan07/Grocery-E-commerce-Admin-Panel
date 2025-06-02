@@ -67,11 +67,11 @@ class ApiHelper {
         ...otherOptions
       } = options;
 
-      // Build URL with query parameters
-      const url = new URL(
-        endpoint.startsWith('/') ? endpoint.slice(1) : endpoint,
-        baseUrl
-      );
+      const normalizedBaseURL = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+      const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+      const url = new URL(normalizedEndpoint, normalizedBaseURL);
+
+      // console.log(url);
 
       Object.keys(queryParams).forEach(key => {
         if (queryParams[key] !== undefined && queryParams[key] !== null) {
