@@ -16,10 +16,10 @@ const TableFilters = ({ setData, tableData }) => {
   const [status, setStatus] = useState("");
 
   useEffect(() => {
-    const filteredData = tableData?.filter((user) => {
+    const filteredData = tableData?.filter((item) => {
       if (search &&
-        !user.name.toLowerCase().includes(search.toLowerCase()) &&
-        !user.email.toLowerCase().includes(search.toLowerCase())
+        !item.name.toLowerCase().includes(search.toLowerCase()) &&
+        !item.email.toLowerCase().includes(search.toLowerCase())
       ) return false;
       if (status && status != '' && item.status !== stringToBoolean(status)) return false;
 

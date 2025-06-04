@@ -40,7 +40,7 @@ const ListApp = async () => {
 
   const dataCategories = await getCategoryData();
 
-  console.log(dataCategories);
+  // console.log(dataCategories);
 
   return <CategoryList tData={dataCategories} />;
 };
