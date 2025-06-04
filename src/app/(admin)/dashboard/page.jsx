@@ -27,7 +27,7 @@ const DashboardCRM = async () => {
 
   return (
     <Grid container spacing={6}>
-      <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }}>
+      {/* <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }}>
         <DistributedBarChartOrder />
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }}>
@@ -84,7 +84,7 @@ const DashboardCRM = async () => {
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
         <ActivityTimeline />
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 };

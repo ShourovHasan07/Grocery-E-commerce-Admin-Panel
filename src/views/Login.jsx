@@ -192,15 +192,6 @@ const Login = ({ mode }) => {
                 Please sign-in to your account and start the adventure
               </Typography>
             </div>
-            <Alert
-              icon={false}
-              className="bg-[var(--mui-palette-primary-lightOpacity)]"
-            >
-              <Typography variant="body2" color="primary.main">
-                Email: <span className="font-medium">admin@annanovas.com</span> /
-                Pass: <span className="font-medium">An@123456</span>
-              </Typography>
-            </Alert>
             <form
               noValidate
               autoComplete="off"
