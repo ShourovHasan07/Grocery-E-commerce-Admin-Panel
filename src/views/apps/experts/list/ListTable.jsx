@@ -39,7 +39,7 @@ import {
 } from "@tanstack/react-table";
 
 import ConfirmDialog from "@components/dialogs/ConfirmDialog";
-import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
+import { activeStatusLabel, activeStatusColor, popularStatusLabel, popularStatusColor } from "@/utils/helpers";
 import apiHelper from "@/utils/apiHelper";
 
 // Util Imports
@@ -142,6 +142,10 @@ const ListTable = ({ tableData }) => {
         cell: ({ row }) => <Typography>{row.original.email}</Typography>,
       },
       {
+        header: "User Name",
+        cell: ({ row }) => <Typography>{row.original.userName}</Typography>,
+      },
+      {
         header: "Phone",
         cell: ({ row }) => <Typography>{row.original.phone}</Typography>,
       },
@@ -162,6 +166,20 @@ const ListTable = ({ tableData }) => {
               label={activeStatusLabel(row.original.status)}
               size="small"
               color={activeStatusColor(row.original.status)}
+              className="capitalize"
+            />
+          </div>
+        ),
+      }),
+      columnHelper.accessor("isPopular", {
+        header: "Verified",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-3">
+            <Chip
+              variant="tonal"
+              label={popularStatusLabel(row.original.isVerified)}
+              size="small"
+              color={popularStatusColor(row.original.isVerified)}
               className="capitalize"
             />
           </div>

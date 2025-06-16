@@ -41,6 +41,10 @@ const schema = z.object({
     .string()
     .min(1, "This field is required")
     .email("Please enter a valid email address"),
+  userName: z
+    .string()
+    .min(1, "This field is required")
+    .min(3, "User Name must be at least 3 characters long"),
   hourlyRate: z
     .string()
     .min(1, "This field is required")
@@ -69,8 +73,10 @@ const schema = z.object({
       }
     ),
   status: z.boolean().default(true),
+  isVerified: z.boolean().default(false),
   phone: z.string().default(""),
   address: z.string().default(""),
+  aboutMe: z.string().default(""),
   title: z.string().default(""),
   categories: z.array(
     z.object({
@@ -92,7 +98,6 @@ const EditForm = ({ expertData, categoryData }) => {
 
   const {
     control,
-    reset,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -140,9 +145,12 @@ const EditForm = ({ expertData, categoryData }) => {
 
       form.append("name", formData.name.trim());
       form.append("email", formData.email.trim());
+      form.append("userName", formData.userName.trim());
       form.append("status", formData.status.toString());
+      form.append("isVerified", formData.isVerified.toString());
       form.append("phone", formData.phone.trim());
       form.append("address", formData.address.trim());
+      form.append("aboutMe", formData.aboutMe.trim());
       form.append("title", formData.title.trim());
       form.append("hourlyRate", formData.hourlyRate);
       form.append("rating", formData.rating);
@@ -245,6 +253,26 @@ const EditForm = ({ expertData, categoryData }) => {
               />
 
               <Controller
+                name="userName"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <CustomTextField
+                    {...field}
+                    fullWidth
+                    value={field.value || ''}
+                    className="mb-4"
+                    label="User Name"
+                    placeholder="User name"
+                    {...(errors.userName && {
+                      error: true,
+                      helperText: errors.userName.message,
+                    })}
+                  />
+                )}
+              />
+
+              <Controller
                 name="image"
                 control={control}
                 render={({ field: { onChange, value, ...field } }) => (
@@ -292,6 +320,28 @@ const EditForm = ({ expertData, categoryData }) => {
                     {...(errors.phone && {
                       error: true,
                       helperText: errors.phone.message,
+                    })}
+                  />
+                )}
+              />
+
+              <Controller
+                name="aboutMe"
+                control={control}
+                rules={{ required: false }}
+                render={({ field }) => (
+                  <CustomTextField
+                    {...field}
+                    value={field.value || ''}
+                    fullWidth
+                    multiline
+                    minRows={8}
+                    className="mb-4"
+                    label="About Me"
+                    placeholder="About Me"
+                    {...(errors.aboutMe && {
+                      error: true,
+                      helperText: errors.aboutMe.message,
                     })}
                   />
                 )}
@@ -430,24 +480,45 @@ const EditForm = ({ expertData, categoryData }) => {
                   />
                 )}
               />
+              <div className="flex items-center gap-2 mt-2">
+                <Controller
+                  name="status"
+                  control={control}
+                  render={({ field }) => {
+                    return (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={Boolean(field.value)}
+                            onChange={(e) => field.onChange(e.target.checked)}
+                          />
+                        }
+                        label="Active"
+                      />
+                    );
+                  }}
+                />
 
-              <Controller
-                name="status"
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={Boolean(field.value)}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                        />
-                      }
-                      label="Active"
-                    />
-                  );
-                }}
-              />
+                <Controller
+                  name="isVerified"
+                  control={control}
+                  render={({ field }) => {
+                    return (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            color='success'
+                            checked={Boolean(field.value)}
+                            onChange={(e) => field.onChange(e.target.checked)}
+                          />
+                        }
+                        label="Verified"
+                      />
+                    );
+                  }}
+                />
+              </div>
+
             </Grid>
 
             <Grid size={{ xs: 12 }} className="flex gap-4">
@@ -476,7 +547,7 @@ const EditForm = ({ expertData, categoryData }) => {
           </Grid>
         </form>
       </CardContent>
-    </Card >
+    </Card>
   );
 };
 

@@ -43,6 +43,10 @@ const schema = z.object({
     .string()
     .min(1, "This field is required")
     .email("Please enter a valid email address"),
+  userName: z
+    .string()
+    .min(1, "This field is required")
+    .min(3, "User Name must be at least 3 characters long"),
   password: z
     .string()
     .min(1, "This field is required")
@@ -79,8 +83,10 @@ const schema = z.object({
       }
     ),
   status: z.boolean().default(true),
+  isVerified: z.boolean().default(false),
   phone: z.string().default(""),
   address: z.string().default(""),
+  aboutMe: z.string().default(""),
   title: z.string().default(""),
   categories: z.array(
     z.object({
@@ -110,15 +116,18 @@ const CreateForm = ({ categoryData }) => {
     defaultValues: {
       name: "",
       email: "",
+      userName: "",
       password: "",
       confirm_password: "",
       phone: "",
       address: "",
+      aboutMe: "",
       title: "",
       image: "",
       hourlyRate: "",
       rating: "",
       status: true,
+      isVerified: false,
       categories: [],
     },
   });
@@ -154,10 +163,13 @@ const CreateForm = ({ categoryData }) => {
 
       form.append("name", formData.name.trim());
       form.append("email", formData.email.trim());
+      form.append("userName", formData.userName.trim());
       form.append("status", formData.status.toString());
+      form.append("isVerified", formData.status.toString());
       form.append("password", formData.password.trim());
       form.append("phone", formData.phone.trim());
       form.append("address", formData.address.trim());
+      form.append("aboutMe", formData.aboutMe.trim());
       form.append("title", formData.title.trim());
       form.append("hourlyRate", formData.hourlyRate);
       form.append("rating", formData.rating);
@@ -358,35 +370,42 @@ const CreateForm = ({ categoryData }) => {
               />
 
               <Controller
-                name="image"
+                name="userName"
                 control={control}
-                render={({ field: { onChange, value, ...field } }) => (
-                  <div className="space-y-2">
-                    <CustomTextField
-                      {...field}
-                      type="file"
-                      fullWidth
-                      label="Upload Image"
-                      variant="outlined"
-                      size="small"
-                      inputRef={fileInputRef}
-                      inputProps={{
-                        accept: "image/*",
-                        onChange: (e) => handleImageChange(e.target.files, onChange),
-                      }}
-                      error={!!errors.image}
-                      helperText={errors.image?.message}
-                    />
-                    {imagePreview && (
-                      <div className="mt-2">
-                        <img
-                          src={imagePreview}
-                          alt="Preview"
-                          className="max-h-[50px] rounded-md"
-                        />
-                      </div>
-                    )}
-                  </div>
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <CustomTextField
+                    {...field}
+                    fullWidth
+                    className="mb-4"
+                    label="User Name"
+                    placeholder="User name"
+                    {...(errors.userName && {
+                      error: true,
+                      helperText: errors.userName.message,
+                    })}
+                  />
+                )}
+              />
+
+              <Controller
+                name="aboutMe"
+                control={control}
+                rules={{ required: false }}
+                render={({ field }) => (
+                  <CustomTextField
+                    {...field}
+                    fullWidth
+                    multiline
+                    minRows={8}
+                    className="mb-4"
+                    label="About Me"
+                    placeholder="About Me"
+                    {...(errors.aboutMe && {
+                      error: true,
+                      helperText: errors.aboutMe.message,
+                    })}
+                  />
                 )}
               />
 
@@ -513,6 +532,7 @@ const CreateForm = ({ categoryData }) => {
                   <CustomAutocomplete
                     {...field}
                     multiple
+                    className="mb-4"
                     options={categoryData || []}
                     id='categories'
                     getOptionLabel={option => option.name || ''}
@@ -543,22 +563,76 @@ const CreateForm = ({ categoryData }) => {
               />
 
               <Controller
-                name="status"
+                name="image"
                 control={control}
-                render={({ field }) => {
-                  return (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={Boolean(field.value)}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                        />
-                      }
-                      label="Active"
+                render={({ field: { onChange, value, ...field } }) => (
+                  <div className="space-y-2">
+                    <CustomTextField
+                      {...field}
+                      type="file"
+                      fullWidth
+                      label="Upload Image"
+                      variant="outlined"
+                      size="small"
+                      inputRef={fileInputRef}
+                      inputProps={{
+                        accept: "image/*",
+                        onChange: (e) => handleImageChange(e.target.files, onChange),
+                      }}
+                      error={!!errors.image}
+                      helperText={errors.image?.message}
                     />
-                  );
-                }}
+                    {imagePreview && (
+                      <div className="mt-2">
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="max-h-[50px] rounded-md"
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
               />
+              <div className="flex items-center gap-2 mt-2">
+                <Controller
+                  name="status"
+                  control={control}
+                  render={({ field }) => {
+                    return (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={Boolean(field.value)}
+                            onChange={(e) => field.onChange(e.target.checked)}
+                          />
+                        }
+                        label="Active"
+                      />
+                    );
+                  }}
+                />
+
+                <Controller
+                  name="isVerified"
+                  control={control}
+                  render={({ field }) => {
+                    return (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            color='success'
+                            checked={Boolean(field.value)}
+                            onChange={(e) => field.onChange(e.target.checked)}
+                          />
+                        }
+                        label="Verified"
+                      />
+                    );
+                  }}
+                />
+              </div>
+
             </Grid>
 
             <Grid size={{ xs: 12 }} className="flex gap-4">
@@ -597,7 +671,7 @@ const CreateForm = ({ categoryData }) => {
           </Grid>
         </form>
       </CardContent>
-    </Card >
+    </Card>
   );
 };
 

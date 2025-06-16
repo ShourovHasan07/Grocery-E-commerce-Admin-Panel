@@ -10,7 +10,7 @@ import Button from "@mui/material/Button";
 
 import CustomAvatar from "@core/components/mui/Avatar";
 
-import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
+import { activeStatusLabel, activeStatusColor, popularStatusLabel, popularStatusColor } from "@/utils/helpers";
 
 const Details = ({ expertData }) => {
 
@@ -64,6 +64,12 @@ const Details = ({ expertData }) => {
               </div>
               <div className="flex items-center flex-wrap gap-x-1.5">
                 <Typography className="font-medium" color="text.primary">
+                  User Name:
+                </Typography>
+                <Typography>{expertData.userName}</Typography>
+              </div>
+              <div className="flex items-center flex-wrap gap-x-1.5">
+                <Typography className="font-medium" color="text.primary">
                   Phone:
                 </Typography>
                 <Typography color="text.primary">{expertData.phone}</Typography>
@@ -82,13 +88,25 @@ const Details = ({ expertData }) => {
               </div>
               <div className="flex items-center flex-wrap gap-x-1.5">
                 <Typography className="font-medium" color="text.primary">
-                  Status
+                  Status:
                 </Typography>
                 <Chip
                   variant="tonal"
                   label={activeStatusLabel(expertData.status)}
                   size="small"
                   color={activeStatusColor(expertData.status)}
+                  className="capitalize"
+                />
+              </div>
+              <div className="flex items-center flex-wrap gap-x-1.5">
+                <Typography className="font-medium" color="text.primary">
+                  Verified:
+                </Typography>
+                <Chip
+                  variant="tonal"
+                  label={popularStatusLabel(expertData.isVerified)}
+                  size="small"
+                  color={popularStatusColor(expertData.isVerified)}
                   className="capitalize"
                 />
               </div>

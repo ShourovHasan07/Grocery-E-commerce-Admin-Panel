@@ -5,11 +5,11 @@ import Grid from "@mui/material/Grid2";
 // Component Imports
 import CategoryList from "./CategoryList";
 
-const RightOverview = ({ categoryList }) => {
+const RightOverview = ({ expert }) => {
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>
-        <CategoryList categoryData={categoryList} />
+        <CategoryList expertData={expert} />
       </Grid>
     </Grid>
   );

@@ -52,7 +52,7 @@ const ExpertView = async ({ params }) => {
         <LeftOverview expertData={expert} />
       </Grid>
       <Grid size={{ xs: 12, lg: 8, md: 7 }}>
-        <RightOverview categoryList={expert?.categories || []} />
+        <RightOverview expert={expert} />
       </Grid>
     </Grid>
   );
