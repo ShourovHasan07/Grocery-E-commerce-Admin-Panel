@@ -3,21 +3,21 @@ import { getServerSession } from 'next-auth';
 
 import { authOptions } from "@/libs/auth";
 
-import CategoryList from "@/views/apps/categories/list";
+import AchievementList from "@/views/apps/achievements/list";
 import apiHelper from "@/utils/apiHelper";
 
 export const metadata = {
-  title: "Categories - AskValor",
+  title: "Achievements - AskValor",
 };
 
-const getCategoryData = async () => {
+const getData = async () => {
 
   const session = await getServerSession(authOptions)
 
   if (session.accessToken) {
     try {
-      // Fetching the categories data
-      const result = await apiHelper.get('categories', { pageSize: 200 }, session);
+      // Fetching the achievements data
+      const result = await apiHelper.get('achievements', { pageSize: 200 }, session);
 
       if (result.success) {
         return result.data;
@@ -25,7 +25,7 @@ const getCategoryData = async () => {
 
       return null;
     } catch (error) {
-      // console.error('Error fetching categories:', error);
+      // console.error('Error fetching achievements:', error);
 
       return null;
     }
@@ -36,11 +36,11 @@ const getCategoryData = async () => {
 
 const ListApp = async () => {
 
-  const dataCategories = await getCategoryData();
+  const dataAchievement = await getData();
 
-  // console.log(dataCategories);
+  // console.log(dataAchievement);
 
-  return <CategoryList tData={dataCategories} />;
+  return <AchievementList tData={dataAchievement} />;
 };
 
 export default ListApp;

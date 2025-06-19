@@ -78,8 +78,16 @@ const VerticalMenu = ({ scrollMenu }) => {
           <MenuItem href="/admins">Admin List</MenuItem>
         </SubMenu> */}
 
-        <MenuItem href="/categories" icon={<i className="tabler-smart-home" />}>
+        <MenuItem href="/categories" icon={<i className="tabler-apps" />}>
           Categories
+        </MenuItem>
+
+        <MenuItem href="/achievements" icon={<i className="tabler-award" />}>
+          Achievements
+        </MenuItem>
+
+        <MenuItem href="/languages" icon={<i className="tabler-award" />}>
+          Languages
         </MenuItem>
 
         <SubMenu label="Experts" icon={<i className="tabler-users" />}>

@@ -3,21 +3,21 @@ import { getServerSession } from 'next-auth';
 
 import { authOptions } from "@/libs/auth";
 
-import CategoryList from "@/views/apps/categories/list";
+import LanguageList from "@/views/apps/languages/list";
 import apiHelper from "@/utils/apiHelper";
 
 export const metadata = {
   title: "Categories - AskValor",
 };
 
-const getCategoryData = async () => {
+const getData = async () => {
 
   const session = await getServerSession(authOptions)
 
   if (session.accessToken) {
     try {
-      // Fetching the categories data
-      const result = await apiHelper.get('categories', { pageSize: 200 }, session);
+      // Fetching the languages data
+      const result = await apiHelper.get('languages', { pageSize: 200 }, session);
 
       if (result.success) {
         return result.data;
@@ -25,7 +25,7 @@ const getCategoryData = async () => {
 
       return null;
     } catch (error) {
-      // console.error('Error fetching categories:', error);
+      // console.error('Error fetching languages:', error);
 
       return null;
     }
@@ -36,11 +36,11 @@ const getCategoryData = async () => {
 
 const ListApp = async () => {
 
-  const dataCategories = await getCategoryData();
+  const dataLanguages = await getData();
 
-  // console.log(dataCategories);
+  // console.log(dataLanguages);
 
-  return <CategoryList tData={dataCategories} />;
+  return <LanguageList tData={dataLanguages} />;
 };
 
 export default ListApp;

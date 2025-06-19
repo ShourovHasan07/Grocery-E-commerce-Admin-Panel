@@ -3,14 +3,6 @@
 // React Imports
 import { useState, useMemo } from "react";
 
-// Next Imports
-import Link from "next/link";
-
-import { toast } from "react-toastify";
-
-
-// Util Imports
-
 // MUI Imports
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -21,10 +13,12 @@ import IconButton from "@mui/material/IconButton";
 import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
 
+import { toast } from "react-toastify";
 
-// Third-party Imports
 import classnames from "classnames";
+
 import { rankItem } from "@tanstack/match-sorter-utils";
+
 import {
   createColumnHelper,
   flexRender,
@@ -38,8 +32,14 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 
+import CustomAvatar from "@core/components/mui/Avatar";// Util Imports
+import { getInitials } from "@/utils/getInitials";
 import ConfirmDialog from "@components/dialogs/ConfirmDialog";
-import { activeStatusLabel, activeStatusColor, popularStatusLabel, popularStatusColor } from "@/utils/helpers";
+import AddDrawer from './AddDrawer'
+
+
+// Third-party Imports
+
 import apiHelper from "@/utils/apiHelper";
 
 // Util Imports
@@ -49,10 +49,9 @@ import { formattedDate } from "@/utils/formatters";
 import TableFilters from "./TableFilters";
 import TablePaginationComponent from "@components/TablePaginationComponent";
 import CustomTextField from "@core/components/mui/TextField";
-import CustomAvatar from "@core/components/mui/Avatar";
 
 // Util Imports
-import { getInitials } from "@/utils/getInitials";
+import { activeStatusLabel, activeStatusColor, popularStatusLabel, popularStatusColor } from "@/utils/helpers";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
@@ -75,7 +74,7 @@ const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
   // States
-  const dataObj = tableData?.experts || [];
+  const dataObj = tableData?.achievements || [];
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState(...[dataObj]);
   const [filteredData, setFilteredData] = useState(data);
@@ -83,10 +82,47 @@ const ListTable = ({ tableData }) => {
 
   const [dialogOpen, setDialogOpen] = useState({
     open: false,
-    id: null,
+    data: {},
   });
 
-  // Hooks
+  const [addDrawerOpen, setAddDrawerOpen] = useState({
+    open: false,
+    type: "create",
+    data: {},
+  });
+
+  // console.log("Data: ", addDrawerOpen.open);
+
+  const handleDelete = async (itemId) => {
+    try {
+      const deleteEndpoint = `achievements/${itemId}`;
+
+      // call the delete API
+      const res = await apiHelper.delete(deleteEndpoint);
+
+      // console.log('Delete result:', res);
+
+      // Update the data state after successful deletion
+      if (res?.success && res?.data?.success) {
+        setData(prevData => prevData.filter((item) => item.id !== itemId));
+        setFilteredData(prevData => prevData.filter((item) => item.id !== itemId));
+
+        setDialogOpen((prevState) => ({
+          ...prevState,
+          open: !prevState.open,
+          data: {},
+        }));
+
+        toast.success("Deleted successfully");
+      }
+
+    } catch (error) {
+      // console.error('Delete failed:', error);
+
+      // Show error in toast
+      toast.error(error.message)
+    }
+  };
 
   const columns = useMemo(
     () => [
@@ -94,31 +130,23 @@ const ListTable = ({ tableData }) => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-            <IconButton>
-              <Link href={`/experts/${row.original.id}`} className="flex">
-                <i className="tabler-eye text-secondary" />
-              </Link>
-            </IconButton>
-
-            <IconButton>
-              <Link href={`/experts/${row.original.id}/achievements`} className="flex">
-                <i className="tabler-award text-success" />
-              </Link>
-            </IconButton>
-
-            <IconButton>
-              <Link href={`/experts/${row.original.id}/edit`} className="flex">
-                <i className="tabler-edit text-primary" />
-              </Link>
+            <IconButton
+              onClick={() => setAddDrawerOpen((prevState) => ({
+                ...prevState,
+                open: !prevState.open,
+                type: "edit",
+                data: row.original
+              }))}
+            >
+              <i className="tabler-edit text-textPrimary" />
             </IconButton>
 
             <IconButton onClick={() => setDialogOpen((prevState) => ({
               ...prevState,
               open: !prevState.open,
-              id: row.original.id,
-            }))}
-            >
-              <i className="tabler-trash text-error" />
+              data: row.original
+            }))}>
+              <i className="tabler-trash text-textSecondary" />
             </IconButton>
           </div>
         ),
@@ -128,41 +156,33 @@ const ListTable = ({ tableData }) => {
         header: "ID",
         cell: ({ row }) => <Typography>{row.original.id}</Typography>,
       },
-      {
-        header: "Name",
-        cell: ({ row }) => <Typography>{row.original.name}</Typography>,
-      },
       columnHelper.accessor("image", {
         header: "Image",
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
             {getAvatar({
               avatar: row.original.image,
-              name: row.original.name,
+              name: row.original.title,
             })}
           </div>
         ),
       }),
       {
-        header: "Email",
-        cell: ({ row }) => <Typography>{row.original.email}</Typography>,
-      },
-      {
-        header: "User Name",
-        cell: ({ row }) => <Typography>{row.original.userName}</Typography>,
-      },
-      {
-        header: "Phone",
-        cell: ({ row }) => <Typography>{row.original.phone}</Typography>,
-      },
-      {
-        header: "Address",
-        cell: ({ row }) => <Typography>{row.original.address}</Typography>,
-      },
-      {
         header: "Title",
         cell: ({ row }) => <Typography>{row.original.title}</Typography>,
       },
+      {
+        header: "Sub title",
+        cell: ({ row }) => <Typography>{row.original.subTitle}</Typography>,
+      },
+      columnHelper.accessor("color", {
+        header: "Color Code",
+        cell: ({ row }) => (
+          <span style={{ backgroundColor: row.original.color }} className="p-1 text-white rounded-sm">
+            {row.original.color}
+          </span>
+        ),
+      }),
       columnHelper.accessor("status", {
         header: "Status",
         cell: ({ row }) => (
@@ -172,20 +192,6 @@ const ListTable = ({ tableData }) => {
               label={activeStatusLabel(row.original.status)}
               size="small"
               color={activeStatusColor(row.original.status)}
-              className="capitalize"
-            />
-          </div>
-        ),
-      }),
-      columnHelper.accessor("isPopular", {
-        header: "Verified",
-        cell: ({ row }) => (
-          <div className="flex items-center gap-3">
-            <Chip
-              variant="tonal"
-              label={popularStatusLabel(row.original.isVerified)}
-              size="small"
-              color={popularStatusColor(row.original.isVerified)}
               className="capitalize"
             />
           </div>
@@ -223,8 +229,7 @@ const ListTable = ({ tableData }) => {
         pageSize: 10,
       },
     },
-    enableRowSelection: true, //enable row selection for all rows
-    // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
+    enableRowSelection: true,
     globalFilterFn: fuzzyFilter,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
@@ -247,40 +252,10 @@ const ListTable = ({ tableData }) => {
     }
   };
 
-  const handleDelete = async (itemId) => {
-    try {
-      const deleteEndpoint = `experts/${itemId}`;
-
-      // call the delete API
-      const res = await apiHelper.delete(deleteEndpoint);
-
-      // console.log('Delete result:', res);
-
-      // Update the data state after successful deletion
-      if (res?.success && res?.data?.success) {
-        setData(prevData => prevData.filter((item) => item.id !== itemId));
-        setFilteredData(prevData => prevData.filter((item) => item.id !== itemId));
-
-        setDialogOpen((prevState) => ({
-          ...prevState,
-          open: !prevState.open,
-        }));
-
-        toast.success("Deleted successfully");
-      }
-
-    } catch (error) {
-      // console.error('Delete failed:', error);
-
-      // Show error in toast
-      toast.error(error.message)
-    }
-  };
-
   return (
     <>
       <Card>
-        <CardHeader title="Expert List" className="pbe-4" />
+        <CardHeader title="Achievement List" className="pbe-4" />
         <TableFilters setData={setFilteredData} tableData={data} />
         <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
           <CustomTextField
@@ -295,13 +270,17 @@ const ListTable = ({ tableData }) => {
           </CustomTextField>
           <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
             <Button
-              variant="contained"
-              component={Link}
-              startIcon={<i className="tabler-plus" />}
-              href={"experts/create"}
-              className="max-sm:is-full"
+              variant='contained'
+              startIcon={<i className='tabler-plus' />}
+              onClick={() => setAddDrawerOpen((prevState) => ({
+                ...prevState,
+                open: !prevState.open,
+                type: "create",
+                data: {}
+              }))}
+              className='max-sm:is-full'
             >
-              Add New Expert
+              Add New Achievement
             </Button>
           </div>
         </div>
@@ -389,15 +368,27 @@ const ListTable = ({ tableData }) => {
           }}
         />
       </Card>
+      <AddDrawer
+        drawerData={addDrawerOpen}
+        handleClose={() => setAddDrawerOpen((prevState) => ({
+          ...prevState,
+          open: !prevState.open,
+          type: prevState.type,
+          data: {},
+        }))}
+        userData={data}
+        setData={setData}
+        setType={addDrawerOpen.type}
+      />
 
       <ConfirmDialog
         dialogData={dialogOpen}
         handleCloseDialog={() => setDialogOpen((prevState) => ({
           ...prevState,
           open: !prevState.open,
-          id: null,
+          data: {},
         }))}
-        handleDelete={() => { handleDelete(dialogOpen.id); }}
+        handleDelete={() => { handleDelete(dialogOpen.data.id); }}
       />
     </>
   );
