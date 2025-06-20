@@ -30,8 +30,8 @@ const getExpertData = async (id) => {
   return null;
 }
 
-// expert category options data
-const getCategoryData = async () => {
+// expert option options data
+const getOptionData = async () => {
   // Vars
   const session = await getServerSession(authOptions)
 
@@ -59,14 +59,14 @@ export const metadata = {
   title: "Expert Achievement - AskValor",
 };
 
-const ExpertEditApp = async ({ params }) => {
+const ExpertAchievementApp = async ({ params }) => {
   // Vars
   const { id } = await params;
   const { expert } = await getExpertData(id);
-  const { achievements } = await getCategoryData();
+  const { achievements } = await getOptionData();
 
 
   return <ExpertAchievement expertData={expert} achievementData={achievements} />;
 };
 
-export default ExpertEditApp;
+export default ExpertAchievementApp;

@@ -32,7 +32,7 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 
-import CustomAvatar from "@core/components/mui/Avatar";// Util Imports
+import CustomAvatar from "@core/components/mui/Avatar";
 import { getInitials } from "@/utils/getInitials";
 import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 import AddDrawer from './AddDrawer'
