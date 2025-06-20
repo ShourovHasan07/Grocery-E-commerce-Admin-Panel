@@ -152,6 +152,7 @@ const FormList = ({ achievementData, achievementList }) => {
         }));
 
         toast.success("Deleted successfully");
+
         return
       }
 
