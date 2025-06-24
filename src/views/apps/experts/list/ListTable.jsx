@@ -107,6 +107,12 @@ const ListTable = ({ tableData }) => {
             </IconButton>
 
             <IconButton>
+              <Link href={`/experts/${row.original.id}/languages`} className="flex">
+                <i className="tabler-abc text-info" />
+              </Link>
+            </IconButton>
+
+            <IconButton>
               <Link href={`/experts/${row.original.id}/edit`} className="flex">
                 <i className="tabler-edit text-primary" />
               </Link>
@@ -130,7 +136,7 @@ const ListTable = ({ tableData }) => {
       },
       {
         header: "Name",
-        cell: ({ row }) => <Typography>{row.original.name}</Typography>,
+        cell: ({ row }) => <Typography className="text-wrap w-[200px]">{row.original.name}</Typography>,
       },
       columnHelper.accessor("image", {
         header: "Image",
