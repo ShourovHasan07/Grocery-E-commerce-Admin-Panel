@@ -86,7 +86,7 @@ const VerticalMenu = ({ scrollMenu }) => {
           Achievements
         </MenuItem>
 
-        <MenuItem href="/languages" icon={<i className="tabler-award" />}>
+        <MenuItem href="/languages" icon={<i className="tabler-abc" />}>
           Languages
         </MenuItem>
 

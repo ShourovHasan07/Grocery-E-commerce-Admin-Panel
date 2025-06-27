@@ -1,65 +1,56 @@
 "use client";
 
-// React Imports
 import { useState } from "react";
 
 import { useParams } from 'next/navigation';
-
 import Link from "next/link";
 
-// MUI Imports
+
+// MUI
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import MenuItem from "@mui/material/MenuItem";
-
 import IconButton from "@mui/material/IconButton";
 
 
-// Util Imports
+// Components
 
-// Third-party Imports
-import { toast } from "react-toastify";
+// Form & Validation
 import { Controller, useForm } from "react-hook-form";
-
-// Components Imports
 import { z } from "zod";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { getInitials } from "@/utils/getInitials";
-import ConfirmDialog from "@components/dialogs/ConfirmDialog";
-import CustomAvatar from "@core/components/mui/Avatar";
+// Utils
+import { toast } from "react-toastify";
 
 import CustomTextField from "@core/components/mui/TextField";
+import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 
 import apiHelper from "@/utils/apiHelper";
 
-// Zod Imports
-
 const schema = z.object({
-  achievement: z
-    .number()
+  language: z
+    .number({
+      required_error: "Language is required"
+    })
     .int("Must be an integer")
     .positive("Must be positive"),
+  level: z
+    .string()
+    .min(1, "This field is required")
 });
 
-const FormList = ({ achievementData, achievementList }) => {
-  const [achievements, setAchievements] = useState(achievementList || []);
+const FormList = ({ languageData, languageList }) => {
+  const [languages, setLanguages] = useState(languageList || []);
 
-  // console.log(achievementData);
   const params = useParams();
   const id = params.id;
 
-  // States
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [dialogOpen, setDialogOpen] = useState({
-    open: false,
-    id: null,
-  });
+  const [dialogOpen, setDialogOpen] = useState({ open: false, id: null });
 
   const {
     control,
@@ -70,21 +61,21 @@ const FormList = ({ achievementData, achievementList }) => {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      achievement: "",
+      language: "",
+      level: "",
     }
   });
 
-
-  // form submission
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
 
     try {
       const form = new FormData();
 
-      form.append("achievement", formData.achievement);
+      form.append("language", formData.language);
+      form.append("level", formData.level);
 
-      const res = await apiHelper.post(`experts/${id}/attach/achievement`, form);
+      const res = await apiHelper.post(`experts/${id}/attach/language`, form);
 
       if (!res?.success) {
         if (res?.status === 400) {
@@ -105,16 +96,10 @@ const FormList = ({ achievementData, achievementList }) => {
         return;
       }
 
-      if (res?.success && res?.data?.success) {
-        if (res?.data?.achievements) {
-          setAchievements(res.data.achievements);
-        }
-
-        resetForm({
-          achievement: ""
-        })
-
-        toast.success("Achievement Added successfully");
+      if (res?.data?.languages) {
+        setLanguages(res.data.languages);
+        resetForm({ language: "", level: "" });
+        toast.success("Language added successfully");
       }
 
     } catch (error) {
@@ -124,55 +109,39 @@ const FormList = ({ achievementData, achievementList }) => {
     }
   };
 
-  const getAvatar = (params) => {
-    const { avatar, name } = params;
-
-    if (avatar) {
-      return <CustomAvatar src={avatar} size={50} />;
-    } else {
-      return <CustomAvatar size={50}>{getInitials(name)}</CustomAvatar>;
-    }
-  };
-
   const handleDelete = async (itemId) => {
     try {
       const form = new FormData();
 
-      form.append("achievement", itemId);
+      form.append("language", itemId);
 
-      const res = await apiHelper.post(`experts/${id}/detach/achievement`, form);
+      const res = await apiHelper.post(`experts/${id}/detach/language`, form);
 
-      // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {
-        setAchievements(prevData => achievements.filter((item) => item.id !== itemId));
-
-        setDialogOpen((prevState) => ({
-          ...prevState,
-          open: !prevState.open,
-        }));
-
+        setLanguages(prevData => languages.filter((item) => item.id !== itemId));
+        setDialogOpen({ open: false, id: null });
         toast.success("Deleted successfully");
 
-        return
+        return;
       }
 
-      toast.error(res?.data?.error || "Something went wrong while deleting the achievement");
+      toast.error(res?.data?.error || "Something went wrong while deleting");
     } catch (error) {
-      // Show error in toast
-      toast.error(error.message)
+      toast.error(error.message);
     }
   };
 
   return (
     <>
       <Card className="mb-4">
-        <CardHeader title="New Achievement Info" />
+        <CardHeader title="New Language Info" />
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={{ md: 4 }}>
+              {/* Language Dropdown */}
               <Grid size={{ md: 6 }}>
                 <Controller
-                  name="achievement"
+                  name="language"
                   control={control}
                   rules={{ required: true }}
                   render={({ field }) => (
@@ -181,41 +150,58 @@ const FormList = ({ achievementData, achievementList }) => {
                       select
                       fullWidth
                       className="mb-4"
-                      label="Achievement"
-                      {...(errors.achievement && {
+                      label="Language"
+                      {...(errors.language && {
                         error: true,
-                        helperText: errors.achievement.message,
+                        helperText: errors.language.message,
                       })}
                     >
-                      <MenuItem value="" selected>Select Achievement</MenuItem>
-                      {achievementData?.map((achievement) => (
-                        <MenuItem key={achievement.id} value={achievement.id}>{achievement.title}</MenuItem>
+                      <MenuItem value="" selected>Select Language</MenuItem>
+                      {languageData?.map((lang) => (
+                        <MenuItem key={lang.id} value={lang.id}>{lang.name}</MenuItem>
                       ))}
                     </CustomTextField>
                   )}
                 />
-
               </Grid>
 
-              <Grid size={{ xs: 12 }} className="flex gap-4">
+              <Grid size={{ md: 6 }}>
+                <Controller
+                  name="level"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      className="mb-4"
+                      label="Level"
+                      placeholder="Level"
+                      {...(errors.level && {
+                        error: true,
+                        helperText: errors.level.message,
+                      })}
+                    />
+                  )}
+                />
+              </Grid>
+
+              {/* Buttons */}
+              <Grid size={12}>
                 <Button
                   variant="contained"
                   type="submit"
                   disabled={isSubmitting}
-                  endIcon={
-                    isSubmitting ? (
-                      <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' />
-                    ) : null
-                  }
+                  endIcon={isSubmitting ? <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' /> : null}
                 >
                   Submit
                 </Button>
-
                 <Button
                   variant="tonal"
                   color="error"
                   component={Link}
                   href={"/experts"}
+                  className="ml-4"
                 >
                   Cancel
                 </Button>
@@ -225,43 +211,32 @@ const FormList = ({ achievementData, achievementList }) => {
         </CardContent>
       </Card>
 
+      {/* Existing Language List */}
       <Card className="mb-4">
-        <CardHeader title="Achievement List" />
+        <CardHeader title="Language List" />
         <CardContent>
-          <Grid size={{ xs: 12 }}>
+          <Grid size={12}>
             <div className="w-full overflow-x-auto">
               <table className="w-full table-auto border-collapse">
                 <thead>
                   <tr className="bg-gray-50">
                     <th className="border px-4 py-2">Action</th>
                     <th className="border px-4 py-2">#</th>
-                    <th className="border px-4 py-2">Image</th>
-                    <th className="border px-4 py-2">Title</th>
-                    <th className="border px-4 py-2">Subtitle</th>
+                    <th className="border px-4 py-2">Name</th>
+                    <th className="border px-4 py-2">Level</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {achievements && achievements.map((achievement, index) => (
-                    <tr key={index}>
+                  {languages?.map((lang, index) => (
+                    <tr key={lang.id}>
                       <td className="border px-4 py-2 text-center">
-                        <IconButton onClick={() => setDialogOpen((prevState) => ({
-                          ...prevState,
-                          open: !prevState.open,
-                          id: achievement.id,
-                        }))}
-                        >
+                        <IconButton onClick={() => setDialogOpen({ open: true, id: lang.id })}>
                           <i className="tabler-trash text-error" />
                         </IconButton>
                       </td>
                       <td className="border px-4 py-2">{index + 1}</td>
-                      <td className="border px-4 py-2">
-                        {getAvatar({
-                          avatar: achievement.image,
-                          name: achievement.title,
-                        })}
-                      </td>
-                      <td className="border px-4 py-2">{achievement.title}</td>
-                      <td className="border px-4 py-2">{achievement.subTitle}</td>
+                      <td className="border px-4 py-2">{lang.name}</td>
+                      <td className="border px-4 py-2">{lang?.pivot?.level}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -272,12 +247,8 @@ const FormList = ({ achievementData, achievementList }) => {
 
         <ConfirmDialog
           dialogData={dialogOpen}
-          handleCloseDialog={() => setDialogOpen((prevState) => ({
-            ...prevState,
-            open: !prevState.open,
-            id: null,
-          }))}
-          handleDelete={() => { handleDelete(dialogOpen.id); }}
+          handleCloseDialog={() => setDialogOpen({ open: false, id: null })}
+          handleDelete={() => handleDelete(dialogOpen.id)}
         />
       </Card>
     </>
