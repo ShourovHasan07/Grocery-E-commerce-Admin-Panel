@@ -113,6 +113,12 @@ const ListTable = ({ tableData }) => {
             </IconButton>
 
             <IconButton>
+              <Link href={`/experts/${row.original.id}/Time`} className="flex">
+                <i className="tabler-clock text-info" />
+              </Link>
+            </IconButton>
+
+            <IconButton>
               <Link href={`/experts/${row.original.id}/edit`} className="flex">
                 <i className="tabler-edit text-primary" />
               </Link>
