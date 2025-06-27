@@ -21,7 +21,7 @@ const getExpertData = async (id) => {
 
       return null;
     } catch (error) {
-       console.error('Error fetching categories:', error);
+      //  console.error('Error fetching categories:', error);
 
       return null;
     }
@@ -70,4 +70,3 @@ const ExpertLanguageApp = async ({ params }) => {
 };
 
 export default ExpertLanguageApp;
- 

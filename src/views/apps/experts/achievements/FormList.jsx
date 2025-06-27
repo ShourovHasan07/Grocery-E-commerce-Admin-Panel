@@ -1,9 +1,9 @@
 "use client";
 
 // React Imports
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 import Link from "next/link";
 
@@ -169,7 +169,7 @@ const FormList = ({ achievementData, achievementList }) => {
         <CardHeader title="New Achievement Info" />
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Grid container spacing={{ md: 6 }}>
+            <Grid container spacing={{ md: 4 }}>
               <Grid size={{ md: 6 }}>
                 <Controller
                   name="achievement"

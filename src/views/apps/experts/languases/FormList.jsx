@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+
 import { useParams } from 'next/navigation';
 import Link from "next/link";
-import TextField from "@mui/material/TextField";
+
 
 // MUI
 import Card from "@mui/material/Card";
@@ -14,6 +15,9 @@ import CardContent from "@mui/material/CardContent";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
 
+
+// Components
+
 // Form & Validation
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -21,11 +25,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 // Utils
 import { toast } from "react-toastify";
-import apiHelper from "@/utils/apiHelper";
 
-// Components
-import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 import CustomTextField from "@core/components/mui/TextField";
+import ConfirmDialog from "@components/dialogs/ConfirmDialog";
+
+import apiHelper from "@/utils/apiHelper";
 
 const schema = z.object({
   language: z
@@ -34,13 +38,13 @@ const schema = z.object({
     })
     .int("Must be an integer")
     .positive("Must be positive"),
-    level: z
-        .string()
-        .min(1, "This field is required")
+  level: z
+    .string()
+    .min(1, "This field is required")
 });
 
-const FormList = ({ languageData, langulageList }) => {
-  const [languages, setLanguages] = useState(langulageList || []);
+const FormList = ({ languageData, languageList }) => {
+  const [languages, setLanguages] = useState(languageList || []);
 
   const params = useParams();
   const id = params.id;
@@ -63,10 +67,11 @@ const FormList = ({ languageData, langulageList }) => {
   });
 
   const onSubmit = async (formData) => {
-    console.log(id)
     setIsSubmitting(true);
+
     try {
       const form = new FormData();
+
       form.append("language", formData.language);
       form.append("level", formData.level);
 
@@ -75,6 +80,7 @@ const FormList = ({ languageData, langulageList }) => {
       if (!res?.success) {
         if (res?.status === 400) {
           let errors = res?.data?.errors || [];
+
           if (errors) {
             Object.keys(errors).forEach(key => {
               setError(key, {
@@ -86,6 +92,7 @@ const FormList = ({ languageData, langulageList }) => {
         } else if (res?.status === 404) {
           toast.error(res?.data?.error || "Sorry! Expert not found");
         }
+
         return;
       }
 
@@ -105,6 +112,7 @@ const FormList = ({ languageData, langulageList }) => {
   const handleDelete = async (itemId) => {
     try {
       const form = new FormData();
+
       form.append("language", itemId);
 
       const res = await apiHelper.post(`experts/${id}/detach/language`, form);
@@ -113,6 +121,7 @@ const FormList = ({ languageData, langulageList }) => {
         setLanguages(prevData => languages.filter((item) => item.id !== itemId));
         setDialogOpen({ open: false, id: null });
         toast.success("Deleted successfully");
+
         return;
       }
 
@@ -128,7 +137,7 @@ const FormList = ({ languageData, langulageList }) => {
         <CardHeader title="New Language Info" />
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Grid container spacing={{ md: 6 }}>
+            <Grid container spacing={{ md: 4 }}>
               {/* Language Dropdown */}
               <Grid size={{ md: 6 }}>
                 <Controller
@@ -158,27 +167,27 @@ const FormList = ({ languageData, langulageList }) => {
 
               <Grid size={{ md: 6 }}>
                 <Controller
-                name="level"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    className="mb-4"
-                    label="Level"
-                    placeholder="level"
-                    {...(errors.level && {
-                      error: true,
-                      helperText: errors.level.message,
-                    })}
-                  />
-                )}
-              />
+                  name="level"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      className="mb-4"
+                      label="Level"
+                      placeholder="Level"
+                      {...(errors.level && {
+                        error: true,
+                        helperText: errors.level.message,
+                      })}
+                    />
+                  )}
+                />
               </Grid>
 
               {/* Buttons */}
-              <Grid xs={12}>
+              <Grid size={12}>
                 <Button
                   variant="contained"
                   type="submit"
@@ -206,7 +215,7 @@ const FormList = ({ languageData, langulageList }) => {
       <Card className="mb-4">
         <CardHeader title="Language List" />
         <CardContent>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <div className="w-full overflow-x-auto">
               <table className="w-full table-auto border-collapse">
                 <thead>

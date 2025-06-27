@@ -6,15 +6,16 @@ import ExpertInfo from "./ExpertInfo";
 import FormList from "./FormList";
 
 const ExpertLanguage = ({ expertData, languageData }) => {
-  console.log(expertData)
+  // console.log(expertData)
+
   return (
-    <Grid container>      
+    <Grid container>
       <Grid size={{ xs: 12 }}>
         <ExpertInfo expertData={expertData} />
-        <FormList languageData={languageData} langulageList={expertData?.languages || []} />
+        <FormList languageData={languageData} languageList={expertData?.languages || []} />
       </Grid>
     </Grid>
   );
 };
 
-export default ExpertLanguage; 
+export default ExpertLanguage;
