@@ -4,7 +4,7 @@ import { authOptions } from "@/libs/auth";
 import apiHelper from "@/utils/apiHelper";
 
 // Component Imports
-import ExpertLanguage from "@/views/apps/experts/Time";
+import ExpertTimeSlot from "@/views/apps/experts/time-slots";
 
 const getExpertData = async (id) => {
   // Vars
@@ -30,43 +30,18 @@ const getExpertData = async (id) => {
   return null;
 }
 
-// expert option options data
-const getOptionData = async () => {
-  // Vars
-  const session = await getServerSession(authOptions)
-
-  if (session.accessToken) {
-    try {
-      // Fetching the categories data
-      const result = await apiHelper.get('experts/create/options', session);
-
-      if (result.success) {
-        return result.data;
-      }
-
-      return null;
-    } catch (error) {
-      // console.error('Error fetching categories:', error);
-
-      return null;
-    }
-  }
-
-  return null;
-}
 
 export const metadata = {
-  title: "Expert Language - AskValor",
+  title: "Expert Time Slot - AskValor",
 };
 
 const ExpertLanguageApp = async ({ params }) => {
   // Vars
   const { id } = await params;
   const { expert } = await getExpertData(id);
-  const { languages } = await getOptionData();
 
 
-  return <ExpertLanguage expertData={expert} languageData={languages} />;
+  return <ExpertTimeSlot expertData={expert} />;
 };
 
 export default ExpertLanguageApp;

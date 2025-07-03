@@ -6,7 +6,7 @@ import ExpertInfo from "../languases/ExpertInfo";
 import FormList from "./FormList";
 
 
-const ExpertTime = ({ expertData,languageData }) => {
+const ExpertTimeSlot = ({ expertData,languageData }) => {
   
   return (
     <Grid container>      
@@ -14,7 +14,7 @@ const ExpertTime = ({ expertData,languageData }) => {
 
           <ExpertInfo expertData={expertData} />
 
-          <FormList languageData={languageData} langulageList={expertData?.languages || []} />
+          <FormList availabilityList={expertData?.availabilities || []} />
         
      
       </Grid>
@@ -22,6 +22,6 @@ const ExpertTime = ({ expertData,languageData }) => {
   );
 };
 
-export default ExpertTime; 
+export default ExpertTimeSlot; 
 
 
