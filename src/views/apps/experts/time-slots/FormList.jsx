@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import DialogEdit from "./DialogEdit";
 import DialogDelete from "./DialogDelete";
+import Chip from "@mui/material/Chip";
 
 
 
@@ -29,12 +30,15 @@ import AppReactDatepicker from "@/libs/styles/AppReactDatepicker";
 import CustomTextField from "@core/components/mui/TextField";
 import apiHelper from "@/utils/apiHelper";  
 import { toast } from "react-toastify";
+// Util Imports
+import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
 
 // Validation
 const schema = z.object({
   timeDay: z.number().int().positive(),
   startTime: z.date(),
   endTime: z.date(),
+  active: z.boolean().default(true),
 });
 
 // Get next 7 days
@@ -88,13 +92,16 @@ const FormList = ({ availabilityList }) => {
       timeDay: "",
       startTime: "",
       endTime: "",
+      active: true,
     },
   });
 
 
 
  
-  // Open dialogEdit  and load data for editing
+  // Open dialogEdit  and load data for editing                 
+
+
   const handleEditSlot = (slotId, dayOfWeek) => {
     const dayGroup = availabilityGroups.find((g) => g.dayOfWeek === dayOfWeek);
     const slot = dayGroup?.timeSlots.find((s) => s.id === slotId);
@@ -108,6 +115,7 @@ const FormList = ({ availabilityList }) => {
         timeDay: matchedDay.id,
         startTime: new Date(`1970-01-01T${slot.startTime}`),
         endTime: new Date(`1970-01-01T${slot.endTime}`),
+         active: slot.status === true || slot.status === "true" 
       });
 
       setEditMode(true);
@@ -177,7 +185,11 @@ const FormList = ({ availabilityList }) => {
     form.append("dayOfWeek", selectedDay.name.toLowerCase());
     form.append("startTime", formData.startTime.toTimeString().slice(0, 8));
     form.append("endTime", formData.endTime.toTimeString().slice(0, 8));
-    form.append("status", "true");
+       form.append("status", formData.active.toString()); // true/false 
+
+
+
+    // edit api Call 
 
   if (editMode && editingSlotId) {
   try {
@@ -406,86 +418,112 @@ const FormList = ({ availabilityList }) => {
       </Card>
 
       {/* Time Slot Table */}
-      <Card className="mb-4">
-        <CardHeader title="Time Slots" />
-        <CardContent>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell />
-                  <TableCell className="text-start">Day</TableCell>
-                  
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {availabilityGroups.map((group) => (
-                  <React.Fragment key={group.dayOfWeek}>
-                    <TableRow>
-                      <TableCell>
-                        <IconButton onClick={() => setOpenDay(openDay === group.dayOfWeek ? null : group.dayOfWeek)}>
-                          {openDay === group.dayOfWeek ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                        </IconButton>
-                      </TableCell>
-                      <TableCell>
-                       {group.dayOfWeek ? group.dayOfWeek.charAt(0).toUpperCase() + group.dayOfWeek.slice(1).toLowerCase() : ""}
-                       </TableCell>
+    <Card className="mb-4">
+  <CardHeader title="Time Slots" />
+  <CardContent>
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell width="10%" />
+            <TableCell
+                    sx={{
+                      textAlign: 'left',
+                      paddingLeft: '16px',
+                      '&.MuiTableCell-head': {
+                        textAlign: 'left',
+                        fontWeight: 'bold',  //  property for bold text
+                                             // Additional header styling options:
+                        fontSize: '0.875rem',
+                        color: 'text.primary',
+                        backgroundColor: 'background.paper'
+                      }
+                    }}
+                  >
+                  Day
+                </TableCell>
 
-                     
-                    </TableRow>
-                    <TableRow>
-                      <TableCell colSpan={3} style={{ padding: 0 }}>
-                        <Collapse in={openDay === group.dayOfWeek} timeout="auto" unmountOnExit>
-                          <Box margin={1}>
-                            <Table size="small">
-                              <TableHead>
-                                <TableRow>
-                                  <TableCell>Action</TableCell>
-                                  <TableCell>ID</TableCell>
-                                  <TableCell>Start</TableCell>
-                                  <TableCell>End</TableCell>
-                                  <TableCell>Status</TableCell>
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                {group.timeSlots.map((slot) => (
-                                  <TableRow key={slot.id}>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {availabilityGroups.map((group) => (
+            <React.Fragment key={group.dayOfWeek}> 
+              <TableRow>
+                <TableCell>
+                  <IconButton onClick={() => setOpenDay(openDay === group.dayOfWeek ? null : group.dayOfWeek)}>
+                    {openDay === group.dayOfWeek ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                  </IconButton>
+                </TableCell>
+                
+                <TableCell
+                  sx={{ textAlign: 'left' }}
+                >
+                  {group.dayOfWeek ? group.dayOfWeek.charAt(0).toUpperCase() + group.dayOfWeek.slice(1).toLowerCase() : ""}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell colSpan={3} style={{ padding: 0 }}>
+                  <Collapse in={openDay === group.dayOfWeek} timeout="auto" unmountOnExit>
+                    <Box margin={1}>
+                      <Table size="small">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Action</TableCell>
+                            <TableCell>ID</TableCell>
+                            <TableCell>Start</TableCell>
+                            <TableCell>End</TableCell>
+                            <TableCell>Status</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {group.timeSlots.map((slot) => (
+                            <TableRow key={slot.id}>
+                              <TableCell className="flex gap-4">
+                                <IconButton onClick={() => handleEditSlot(slot.id, group.dayOfWeek)}>
+                                  <i className="tabler-edit text-primary" />
+                                </IconButton>
+                                <IconButton onClick={() => handleDeleteClick(group.day, slot.id)}>
+                                  <i className="tabler-trash text-error" />
+                                </IconButton>
+                              </TableCell>
+                              <TableCell>{slot.id}</TableCell>
+                              <TableCell>{convertTo12Hour(slot.startTime)}</TableCell>
+                              <TableCell>{convertTo12Hour(slot.endTime)}</TableCell>
+                              <TableCell>
+                                
+                                
+                                <Chip
+                                  variant="tonal"
+                                  label={activeStatusLabel(slot.status)}
+                                  size="small"
+                                  color={activeStatusColor(slot.status)}
+                                  className="capitalize"
+                                />
+                                
+                                </TableCell>
 
-                                      <TableCell className="flex gap-4">
-                                      <IconButton onClick={() => handleEditSlot(slot.id, group.dayOfWeek)}>
-                                        <i className="tabler-edit text-primary" />
-                                      </IconButton>
-                                      <IconButton onClick={() => handleDeleteClick(group.day, slot.id)}>
-                                        <i className="tabler-trash text-error" />
-                                      </IconButton>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </Box>
+                  </Collapse>
+                </TableCell>
+              </TableRow>
+            </React.Fragment>
+          ))}
+          {availabilityGroups.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={3} align="center">No time slots available</TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </CardContent>
+</Card>
 
-                                    </TableCell>
-                                    <TableCell>{slot.id}</TableCell>
-                                    <TableCell>{convertTo12Hour(slot.startTime)}</TableCell>
-                                    <TableCell>{convertTo12Hour(slot.endTime)}</TableCell>
-                                     <TableCell>{slot.status ? "Active" : "Inactive"}</TableCell>
-                                  </TableRow>
-                                ))}
-                              </TableBody>
-                            </Table>
-                          </Box>
-                        </Collapse>
-                      </TableCell>
-                    </TableRow>
-                  </React.Fragment>
-                ))}
-                {availabilityGroups.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={3} align="center">No time slots available</TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </CardContent>
-      </Card>
-
-         
+          {/* Dialog for Edit */}
       <DialogEdit
         open={dialogOpen}
         onClose={handleDialogClose}
@@ -497,7 +535,7 @@ const FormList = ({ availabilityList }) => {
 
 
 
- {/* Dialog for Edit */}
+ {/* Dialog for delete  */}
       <DialogDelete
   open={deleteDialogOpen}
   onClose={() => setDeleteDialogOpen(false)}

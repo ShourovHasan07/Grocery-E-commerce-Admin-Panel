@@ -5,16 +5,18 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  
+
   MenuItem,
   Button,
   Box,
+  Chip,
 } from "@mui/material";
 import { Controller } from "react-hook-form";
 import AppReactDatepicker from "@/libs/styles/AppReactDatepicker";
 import CustomTextField from "@core/components/mui/TextField";
 import Grid from "@mui/material/Grid2";
-
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 
 const getNext7Days = () => {
   const days = [];
@@ -96,6 +98,39 @@ const DialogEdit = ({ open, onClose, control, errors, handleSubmit, onSubmit }) 
             </Grid>
           </Grid>
 
+
+
+
+          {/* active status section  */}
+
+
+          <Grid size={{ md: 4 }}>
+            <Grid size={{ xs: 6 }}>
+              <Controller
+                name="active"
+                control={control}
+                render={({ field }) => {
+                  return (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={Boolean(field.value)}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                        />
+                      }
+                      label="Active"
+                    />
+                  );
+                }}
+              />
+            </Grid>
+
+          </Grid>
+
+
+
+
+
           <Box display="flex" justifyContent="end" mt={4}>
             <Button onClick={onClose} variant="tonal" color="error" sx={{ mr: 2 }}>
               Cancel
@@ -104,6 +139,12 @@ const DialogEdit = ({ open, onClose, control, errors, handleSubmit, onSubmit }) 
               Update
             </Button>
           </Box>
+
+
+
+
+
+
         </form>
       </DialogContent>
     </Dialog>
