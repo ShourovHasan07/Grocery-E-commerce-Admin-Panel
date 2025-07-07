@@ -3,9 +3,10 @@
 import Grid from "@mui/material/Grid2";
 
 // Component Imports
+import { Box } from "@mui/material";
+
 import CategoryList from "./CategoryList";
 import LanguageList from "./LanguagesList";
-import { Box } from "@mui/material";
 import TimeSlots from "./TimeSlots";
 
 const RightOverview = ({ expert }) => {

@@ -21,7 +21,7 @@ const getExpertData = async (id) => {
 
       return null;
     } catch (error) {
-       console.error('Error fetching categories:', error);
+      console.error('Error fetching categories:', error);
 
       return null;
     }
@@ -35,7 +35,7 @@ export const metadata = {
   title: "Expert Time Slot - AskValor",
 };
 
-const ExpertLanguageApp = async ({ params }) => {
+const ExpertTimeSlotApp = async ({ params }) => {
   // Vars
   const { id } = await params;
   const { expert } = await getExpertData(id);
@@ -44,5 +44,4 @@ const ExpertLanguageApp = async ({ params }) => {
   return <ExpertTimeSlot expertData={expert} />;
 };
 
-export default ExpertLanguageApp;
- 
+export default ExpertTimeSlotApp;

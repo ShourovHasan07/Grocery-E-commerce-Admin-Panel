@@ -2,26 +2,23 @@
 
 import Grid from "@mui/material/Grid2";
 
-import ExpertInfo from "../languases/ExpertInfo";
+import ExpertInfo from "../expertInfo/ExpertInfo";
 import FormList from "./FormList";
 
 
-const ExpertTimeSlot = ({ expertData,languageData }) => {
-  
+const ExpertTimeSlot = ({ expertData }) => {
+
   return (
-    <Grid container>      
+    <Grid container>
       <Grid size={{ xs: 12 }}>
+        <ExpertInfo expertData={expertData} />
 
-          <ExpertInfo expertData={expertData} />
-
-          <FormList availabilityList={expertData?.availabilities || []} />
-        
-     
+        <FormList availabilityList={expertData?.availabilities || []} />
       </Grid>
     </Grid>
   );
 };
 
-export default ExpertTimeSlot; 
+export default ExpertTimeSlot;
 
 

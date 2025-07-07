@@ -111,6 +111,7 @@ const CreateForm = ({ categoryData }) => {
     reset,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {

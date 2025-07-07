@@ -1,7 +1,7 @@
 // MUI Imports
 import Grid from "@mui/material/Grid2";
 
-import ExpertInfo from "./ExpertInfo";
+import ExpertInfo from "../expertInfo/ExpertInfo";
 import FormList from "./FormList";
 
 const ExpertAchievement = ({ expertData, achievementData }) => {

@@ -1,45 +1,35 @@
 "use client";
 
 import React from "react";
+
 import {
   Dialog,
   DialogTitle,
   DialogContent,
-
   MenuItem,
   Button,
-  Box,
-  Chip,
+  Box
 } from "@mui/material";
+
 import { Controller } from "react-hook-form";
-import AppReactDatepicker from "@/libs/styles/AppReactDatepicker";
-import CustomTextField from "@core/components/mui/TextField";
+
 import Grid from "@mui/material/Grid2";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 
-const getNext7Days = () => {
-  const days = [];
-  const today = new Date();
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    const formatted = date.toLocaleDateString("en-US", { weekday: "long" });
-    days.push({ id: i + 1, name: formatted });
-  }
-  return days;
-};
+import CustomTextField from "@core/components/mui/TextField";
+import AppReactDatepicker from "@/libs/styles/AppReactDatepicker";
 
-const DialogEdit = ({ open, onClose, control, errors, handleSubmit, onSubmit }) => {
+const DialogEdit = ({ weeks, open, onClose, control, errors, handleSubmit, onSubmit }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>Edit Time Slot</DialogTitle>
       <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={4} sx={{ mt: 1 }}>
+          <Grid container spacing={4} sx={{ mt: 2 }}>
             <Grid size={{ md: 4 }}>
               <Controller
-                name="timeDay"
+                name="dayOfWeek"
                 control={control}
                 render={({ field }) => (
                   <CustomTextField
@@ -47,63 +37,69 @@ const DialogEdit = ({ open, onClose, control, errors, handleSubmit, onSubmit }) 
                     select
                     fullWidth
                     label="Slot Day"
-                    error={!!errors.timeDay}
-                    helperText={errors.timeDay?.message}
+                    {...(errors.dayOfWeek && {
+                      error: true,
+                      helperText: errors.dayOfWeek.message,
+                    })}
                   >
                     <MenuItem value="" disabled>
-                      Select a day
+                      Select a Day
                     </MenuItem>
-                    {getNext7Days().map((day) => (
-                      <MenuItem key={day.id} value={day.id}>
-                        {day.name}
+                    {weeks.length > 0 && weeks.map((day) => (
+                      <MenuItem key={day.key} value={day.key}>
+                        {day.value}
                       </MenuItem>
                     ))}
                   </CustomTextField>
                 )}
               />
             </Grid>
-            <Grid size={{ md: 4 }}>
-              <Controller
-                name="startTime"
-                control={control}
-                render={({ field }) => (
-                  <AppReactDatepicker
-                    showTimeSelect
-                    showTimeSelectOnly
-                    timeIntervals={15}
-                    selected={field.value}
-                    onChange={field.onChange}
-                    dateFormat="h:mm aa"
-                    customInput={<CustomTextField label="Start Time" fullWidth />}
+
+            <Grid size={{ md: 8 }}>
+              <Grid container spacing={4}>
+                <Grid size={{ md: 6 }}>
+                  <Controller
+                    name="startTime"
+                    control={control}
+                    render={({ field }) => (
+                      <AppReactDatepicker
+                        showTimeSelect
+                        showTimeSelectOnly
+                        timeIntervals={15}
+                        selected={field.value}
+                        onChange={field.onChange}
+                        dateFormat="h:mm aa"
+                        customInput={<CustomTextField label="Start Time" fullWidth />}
+                      />
+                    )}
                   />
-                )}
-              />
-            </Grid>
-            <Grid size={{ md: 4 }}>
-              <Controller
-                name="endTime"
-                control={control}
-                render={({ field }) => (
-                  <AppReactDatepicker
-                    showTimeSelect
-                    showTimeSelectOnly
-                    timeIntervals={15}
-                    selected={field.value}
-                    onChange={field.onChange}
-                    dateFormat="h:mm aa"
-                    customInput={<CustomTextField label="End Time" fullWidth />}
+                </Grid>
+
+                <Grid size={{ md: 6 }}>
+                  <Controller
+                    name="endTime"
+                    control={control}
+                    render={({ field }) => (
+                      <AppReactDatepicker
+                        showTimeSelect
+                        showTimeSelectOnly
+                        timeIntervals={15}
+                        selected={field.value}
+                        onChange={field.onChange}
+                        dateFormat="h:mm aa"
+                        customInput={<CustomTextField label="End Time" fullWidth />}
+                      />
+                    )}
                   />
-                )}
-              />
+                </Grid>
+              </Grid>
+              {errors.startTime && (
+                <p className="text-red-500 text-sm mt-1">{errors.startTime.message}</p>
+              )}
             </Grid>
           </Grid>
 
-
-
-
           {/* active status section  */}
-
-
           <Grid size={{ md: 4 }}>
             <Grid size={{ xs: 6 }}>
               <Controller
@@ -124,12 +120,7 @@ const DialogEdit = ({ open, onClose, control, errors, handleSubmit, onSubmit }) 
                 }}
               />
             </Grid>
-
           </Grid>
-
-
-
-
 
           <Box display="flex" justifyContent="end" mt={4}>
             <Button onClick={onClose} variant="tonal" color="error" sx={{ mr: 2 }}>
@@ -139,12 +130,6 @@ const DialogEdit = ({ open, onClose, control, errors, handleSubmit, onSubmit }) 
               Update
             </Button>
           </Box>
-
-
-
-
-
-
         </form>
       </DialogContent>
     </Dialog>

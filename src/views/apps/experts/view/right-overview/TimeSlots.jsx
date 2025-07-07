@@ -37,8 +37,10 @@ const TimeSlots = ({ expertData }) => {
   const convertTo12Hour = (time24h) => {
     let [hours, minutes] = time24h.split(":");
     const modifier = +hours >= 12 ? "PM" : "AM";
+
     hours = +hours % 12 || 12;
-    return `${hours}:${minutes} ${modifier}`;
+    
+return `${hours}:${minutes} ${modifier}`;
   };
 
   

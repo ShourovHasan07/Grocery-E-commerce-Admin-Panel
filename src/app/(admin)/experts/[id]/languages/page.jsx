@@ -4,7 +4,7 @@ import { authOptions } from "@/libs/auth";
 import apiHelper from "@/utils/apiHelper";
 
 // Component Imports
-import ExpertLanguage from "@/views/apps/experts/languases";
+import ExpertLanguage from "@/views/apps/experts/languages";
 
 const getExpertData = async (id) => {
   // Vars
@@ -64,7 +64,6 @@ const ExpertLanguageApp = async ({ params }) => {
   const { id } = await params;
   const { expert } = await getExpertData(id);
   const { languages } = await getOptionData();
-
 
   return <ExpertLanguage expertData={expert} languageData={languages} />;
 };
