@@ -93,7 +93,7 @@ const ListTable = ({ tableData }) => {
       columnHelper.accessor("action", {
         header: "Action",
         cell: ({ row }) => (
-          <div className="flex items-center">
+          <div className="text-wrap w-[150px]">
             <IconButton>
               <Link href={`/experts/${row.original.id}`} className="flex">
                 <i className="tabler-eye text-secondary" />
@@ -109,6 +109,12 @@ const ListTable = ({ tableData }) => {
             <IconButton>
               <Link href={`/experts/${row.original.id}/languages`} className="flex">
                 <i className="tabler-abc text-info" />
+              </Link>
+            </IconButton>
+
+            <IconButton>
+              <Link href={`/experts/${row.original.id}/time-slots`} className="flex">
+                <i className="tabler-clock text-info" />
               </Link>
             </IconButton>
 

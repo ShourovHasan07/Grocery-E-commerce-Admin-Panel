@@ -23,7 +23,8 @@ const getCategoryData = async () => {
         return result.data;
       }
 
-      return null;
+      
+return null;
     } catch (error) {
       // console.error('Error fetching categories:', error);
 

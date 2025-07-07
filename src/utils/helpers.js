@@ -127,3 +127,13 @@ export const popularStatusColor = popular => {
       return 'secondary'
   }
 }
+
+// 👉 Format Time
+export const timeFormat = (time24h) => {
+  let [hours, minutes] = time24h.split(":");
+  const modifier = +hours >= 12 ? "PM" : "AM";
+
+  hours = +hours % 12 || 12; // convert '00' to '12'
+
+  return `${hours}:${minutes} ${modifier}`;
+}

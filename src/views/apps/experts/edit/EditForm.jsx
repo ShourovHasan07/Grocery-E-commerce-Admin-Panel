@@ -100,6 +100,7 @@ const EditForm = ({ expertData, categoryData }) => {
     control,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {

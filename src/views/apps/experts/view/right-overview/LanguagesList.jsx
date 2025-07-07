@@ -5,29 +5,29 @@ import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid2";
 
 
-const CategoryList = ({ expertData }) => {
+const LanguagesList = ({ expertData }) => {
 
-  //console.log("expert data :",expertData)
+  console.log("expert data :",expertData)
 
 
   return (
     <>
       <Card>
         <CardHeader
-          title="About Me"
+          title=""
           className="pb-0"
         />
 
         <CardContent>
           <Grid size={{ xs: 12 }}>
             <div className="w-full">
-              <p>{expertData.aboutMe}</p>
+              <p></p>
             </div>
           </Grid>
         </CardContent>
 
         <CardHeader
-          title="Expert Categories"
+          title="Expert languages"
           className="pb-0"
         />
         <CardContent>
@@ -37,20 +37,20 @@ const CategoryList = ({ expertData }) => {
                 <thead>
                   <tr className="bg-gray-50">
                     <th className="border px-4 py-2">ID</th>
-                    <th className="border px-4 py-2">Category Name</th>
+                    <th className="border px-4 py-2">languages Name</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {expertData.categories?.map((category, index) => (
+                  {expertData.languages?.map((language, index) => (
                     <tr key={index}>
                       <td className="border px-4 py-2">{index + 1}</td>
-                      <td className="border px-4 py-2">{category.name}</td>
+                      <td className="border px-4 py-2">{language.name}</td>
                     </tr>
                   ))}
-                  {(!expertData.categories || expertData.categories.length === 0) && (
+                  {(!expertData.languages || expertData.languages.length === 0) && (
                     <tr>
                       <td colSpan={2} className="border px-4 py-2 text-center">
-                        No categories found
+                        No languages found
                       </td>
                     </tr>
                   )}
@@ -64,4 +64,4 @@ const CategoryList = ({ expertData }) => {
   );
 };
 
-export default CategoryList;
+export default LanguagesList;

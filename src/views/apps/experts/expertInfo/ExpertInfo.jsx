@@ -34,7 +34,7 @@ const ExpertInfo = ({ expertData }) => {
                   <td className="border px-4 py-2">{expertData.name}</td>
                   <td className="border px-4 py-2">{expertData.email}</td>
                   <td className="border px-4 py-2">{expertData.phone}</td>
-                  <td className="border px-4 py-2">
+                  <td className="border px-4 py-2 text-center">
                     <Chip
                       variant="tonal"
                       label={activeStatusLabel(expertData.status)}
