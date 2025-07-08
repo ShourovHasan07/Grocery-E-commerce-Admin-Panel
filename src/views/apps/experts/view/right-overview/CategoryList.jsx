@@ -7,9 +7,6 @@ import Grid from "@mui/material/Grid2";
 
 const CategoryList = ({ expertData }) => {
 
-  //console.log("expert data :",expertData)
-
-
   return (
     <>
       <Card>
@@ -28,7 +25,7 @@ const CategoryList = ({ expertData }) => {
 
         <CardHeader
           title="Expert Categories"
-          className="pb-0"
+          className="pb-1"
         />
         <CardContent>
           <Grid size={{ xs: 12 }}>
@@ -36,8 +33,8 @@ const CategoryList = ({ expertData }) => {
               <table className="w-full table-auto border-collapse">
                 <thead>
                   <tr className="bg-gray-50">
-                    <th className="border px-4 py-2">ID</th>
-                    <th className="border px-4 py-2">Category Name</th>
+                    <th className="border px-4 py-2 text-start">ID</th>
+                    <th className="border px-4 py-2 text-start">Category Name</th>
                   </tr>
                 </thead>
                 <tbody>

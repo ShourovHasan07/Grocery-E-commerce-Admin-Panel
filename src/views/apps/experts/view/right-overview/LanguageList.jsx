@@ -5,39 +5,25 @@ import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid2";
 
 
-const LanguagesList = ({ expertData }) => {
-
-  console.log("expert data :",expertData)
-
-
+const LanguageList = ({ expertData }) => {
+  // console.log(expertData.languages)
   return (
     <>
       <Card>
         <CardHeader
-          title=""
-          className="pb-0"
+          title="Expert Languages"
+          className="pb-1"
         />
 
-        <CardContent>
-          <Grid size={{ xs: 12 }}>
-            <div className="w-full">
-              <p></p>
-            </div>
-          </Grid>
-        </CardContent>
-
-        <CardHeader
-          title="Expert languages"
-          className="pb-0"
-        />
         <CardContent>
           <Grid size={{ xs: 12 }}>
             <div className="w-full overflow-x-auto">
               <table className="w-full table-auto border-collapse">
                 <thead>
                   <tr className="bg-gray-50">
-                    <th className="border px-4 py-2">ID</th>
-                    <th className="border px-4 py-2">languages Name</th>
+                    <th className="border px-4 py-2 text-start">ID</th>
+                    <th className="border px-4 py-2 text-start">Name</th>
+                    <th className="border px-4 py-2 text-start">Level</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -45,6 +31,7 @@ const LanguagesList = ({ expertData }) => {
                     <tr key={index}>
                       <td className="border px-4 py-2">{index + 1}</td>
                       <td className="border px-4 py-2">{language.name}</td>
+                      <td className="border px-4 py-2">{language?.pivot?.level}</td>
                     </tr>
                   ))}
                   {(!expertData.languages || expertData.languages.length === 0) && (
@@ -64,4 +51,4 @@ const LanguagesList = ({ expertData }) => {
   );
 };
 
-export default LanguagesList;
+export default LanguageList;

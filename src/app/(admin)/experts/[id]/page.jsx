@@ -37,7 +37,7 @@ const getExpertData = async (id) => {
 }
 
 export const metadata = {
-  title: "Experts - AskValor",
+  title: "Expert Detail - AskValor",
 };
 
 const ExpertView = async ({ params }) => {
