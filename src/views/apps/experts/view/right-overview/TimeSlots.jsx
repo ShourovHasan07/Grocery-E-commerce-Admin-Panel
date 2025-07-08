@@ -17,38 +17,18 @@ import Collapse from "@mui/material/Collapse";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 
-// Icons
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-
 // Utils
-import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
+import { activeStatusLabel, activeStatusColor, timeFormat } from "@/utils/helpers";
 
 const TimeSlots = ({ expertData }) => {
-  const [availabilityGroups, setAvailabilityGroups] = useState([]);
   const [openDay, setOpenDay] = useState(null);
 
-  useEffect(() => {
-    if (expertData?.availabilities) {
-      setAvailabilityGroups(expertData.availabilities);
-    }
-  }, [expertData]);
-
-  const convertTo12Hour = (time24h) => {
-    let [hours, minutes] = time24h.split(":");
-    const modifier = +hours >= 12 ? "PM" : "AM";
-
-    hours = +hours % 12 || 12;
-    
-return `${hours}:${minutes} ${modifier}`;
-  };
-
-  
-
-  
   return (
     <Card>
-      <CardHeader title="Expert TimeSlots" />
+      <CardHeader
+        title="Expert Time Slots"
+        className="pb-1"
+      />
       <CardContent>
         <Grid size={{ xs: 12 }}>
           <div className="w-full overflow-x-auto">
@@ -56,28 +36,27 @@ return `${hours}:${minutes} ${modifier}`;
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell />
-                    <TableCell>Day</TableCell>
+                    <TableCell colSpan={2} className="font-black text-[15px]">Day</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {availabilityGroups.map((group) => (
+                  {expertData?.availabilities && expertData?.availabilities.length > 0 && expertData.availabilities.map((group) => (
                     <React.Fragment key={group.dayOfWeek}>
                       <TableRow>
-                        <TableCell>
+                        <TableCell colSpan={2}>
                           <IconButton
+                            className="mr-2"
                             onClick={() =>
                               setOpenDay(openDay === group.dayOfWeek ? null : group.dayOfWeek)
                             }
                           >
                             {openDay === group.dayOfWeek ? (
-                              <KeyboardArrowUpIcon />
+                              <i className="tabler-chevron-up" />
                             ) : (
-                              <KeyboardArrowDownIcon />
+                              <i className="tabler-chevron-down" />
                             )}
                           </IconButton>
-                        </TableCell>
-                        <TableCell>
+
                           {group.dayOfWeek.charAt(0).toUpperCase() + group.dayOfWeek.slice(1)}
                         </TableCell>
                       </TableRow>
@@ -88,7 +67,6 @@ return `${hours}:${minutes} ${modifier}`;
                               <Table size="small">
                                 <TableHead>
                                   <TableRow>
-                                  
                                     <TableCell>ID</TableCell>
                                     <TableCell>Start</TableCell>
                                     <TableCell>End</TableCell>
@@ -98,10 +76,9 @@ return `${hours}:${minutes} ${modifier}`;
                                 <TableBody>
                                   {group.timeSlots?.map((slot) => (
                                     <TableRow key={slot.id}>
-                                      
                                       <TableCell>{slot.id}</TableCell>
-                                      <TableCell>{convertTo12Hour(slot.startTime)}</TableCell>
-                                      <TableCell>{convertTo12Hour(slot.endTime)}</TableCell>
+                                      <TableCell>{timeFormat(slot.startTime)}</TableCell>
+                                      <TableCell>{timeFormat(slot.endTime)}</TableCell>
                                       <TableCell>
                                         <Chip
                                           variant="tonal"
@@ -121,13 +98,6 @@ return `${hours}:${minutes} ${modifier}`;
                       </TableRow>
                     </React.Fragment>
                   ))}
-                  {availabilityGroups.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={3} align="center">
-                        No time slots available
-                      </TableCell>
-                    </TableRow>
-                  )}
                 </TableBody>
               </Table>
             </TableContainer>

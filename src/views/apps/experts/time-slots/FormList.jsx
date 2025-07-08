@@ -13,8 +13,6 @@ import {
   IconButton, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, Box, Collapse
 } from "@mui/material";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Grid from "@mui/material/Grid2";
 
 // Form
@@ -29,7 +27,7 @@ import AppReactDatepicker from "@/libs/styles/AppReactDatepicker";
 import CustomTextField from "@core/components/mui/TextField";
 import apiHelper from "@/utils/apiHelper";
 import DialogDelete from "./DialogDelete";
-import DialogEdit from "./DialogEdit";
+import EditDrawer from "./EditDrawer";
 
 // Util Imports
 import { activeStatusLabel, activeStatusColor, timeFormat } from "@/utils/helpers";
@@ -426,7 +424,7 @@ const FormList = ({ availabilityList }) => {
                     <TableRow>
                       <TableCell align='left' className="font-semibold text-sm capitalize">
                         <IconButton className="mr-1" onClick={() => setOpenDay(openDay === group.dayOfWeek ? null : group.dayOfWeek)}>
-                          {openDay === group.dayOfWeek ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                          {openDay === group.dayOfWeek ? <i className="tabler-chevron-up" /> : <i className="tabler-chevron-down" />}
                         </IconButton>
 
                         {group.dayOfWeek ? group.dayOfWeek.charAt(0).toUpperCase() + group.dayOfWeek.slice(1).toLowerCase() : ""}
@@ -490,8 +488,8 @@ const FormList = ({ availabilityList }) => {
         </CardContent>
       </Card>
 
-      {/* Dialog for Edit */}
-      <DialogEdit
+      {/* Edit Drawer */}
+      <EditDrawer
         weeks={weeks}
         open={dialogOpen}
         onClose={handleDialogClose}
