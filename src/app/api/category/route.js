@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+
 export async function GET(request) {
   try {
     // 1. Get and validate access token
@@ -87,52 +88,63 @@ export async function GET(request) {
 
 
 
+
+
+
+
+
+
 export async function POST(request) {
-  // First check content type
+  // 1. First check content type
   const contentType = request.headers.get('content-type');
   
   if (!contentType || !contentType.includes('application/json')) {
     return NextResponse.json(
       { 
         success: false, 
-        message: 'Content-Type must be application/json' 
+        message: 'Content-Type must be application/json',
+        solution: 'Please add Content-Type: application/json header'
       },
-      { status: 415 } // 415 Unsupported Media Type
+      { status: 415 } // 415 = Unsupported Media Type
     );
   }
 
   try {
-    // Now safely parse the JSON body
+    // 2. Now safely parse the JSON body
     const requestBody = await request.json();
     
-    // Validate required fields
+    // 3. Validate required fields
     if (!requestBody.name) {
       return NextResponse.json(
-        { success: false, message: 'Category name is required' },
+        { 
+          success: false, 
+          message: 'Category name is required',
+          example: {
+            name: "Category Name",
+            image: "https://example.com/image.jpg"
+          }
+        },
         { status: 400 }
       );
     }
 
-    // Process the request...
-    const response = await fetch('https://your-api-endpoint.com/categories', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${YOUR_TOKEN}`
-      },
-      body: JSON.stringify(requestBody)
-    });
-
-    const data = await response.json();
-    return NextResponse.json(data);
-
+    // Rest of your API logic...
+    
   } catch (error) {
+    console.error('API Error:', error);
     return NextResponse.json(
-      { success: false, message: 'Server error' },
+      { 
+        success: false, 
+        message: 'Internal server error',
+        ...(process.env.NODE_ENV === 'development' && {
+          error: error.message
+        })
+      },
       { status: 500 }
     );
   }
 }
+
 
 
 
