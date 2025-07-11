@@ -4,44 +4,57 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from "@/libs/auth";
 
 import CategoryList from "@/views/apps/categories/list";
-import apiHelper from "@/utils/apiHelper";
+
 
 export const metadata = {
   title: "Categories - AskValor",
 };
 
-const getCategoryData = async () => {
+// const getCategoryData = async () => {
 
-  const session = await getServerSession(authOptions)
+//   const session = await getServerSession(authOptions)
 
-  if (session.accessToken) {
-    try {
-      // Fetching the categories data
-      const result = await apiHelper.get('categories', { pageSize: 200 }, session);
+//   if (session.accessToken) {
+//     try {
+//       // Fetching the categories data
+//       //const result = await apiHelper.get('categories', { pageSize: 200 }, session);
 
-      if (result.success) {
-        return result.data;
-      }
+//      const url = `${process.env.NEXT_PUBLIC_APP_URL}/admin/categories?pageSize=200`;
 
-      
-return null;
-    } catch (error) {
-      // console.error('Error fetching categories:', error);
 
-      return null;
-    }
-  }
+//     const res = await fetch(url, {
+//         method: "GET",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${session.accessToken}`,
+//         },
+//         cache: "no-store",
+//       });
 
-  return null;
-}
+//       const result = await res.json();
+
+//       if (res.ok && result.success) {
+//         return result.data;
+//       }
+
+//       return null;
+//     } catch (error) {
+//       console.error("Fetching error:", error);
+//       return null;
+//     }
+//   }
+
+//   return null;
+// };
 
 const ListApp = async () => {
 
-  const dataCategories = await getCategoryData();
+ // const dataCategories = await getCategoryData();
 
   // console.log(dataCategories);
 
-  return <CategoryList tData={dataCategories} />;
+  //return <CategoryList tData={dataCategories} />;
+  return <CategoryList  />;
 };
 
 export default ListApp;

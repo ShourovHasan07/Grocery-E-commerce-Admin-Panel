@@ -9,7 +9,7 @@ class ApiHelper {
     };
   }
 
-  // Get session and token (works in both server and client)
+  // Get session and token (works in both server and client) 
   async getAuthToken(customSession = null) {
     try {
       let session = customSession;
@@ -66,6 +66,14 @@ class ApiHelper {
         queryParams = {},
         ...otherOptions
       } = options;
+
+
+
+//       const isInternal = endpoint.startsWith("/api/");
+// const baseUrl = isInternal ? "" : process.env.NEXT_PUBLIC_ADMIN_API_BASE_URL;
+
+
+      
 
       const normalizedBaseURL = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
       const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
