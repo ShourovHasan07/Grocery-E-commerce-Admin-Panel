@@ -95,7 +95,6 @@ const ListTable = ({ tableData }) => {
 
   const handleDelete = async (itemId) => {
     try {
-      const deleteEndpoint = `categories/${itemId}`;
 
       // call the delete API
       const res = await apiHelper.delete(deleteEndpoint);
