@@ -88,68 +88,126 @@ export async function GET(request) {
 
 
 
-
-
-
-
-
-
 export async function POST(request) {
-  // 1. First check content type
-  const contentType = request.headers.get('content-type');
-  
-  if (!contentType || !contentType.includes('application/json')) {
-    return NextResponse.json(
-      { 
-        success: false, 
-        message: 'Content-Type must be application/json',
-        solution: 'Please add Content-Type: application/json header'
-      },
-      { status: 415 } // 415 = Unsupported Media Type
-    );
-  }
-
   try {
-    // 2. Now safely parse the JSON body
-    const requestBody = await request.json();
-    
-    // 3. Validate required fields
-    if (!requestBody.name) {
+    // 1. Verify API configuration
+    const baseUrl = process.env.NEXT_PUBLIC_ADMIN_API_BASE_URL;
+    if (!baseUrl) {
       return NextResponse.json(
-        { 
-          success: false, 
-          message: 'Category name is required',
-          example: {
-            name: "Category Name",
-            image: "https://example.com/image.jpg"
-          }
+        { success: false, message: "Server configuration error" },
+        { status: 500 }
+      );
+    }
+
+    // 2. Parse and validate request
+    let requestBody;
+    try {
+      requestBody = await request.json();
+      if (!requestBody) throw new Error("Empty request body");
+    } catch (error) {
+      return NextResponse.json(
+        { success: false, message: "Invalid JSON format" },
+        { status: 400 }
+      );
+    }
+
+    // 3. Process payload 
+    let payload;
+    try {
+      if (Array.isArray(requestBody)) {
+        // Array format
+        const getValue = (key) => {
+          const item = requestBody.find(i => i?.key === key);
+          return item?.value;
+        };
+
+      // get string value for backend requirment
+payload = {
+  name: String(requestBody?.name || ""),
+  status: String(requestBody?.status),      
+  isPopular: String(requestBody?.isPopular) 
+};
+
+      } else {
+        // Object format
+        payload = {
+          name: String(requestBody?.name || ""),
+          status: (requestBody?.status),
+          isPopular: (requestBody?.isPopular)
+        };
+
+        //console.log("Payload being sent to backend:", payload);
+
+      }
+    } catch (error) {
+      return NextResponse.json(
+        { success: false, message: "Invalid data structure" },
+        { status: 400 }
+      );
+    }
+
+    const validationErrors = {};
+if (!payload.name.trim()) validationErrors.name = "Name is required";
+if (!["true", "false"].includes(payload.status)) validationErrors.status = "Status must be 'true' or 'false'";
+if (!["true", "false"].includes(payload.isPopular)) validationErrors.isPopular = "isPopular must be 'true' or 'false'";
+
+    if (Object.keys(validationErrors).length > 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Validation failed",
+          errors: validationErrors
         },
         { status: 400 }
       );
     }
 
-    // Rest of your API logic...
+    // 5. Prepare API request with strict boolean values
+    const apiUrl = `${baseUrl.replace(/\/$/, "")}/categories`;
+    const res = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${request.headers.get("Authorization")?.split(" ")[1] || ""}`
+      },
+     body: JSON.stringify(payload)
+    });
+
+
+
     
-  } catch (error) {
-    console.error('API Error:', error);
+
+    // 6. Handle API response
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}));
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Category creation failed",
+          apiError: error,
+          status: res.status
+        },
+        { status: res.status }
+      );
+    }
+
+    const responseData = await res.json();
     return NextResponse.json(
-      { 
-        success: false, 
-        message: 'Internal server error',
-        ...(process.env.NODE_ENV === 'development' && {
-          error: error.message
-        })
+      { success: true, data: responseData },
+      { status: 201 }
+    );
+
+  } catch (error) {
+    console.error("API Error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Internal server error",
+        error: process.env.NODE_ENV === "development" ? error.message : undefined
       },
       { status: 500 }
     );
   }
 }
-
-
-
-
-
-
-
 
 
