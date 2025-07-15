@@ -19,17 +19,8 @@ export const metadata = {
 //       // Fetching the categories data
 //       //const result = await apiHelper.get('categories', { pageSize: 200 }, session);
 
-//      const url = `${process.env.NEXT_PUBLIC_APP_URL}/admin/categories?pageSize=200`;
+//   
 
-
-//     const res = await fetch(url, {
-//         method: "GET",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${session.accessToken}`,
-//         },
-//         cache: "no-store",
-//       });
 
 //       const result = await res.json();
 

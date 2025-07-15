@@ -1,23 +1,28 @@
 // utils/shourovApiHelper.js
+
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/auth";
 
-class ApiHelper {
+class ApiHelper {                                                                 
   constructor() {
     this.defaultHeaders = {
       "Content-Type": "application/json",
     };
   }
 
-  // 🔐 Token নেওয়ার জন্য method
-  async getAuthToken(customSession = null) {
+  // ✅ Get token from session (client/server aware)
+  async getAuthToken(customSession = null, req = null) {
     try {
       let session = customSession;
 
       if (!session) {
         if (typeof window === "undefined") {
-          // Server side
-          session = await getServerSession(authOptions);
+          // Server side: use request with getServerSession
+          if (req) {
+            session = await getServerSession({ req, ...authOptions });
+          } else {
+            return null;
+          }
         } else {
           // Client side
           const { getSession } = await import("next-auth/react");
@@ -26,14 +31,14 @@ class ApiHelper {
       }
 
       return session?.accessToken || session?.user?.apiToken || null;
-    } catch {
+    } catch (err) {
       return null;
     }
   }
 
-  // 🔧 Header বানানো
-  async buildHeaders(session = null, additionalHeaders = {}) {
-    const token = await this.getAuthToken(session);
+  // ✅ Build headers with Authorization
+  async buildHeaders(session = null, additionalHeaders = {}, req = null) {
+    const token = await this.getAuthToken(session, req);
     const headers = {
       ...this.defaultHeaders,
       ...additionalHeaders,
@@ -46,26 +51,25 @@ class ApiHelper {
     return headers;
   }
 
-  // 🌐 API call করার মূল method
-  async makeApiCall(endpoint, options = {}, session = null) {
+  // ✅ Main API request handler
+  async makeApiCall(endpoint, options = {}, session = null, req = null) {
     try {
       const isInternal = endpoint.startsWith("/api/");
 
-      // ✅ Fix for internal API routes on server/client
       let baseUrl = "";
-
       if (isInternal) {
-        if (typeof window !== "undefined") {
-          baseUrl = window.location.origin;
-        } else {
-          baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-        }
+        baseUrl =
+          typeof window !== "undefined"
+            ? window.location.origin
+            : process.env.NEXTAUTH_URL || "http://localhost:3000";
       } else {
         baseUrl = process.env.NEXT_PUBLIC_ADMIN_API_BASE_URL || "";
       }
 
       const normalizedBaseURL = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
-      const normalizedEndpoint = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
+      const normalizedEndpoint = endpoint.startsWith("/")
+        ? endpoint.slice(1)
+        : endpoint;
       const url = new URL(normalizedEndpoint, normalizedBaseURL);
 
       const {
@@ -76,14 +80,14 @@ class ApiHelper {
         ...otherOptions
       } = options;
 
-      // Query param সেট করা
+      // Append query params
       Object.keys(queryParams).forEach((key) => {
         if (queryParams[key] !== undefined && queryParams[key] !== null) {
           url.searchParams.append(key, queryParams[key]);
         }
       });
 
-      const headers = await this.buildHeaders(session, customHeaders);
+      const headers = await this.buildHeaders(session, customHeaders, req);
 
       const fetchOptions = {
         method,
@@ -126,40 +130,44 @@ class ApiHelper {
     }
   }
 
-  // 📦 Shortcut methods
-  async get(endpoint, queryParams = {}, session = null, headers = {}) {
+  // 🔁 HTTP helpers
+  async get(endpoint, queryParams = {}, session = null, headers = {}, req = null) {
     return this.makeApiCall(
       endpoint,
       { method: "GET", queryParams, headers },
-      session
+      session,
+      req
     );
   }
 
-  async post(endpoint, body = null, session = null, headers = {}) {
+  async post(endpoint, body = null, session = null, headers = {}, req = null) {
     return this.makeApiCall(
       endpoint,
       { method: "POST", body, headers },
-      session
+      session,
+      req
     );
   }
 
-  async put(endpoint, body = null, session = null, headers = {}) {
+  async put(endpoint, body = null, session = null, headers = {}, req = null) {
     return this.makeApiCall(
       endpoint,
       { method: "PUT", body, headers },
-      session
+      session,
+      req
     );
   }
 
-  async delete(endpoint, session = null, headers = {}) {
+  async delete(endpoint, session = null, headers = {}, req = null) {
     return this.makeApiCall(
       endpoint,
       { method: "DELETE", headers },
-      session
+      session,
+      req
     );
   }
 }
 
-// ✅ Export singleton instance
+// ✅ Singleton export
 const shourovApiHelper = new ApiHelper();
 export default shourovApiHelper;

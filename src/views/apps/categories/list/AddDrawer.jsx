@@ -26,6 +26,7 @@ import apiHelper from "@/utils/apiHelper";
 
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
+import shourovApiHelper from "@/utils/shourovApiHelper";
 
 // Vars
 const initialData = {
@@ -123,6 +124,8 @@ const AddDrawer = (props) => {
 
   // form submission
   const onSubmit = async (formData) => {
+
+    console.log(formData)
     setIsSubmitting(true);
 
     try {
@@ -141,24 +144,33 @@ const AddDrawer = (props) => {
 
       const headerConfig = {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data' 
         }
       };
 
       if (setType === 'edit') {
-        res = await apiHelper.put(`categories/${data.id}`, form, null, headerConfig);
+        res = await shourovApiHelper.put(`/api/category/${data.id}`, form, null, headerConfig);
         toastMessage = "Category updated successfully";
       } else {
-        res = await apiHelper.post('categories', form, null, headerConfig);
+        res = await shourovApiHelper.post('/api/category', form, null, headerConfig);
         toastMessage = "Category created successfully";
+     
+
       }
 
-      if (!res?.success && (res?.status === 400 || res?.status === 404)) {
+      console.log(res)
+
+      if (!res?.success && (res?.raw?.status === 400 || res?.status === 404)) {
         if (res?.status === 404) {
           toast.error("Category not found");
 
           return;
-        }
+
+          
+        } else if (res?.raw?.status === 400) {
+    toast.error(res?.data?.message || "Invalid request format");
+    return;
+  }
 
         let errors = res?.data?.errors || [];
 
@@ -175,17 +187,17 @@ const AddDrawer = (props) => {
         return;
       }
 
-      if (res?.success && res?.data?.success) {
+      if (res?.success && res?.data?.data?.success) {
         if (setType === 'edit') {
           const updatedData = userData.map(item =>
-            item.id === res?.data?.category?.id
-              ? { ...item, ...res?.data?.category }
+            item.id === res?.data?.data?.category?.id
+              ? { ...item, ...res?.data?.data?.category }
               : item
           );
 
           setData(updatedData);
         } else {
-          setData([res?.data?.category, ...(userData ?? [])]);
+          setData([res?.data?.data?.category, ...(userData ?? [])]);
         }
 
         handleClose();
@@ -199,7 +211,8 @@ const AddDrawer = (props) => {
           fileInputRef.current.value = '';
         }
 
-        toast.success(toastMessage);
+      toast.success(toastMessage, { autoClose: 2000 });
+
       }
 
     } catch (error) {

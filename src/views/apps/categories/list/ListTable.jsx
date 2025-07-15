@@ -103,10 +103,10 @@ const ListTable = () => {
      
       const result = await shourovApiHelper.get("/api/category", {}, session);
 
-      console.log(result)
+      //console.log(result)
 
       if (result.success) {
-  setData(result.data?.data?.categories || []);
+  setData(result.data?.categories || []);
 
       } else {
         console.error("Error:", result.error);
@@ -130,6 +130,8 @@ const ListTable = () => {
 
     // Make DELETE request (not GET as in your original code)
     const res = await shourovApiHelper.delete(`/api/category/${itemId}`, null, session);
+
+     console.log(res)
 
     if (res?.success) {
       // Update local state

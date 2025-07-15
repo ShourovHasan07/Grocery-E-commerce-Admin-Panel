@@ -1,86 +1,60 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+
+import { authOptions } from "@/libs/auth";
+import apiHelper from "@/utils/apiHelper";
+import shourovApiHelper from '@/utils/shourovApiHelper';
 
 
 export async function GET(request) {
   try {
-    // 1. Get and validate access token
-    const authHeader = request.headers.get("Authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    //  1: Get session
+    const session = await getServerSession(authOptions);
+    console.log("Session Info:", session);
+
+    //  2: Check token
+    if (!session?.accessToken) {
       return NextResponse.json(
-        { 
-          success: false, 
-          message: "Authorization token missing or invalid",
-          error: "Unauthorized" 
-        },
+        { success: false, message: "Unauthorized" },
         { status: 401 }
       );
     }
-    const accessToken = authHeader.split(" ")[1];
 
-    // 2. Construct URL safely
-    const baseUrl = process.env.API_BASE_URL || "https://askvalor-api.anvs.xyz";
-    const apiUrl = new URL("/api/admin/categories", baseUrl);
-    apiUrl.searchParams.append("pageSize", "200");
+    //  3: Call external API (Admin API)
+    const result = await apiHelper.get("categories", { pageSize: 200 }, session);
 
-    console.log("Fetching categories from:", apiUrl.toString());
+    
 
-    // 3. Make API request
-    const res = await fetch(apiUrl.toString(), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      cache: "no-store",
-    });
-
-    // 4. Handle response
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({
-        message: "Failed to parse error response"
-      }));
-      
-      
+    //  Step 4: Handle result
+    if (result.success) {
+      return NextResponse.json(result.data, { status: 200 });
+    } else {
       return NextResponse.json(
-        { 
-          success: false, 
-          message: errorData.message || "Failed to fetch categories",
-          error: res.statusText,
-          status: res.status 
-        },
-        { status: res.status }
+        { success: false, message: "Failed to fetch categories", error: result.data },
+        { status: result.status || 500 }
       );
     }
 
-    const result = await res.json();
-    
-    // Handle different response structures
-    const responseData = result.data || result.items || result;
-    
-   
-
-    return NextResponse.json({ 
-      success: true, 
-      data: responseData,
-      count: Array.isArray(responseData) ? responseData.length : undefined
-    }, { 
-      status: 200 
-    });
-
   } catch (error) {
-    console.error("Fetching error:", error);
+    console.error("GET /api/category error:", error);
+
     return NextResponse.json(
-      { 
-        success: false, 
-        error: "Internal Server Error",
-        message: "Failed to process categories request",
-        details: process.env.NODE_ENV === "development" ? error.message : undefined,
-        stack: process.env.NODE_ENV === "development" ? error.stack : undefined
+      {
+        success: false,
+        message: "Internal server error",
+        error: process.env.NODE_ENV === "development" ? error.message : undefined,
       },
       { status: 500 }
     );
   }
 }
+
+
+
+
+
+
+//Add Category 
 
 
 
@@ -89,125 +63,148 @@ export async function GET(request) {
 
 
 export async function POST(request) {
+
+
   try {
-    // 1. Verify API configuration
-    const baseUrl = process.env.NEXT_PUBLIC_ADMIN_API_BASE_URL;
-    if (!baseUrl) {
+
+     const session = await getServerSession(authOptions);
+
+
+
+     if (!session?.accessToken) {
       return NextResponse.json(
-        { success: false, message: "Server configuration error" },
-        { status: 500 }
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
       );
     }
 
-    // 2. Parse and validate request
-    let requestBody;
-    try {
-      requestBody = await request.json();
-      if (!requestBody) throw new Error("Empty request body");
-    } catch (error) {
-      return NextResponse.json(
-        { success: false, message: "Invalid JSON format" },
-        { status: 400 }
-      );
-    }
+   
+    
 
-    // 3. Process payload 
-    let payload;
-    try {
-      if (Array.isArray(requestBody)) {
-        // Array format
-        const getValue = (key) => {
-          const item = requestBody.find(i => i?.key === key);
-          return item?.value;
-        };
+    // 2. Parse request
+    const contentType = request.headers.get("content-type") || "";
+    let requestData;
 
-      // get string value for backend requirment
-payload = {
-  name: String(requestBody?.name || ""),
-  status: String(requestBody?.status),      
-  isPopular: String(requestBody?.isPopular) 
-};
+    if (
+      contentType.includes("multipart/form-data") ||
+      contentType.includes("application/x-www-form-urlencoded")
+    ) {
+      // Handle form data
+     // console.log("Processing multipart/form-data");
+      const formData = await request.formData();
 
-      } else {
-        // Object format
-        payload = {
-          name: String(requestBody?.name || ""),
-          status: (requestBody?.status),
-          isPopular: (requestBody?.isPopular)
-        };
-
-        //console.log("Payload being sent to backend:", payload);
-
+      //console.log("FormData entries:");
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
       }
-    } catch (error) {
+
+      requestData = {
+        name: formData.get("name"),
+        status: formData.get("status"),
+        isPopular: formData.get("isPopular"),
+      };
+    } else if (contentType.includes("application/json")) {
+      // Handle JSON
+      ;
+      const rawBody = await request.text();
+     
+
+      if (!rawBody.trim()) throw new Error("Empty request body");
+
+      requestData = JSON.parse(rawBody);
+    } else {
       return NextResponse.json(
-        { success: false, message: "Invalid data structure" },
-        { status: 400 }
+        { success: false, message: "Unsupported Content-Type" },
+        { status: 415 }
       );
     }
 
+   
+
+    // 3. Process payload for backend (convert to string)
+    let payload;
+    if (Array.isArray(requestData)) {
+      // Array format (if needed)
+      const getValue = (key) => {
+        const item = requestData.find((i) => i?.key === key);
+        return item?.value;
+      };
+      payload = {
+        name: String(getValue("name") || ""),
+        status: String(getValue("status") || ""),
+        isPopular: String(getValue("isPopular") || ""),
+      };
+    } else {
+      // Object format
+      payload = {
+        name: String(requestData.name || ""),
+        status: String(requestData.status || ""),
+        isPopular: String(requestData.isPopular || ""),
+      };
+    }
+
+    console.log("Payload being sent to backend:", payload);
+
+    // 4. Validation
     const validationErrors = {};
-if (!payload.name.trim()) validationErrors.name = "Name is required";
-if (!["true", "false"].includes(payload.status)) validationErrors.status = "Status must be 'true' or 'false'";
-if (!["true", "false"].includes(payload.isPopular)) validationErrors.isPopular = "isPopular must be 'true' or 'false'";
+    if (!payload.name.trim()) validationErrors.name = "Name is required";
+    if (!["true", "false"].includes(payload.status))
+      validationErrors.status = "Status must be 'true' or 'false'";
+    if (!["true", "false"].includes(payload.isPopular))
+      validationErrors.isPopular = "isPopular must be 'true' or 'false'";
 
     if (Object.keys(validationErrors).length > 0) {
       return NextResponse.json(
         {
           success: false,
           message: "Validation failed",
-          errors: validationErrors
+          errors: validationErrors,
         },
         { status: 400 }
       );
     }
 
-    // 5. Prepare API request with strict boolean values
-    const apiUrl = `${baseUrl.replace(/\/$/, "")}/categories`;
-    const res = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${request.headers.get("Authorization")?.split(" ")[1] || ""}`
-      },
-     body: JSON.stringify(payload)
-    });
+
+    // 5. Send to backend API
+const res = await apiHelper.post("categories", payload, session);
+console.log(res)
+
+// 6. Handle backend response
+if (!res.success) {
+  const error = res.data || {};
+  return NextResponse.json(
+    {
+      success: false,
+      message: "Category creation failed",
+      apiError: error,
+      status: res.status,
+    },
+    { status: res.status }
+  );
+}
+
+// ✅ Success
+return NextResponse.json(
+  { success: true, data: res.data },
+  { status: 201 }
+);
 
 
 
     
-
-    // 6. Handle API response
-    if (!res.ok) {
-      const error = await res.json().catch(() => ({}));
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Category creation failed",
-          apiError: error,
-          status: res.status
-        },
-        { status: res.status }
-      );
-    }
-
-    const responseData = await res.json();
-    return NextResponse.json(
-      { success: true, data: responseData },
-      { status: 201 }
-    );
-
+      
+      
+  
   } catch (error) {
     console.error("API Error:", error);
     return NextResponse.json(
       {
         success: false,
         message: "Internal server error",
-        error: process.env.NODE_ENV === "development" ? error.message : undefined
+        error:
+          process.env.NODE_ENV === "development" ? error.message : undefined,
       },
       { status: 500 }
     );
   }
 }
-
-

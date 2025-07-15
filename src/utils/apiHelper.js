@@ -69,8 +69,7 @@ class ApiHelper {
 
 
 
-//       const isInternal = endpoint.startsWith("/api/");
-// const baseUrl = isInternal ? "" : process.env.NEXT_PUBLIC_ADMIN_API_BASE_URL;
+
 
 
       
