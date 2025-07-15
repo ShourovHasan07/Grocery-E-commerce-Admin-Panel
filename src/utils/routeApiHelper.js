@@ -124,7 +124,7 @@ class RouteApiHelper {
       };
 
     } catch (error) {
-      console.error('API call failed:', error);
+      // console.error('API call failed:', error);
 
       return {
         success: false,

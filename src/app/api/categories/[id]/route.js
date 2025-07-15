@@ -2,48 +2,7 @@ import { NextResponse } from 'next/server';
 
 import routeApiHelper from "@/utils/routeApiHelper";
 
-export async function DELETE(request, { params }) {
-  const token = request.headers.get("authorization");
-
-  if (!token) {
-    return NextResponse.json(
-      { success: false, data: null, message: "Authorization header is missing" },
-      { status: 401 }
-    );
-  }
-
-  try {
-    // 1. Validate ID
-    const { id } = await params;
-
-    if (!id || !/^\d+$/.test(id)) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid category ID' },
-        { status: 400 }
-      );
-    }
-
-    const result = await routeApiHelper.delete(`categories/${id}`, token);
-
-    if (!result.success) {
-      return NextResponse.json(
-        { success: false, message: 'Category not found or deletion failed' },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(
-      { success: true, data: result, message: result?.message || 'Category deleted successfully' },
-      { status: 200 }
-    );
-  } catch (error) {
-    return NextResponse.json(
-      { success: false, message: 'Server error' },
-      { status: 500 }
-    );
-  }
-}
-
+//Edit Category
 export async function PUT(request, { params }) {
   const token = request.headers.get("authorization");
 
@@ -55,7 +14,7 @@ export async function PUT(request, { params }) {
   }
 
   try {
-    const { id } = params;
+    const { id } = await params;
 
     if (!id || !/^\d+$/.test(id)) {
       return NextResponse.json(
@@ -111,6 +70,49 @@ export async function PUT(request, { params }) {
         message: "Internal server error",
         error: error?.message,
       },
+      { status: 500 }
+    );
+  }
+}
+
+//Delete Category
+export async function DELETE(request, { params }) {
+  const token = request.headers.get("authorization");
+
+  if (!token) {
+    return NextResponse.json(
+      { success: false, data: null, message: "Authorization header is missing" },
+      { status: 401 }
+    );
+  }
+
+  try {
+    // 1. Validate ID
+    const { id } = await params;
+
+    if (!id || !/^\d+$/.test(id)) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid category ID' },
+        { status: 400 }
+      );
+    }
+
+    const result = await routeApiHelper.delete(`categories/${id}`, token);
+
+    if (!result.success) {
+      return NextResponse.json(
+        { success: false, message: 'Category not found or deletion failed' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, data: result, message: result?.message || 'Category deleted successfully' },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: 'Server error' },
       { status: 500 }
     );
   }
