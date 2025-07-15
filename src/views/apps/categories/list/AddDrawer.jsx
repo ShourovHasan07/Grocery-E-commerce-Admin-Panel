@@ -1,6 +1,8 @@
 // React Imports
 import { useEffect, useRef, useState } from "react";
 
+import { useSession } from "next-auth/react";
+
 // MUI Imports
 import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
@@ -22,11 +24,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // Third-party Imports
 import { toast } from "react-toastify";
 
-import apiHelper from "@/utils/apiHelper";
+import pageApiHelper from "@/utils/pageApiHelper";
 
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
-import shourovApiHelper from "@/utils/shourovApiHelper";
 
 // Vars
 const initialData = {
@@ -123,9 +124,10 @@ const AddDrawer = (props) => {
   };
 
   // form submission
-  const onSubmit = async (formData) => {
+  const { data: session } = useSession();
+  const token = session?.accessToken;
 
-    console.log(formData)
+  const onSubmit = async (formData) => {
     setIsSubmitting(true);
 
     try {
@@ -140,37 +142,31 @@ const AddDrawer = (props) => {
         form.append("image", formData.image[0]);
       }
 
-      let res, toastMessage;
+      let response, toastMessage;
 
       const headerConfig = {
         headers: {
-          'Content-Type': 'multipart/form-data' 
+          'Content-Type': 'multipart/form-data'
         }
       };
 
       if (setType === 'edit') {
-        res = await shourovApiHelper.put(`/api/category/${data.id}`, form, null, headerConfig);
+        response = await pageApiHelper.put(`categories/${data.id}`, form, token, headerConfig);
+
         toastMessage = "Category updated successfully";
       } else {
-        res = await shourovApiHelper.post('/api/category', form, null, headerConfig);
+        response = await pageApiHelper.post('categories', form, token, headerConfig);
         toastMessage = "Category created successfully";
-     
-
       }
 
-      console.log(res)
+      const res = response?.data;
 
-      if (!res?.success && (res?.raw?.status === 400 || res?.status === 404)) {
+      if (!response?.success && (response?.status === 400 || response?.status === 404)) {
         if (res?.status === 404) {
           toast.error("Category not found");
 
           return;
-
-          
-        } else if (res?.raw?.status === 400) {
-    toast.error(res?.data?.message || "Invalid request format");
-    return;
-  }
+        }
 
         let errors = res?.data?.errors || [];
 
@@ -187,17 +183,17 @@ const AddDrawer = (props) => {
         return;
       }
 
-      if (res?.success && res?.data?.data?.success) {
+      if (res?.success && res?.data?.success) {
         if (setType === 'edit') {
           const updatedData = userData.map(item =>
-            item.id === res?.data?.data?.category?.id
-              ? { ...item, ...res?.data?.data?.category }
+            item.id === res?.data?.category?.id
+              ? { ...item, ...res?.data?.category }
               : item
           );
 
           setData(updatedData);
         } else {
-          setData([res?.data?.data?.category, ...(userData ?? [])]);
+          setData([res?.data?.category, ...(userData ?? [])]);
         }
 
         handleClose();
@@ -211,8 +207,7 @@ const AddDrawer = (props) => {
           fileInputRef.current.value = '';
         }
 
-      toast.success(toastMessage, { autoClose: 2000 });
-
+        toast.success(toastMessage);
       }
 
     } catch (error) {

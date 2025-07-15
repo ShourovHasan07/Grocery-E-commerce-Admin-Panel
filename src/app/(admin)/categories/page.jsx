@@ -4,48 +4,41 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from "@/libs/auth";
 
 import CategoryList from "@/views/apps/categories/list";
-
+import pageApiHelper from "@/utils/pageApiHelper";
 
 export const metadata = {
   title: "Categories - AskValor",
 };
 
-// const getCategoryData = async () => {
+const getCategoryData = async () => {
+  const session = await getServerSession(authOptions)
 
-//   const session = await getServerSession(authOptions)
+  // console.log("Session:", session);
 
-//   if (session.accessToken) {
-//     try {
-//       // Fetching the categories data
-//       //const result = await apiHelper.get('categories', { pageSize: 200 }, session);
+  if (session.accessToken) {
+    try {
+      // Fetching the categories data
+      const result = await pageApiHelper.get('categories', { pageSize: 200 }, session.accessToken);
 
-//   
+      if (result.success) {
+        return result.data;
+      }
 
+      return null;
+    } catch (error) {
+      // console.error('Error fetching categories:', error);
 
-//       const result = await res.json();
+      return null;
+    }
+  }
 
-//       if (res.ok && result.success) {
-//         return result.data;
-//       }
-
-//       return null;
-//     } catch (error) {
-//       console.error("Fetching error:", error);
-//       return null;
-//     }
-//   }
-
-//   return null;
-// };
+  return null;
+}
 
 const ListApp = async () => {
+  const { data } = await getCategoryData();
 
- // const dataCategories = await getCategoryData();
-
-  // console.log(dataCategories);
-
-  //return <CategoryList tData={dataCategories} />;
-  return <CategoryList  />;
+  return <CategoryList tData={data} />;
 };
 
 export default ListApp;

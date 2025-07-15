@@ -1,7 +1,9 @@
 "use client";
 
 // React Imports
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
+
+import { useSession } from "next-auth/react";
 
 // MUI Imports
 import Card from "@mui/material/Card";
@@ -40,8 +42,7 @@ import AddDrawer from './AddDrawer'
 
 // Third-party Imports
 
-import apiHelper from "@/utils/apiHelper";
-import shourovApiHelper from "@/utils/shourovApiHelper";
+import pageApiHelper from "@/utils/pageApiHelper";
 
 // Util Imports
 import { formattedDate } from "@/utils/formatters";
@@ -56,8 +57,6 @@ import { activeStatusLabel, activeStatusColor, popularStatusLabel, popularStatus
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
-import { useSession } from "next-auth/react";
-
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -75,12 +74,12 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 // Column Definitions
 const columnHelper = createColumnHelper();
 
-const ListTable = () => {
+const ListTable = ({ tableData }) => {
   // States
-  //const dataObj = tableData?.categories || [];
+  const dataObj = tableData?.categories || [];
+  const [data, setData] = useState(...[dataObj]);
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData] = useState(data);
   const [globalFilter, setGlobalFilter] = useState("");
 
   const [dialogOpen, setDialogOpen] = useState({
@@ -94,72 +93,38 @@ const ListTable = () => {
     data: {},
   });
 
-  // console.log("Data: ", addDrawerOpen.open);
-
-   const { data: session } = useSession();
-
-    useEffect(() => {
-    const fetchCategories = async () => {
-     
-      const result = await shourovApiHelper.get("/api/category", {}, session);
-
-      //console.log(result)
-
-      if (result.success) {
-  setData(result.data?.categories || []);
-
-      } else {
-        console.error("Error:", result.error);
-      }
-    };
-
-    if (session) {
-      fetchCategories();
-    }
-  }, [session]);//  session dependency
-
-
-
-
-  // call the delete API
+  const { data: session } = useSession();
+  const token = session?.accessToken;
 
   const handleDelete = async (itemId) => {
-  try {
-    // Show loading state in dialog
-    setDialogOpen(prev => ({ ...prev, isLoading: true }));
+    try {
+      const deleteEndpoint = `categories/${itemId}`;
 
-    // Make DELETE request (not GET as in your original code)
-    const res = await shourovApiHelper.delete(`/api/category/${itemId}`, null, session);
+      // call the delete API
+      const res = await pageApiHelper.delete(deleteEndpoint, token);
 
-     console.log(res)
+      // Update the data state after successful deletion
+      if (res?.success && res?.data?.success) {
+        setData(prevData => prevData.filter((item) => item.id !== itemId));
+        setFilteredData(prevData => prevData.filter((item) => item.id !== itemId));
 
-    if (res?.success) {
-      // Update local state
-      setData(prev => prev.filter(item => item.id !== itemId));
-      setFilteredData(prev => prev.filter(item => item.id !== itemId));
+        setDialogOpen((prevState) => ({
+          ...prevState,
+          open: !prevState.open,
+          data: {},
+        }));
 
-      // Close dialog and reset
-      setDialogOpen({
-        open: false,
-        data: {},
-        isLoading: false
-      });
+        toast.success("Deleted successfully");
+      }
 
-      // Show success message
-      toast.success(res?.data?.message || "Category deleted successfully");
-    } else {
-      throw new Error(res?.error?.message || 'Failed to delete category');
+    } catch (error) {
+      // console.error('Delete failed:', error);
+
+      // Show error in toast
+      toast.error(error.message)
     }
-  } catch (error) {
-    console.error('Delete failed:', error);
-    
-    // Reset loading state
-    setDialogOpen(prev => ({ ...prev, isLoading: false }));
-    
-    // Show error message
-    toast.error(error.message || 'An error occurred during deletion');
-  }
-};
+  };
+
   const columns = useMemo(
     () => [
       columnHelper.accessor("action", {
