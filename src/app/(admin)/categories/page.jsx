@@ -36,7 +36,7 @@ const getCategoryData = async () => {
 }
 
 const ListApp = async () => {
-  const { data } = await getCategoryData();
+const { data } = await getCategoryData();
 
   return <CategoryList tData={data} />;
 };

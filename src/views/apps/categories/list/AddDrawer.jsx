@@ -124,8 +124,8 @@ const AddDrawer = (props) => {
   };
 
   // form submission
-  const { data: session } = useSession();
-  const token = session?.accessToken;
+    const { data: session } = useSession();
+    const token = session?.accessToken;
 
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
