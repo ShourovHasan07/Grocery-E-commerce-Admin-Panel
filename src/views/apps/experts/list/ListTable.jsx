@@ -74,8 +74,13 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
+
+  // console.log("tableData data:", tableData);
   // States
   const dataObj = tableData?.experts || [];
+
+  // console.log("ListTable dataObj:", dataObj);
+
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState(...[dataObj]);
   const [filteredData, setFilteredData] = useState(data);

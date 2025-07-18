@@ -1,10 +1,12 @@
 import { getServerSession } from "next-auth/next";
 
 import { authOptions } from "@/libs/auth";
-import apiHelper from "@/utils/apiHelper";
+import pageApiHelper from "@/utils/pageApiHelper";
+
 
 // Component Imports
 import ExpertTimeSlot from "@/views/apps/experts/time-slots";
+
 
 const getExpertData = async (id) => {
   // Vars
@@ -13,7 +15,9 @@ const getExpertData = async (id) => {
   if (session.accessToken) {
     try {
       // Fetching the categories data
-      const result = await apiHelper.get(`experts/${id}`, session);
+    const result = await pageApiHelper.get(`experts/${id}/time-slots`, { pageSize: 200 }, session.accessToken);
+
+   // console.log("time-slots data:", result);
 
       if (result.success) {
         return result.data;
@@ -21,7 +25,7 @@ const getExpertData = async (id) => {
 
       return null;
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      //console.error('Error fetching categories:', error);
 
       return null;
     }
@@ -38,10 +42,10 @@ export const metadata = {
 const ExpertTimeSlotApp = async ({ params }) => {
   // Vars
   const { id } = await params;
-  const { expert } = await getExpertData(id);
+  const {data} = await getExpertData(id);
 
 
-  return <ExpertTimeSlot expertData={expert} />;
+  return <ExpertTimeSlot expertData={data} />;
 };
 
 export default ExpertTimeSlotApp;

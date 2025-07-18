@@ -14,6 +14,8 @@ import { activeStatusLabel, activeStatusColor, popularStatusLabel, popularStatus
 
 const Details = ({ expertData }) => {
 
+  // console.log("Expert Data in Details about:", expertData); 
+
   return (
     <>
       <Card>

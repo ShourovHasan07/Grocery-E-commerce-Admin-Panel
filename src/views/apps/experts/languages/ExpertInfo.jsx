@@ -12,10 +12,8 @@ import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
 
 
 const ExpertInfo = ({ expertData }) => {
-
-  
-const expert = expertData?.data?.expert;
-
+ const expert = expertData?.data?.expert;
+ // console.log("Expert  Info  prooopsc final:", expert);
 
 
 
@@ -26,7 +24,7 @@ const expert = expertData?.data?.expert;
     <Card className="mb-4">
       <CardHeader title="Expert Info" />
       <CardContent>
-        <Grid size={{ xs: 12 }}>
+        <Grid item xs={12}>
           <div className="w-full overflow-x-auto">
             <table className="w-full table-auto border-collapse">
               <thead>

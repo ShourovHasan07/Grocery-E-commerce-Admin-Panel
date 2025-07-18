@@ -34,7 +34,7 @@ import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 import CustomAvatar from "@core/components/mui/Avatar";
 
 import CustomTextField from "@core/components/mui/TextField";
-
+  
 import apiHelper from "@/utils/apiHelper";
 
 // Zod Imports
@@ -47,7 +47,12 @@ const schema = z.object({
 });
 
 const FormList = ({ achievementData, achievementList }) => {
-  const [achievements, setAchievements] = useState(achievementList || []);
+
+  //console.log("Achievement data:", achievementList);
+
+  
+
+  const [achievements, setAchievements] = useState(achievementList );
 
   // console.log(achievementData);
   const params = useParams();
@@ -122,7 +127,7 @@ const FormList = ({ achievementData, achievementList }) => {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  };              
 
   const getAvatar = (params) => {
     const { avatar, name } = params;
@@ -189,11 +194,17 @@ const FormList = ({ achievementData, achievementList }) => {
                     >
                       <MenuItem value="" selected>Select Achievement</MenuItem>
                       {achievementData?.map((achievement) => (
+
+                     
+
+
                         <MenuItem key={achievement.id} value={achievement.id}>{achievement.title}</MenuItem>
                       ))}
                     </CustomTextField>
                   )}
                 />
+
+                
 
               </Grid>
 
@@ -228,7 +239,7 @@ const FormList = ({ achievementData, achievementList }) => {
       <Card className="mb-4">
         <CardHeader title="Achievement List" />
         <CardContent>
-          <Grid size={{ xs: 12 }}>
+          <Grid    size={{ xs: 12 }}>
             <div className="w-full overflow-x-auto">
               <table className="w-full table-auto border-collapse">
                 <thead>
