@@ -13,7 +13,7 @@ const ExpertTimeSlot = ({ expertData }) => {
       <Grid size={{ xs: 12 }}>
         <ExpertInfo expertData={expertData} />
 
-        <FormList availabilityList={expertData?.availabilities || []} />
+        <FormList availabilityList={expertData?.expert?.availabilities || []} />
       </Grid>
     </Grid>
   );

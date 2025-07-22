@@ -1,22 +1,11 @@
+
 import { NextResponse } from 'next/server';
 
 import routeApiHelper from "@/utils/routeApiHelper";
 
-
-
-
-
-
-
-
 export async function GET(request,{ params }) {
 
-
-
   const token = request.headers.get("authorization");
-
-
-     
 
   if (!token) {
     return NextResponse.json(
@@ -49,15 +38,3 @@ export async function GET(request,{ params }) {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-

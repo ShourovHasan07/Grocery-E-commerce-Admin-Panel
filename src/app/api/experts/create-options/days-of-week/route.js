@@ -2,12 +2,8 @@ import { NextResponse } from 'next/server';
 
 import routeApiHelper from "@/utils/routeApiHelper";
 
-
-
-export async function GET(request, { params }) {
+export async function GET(request) {
   const token = request.headers.get("authorization");
-
-   const { id } = await params;
 
   if (!token) {
     return NextResponse.json(
@@ -17,17 +13,17 @@ export async function GET(request, { params }) {
   }
 
   try {
-    const result = await routeApiHelper.get(`experts/${id}`, { pageSize: 200 }, token);
+    const result = await routeApiHelper.get('experts/create/options/days-of-week', { pageSize: 200 }, token);
 
     if (result.success) {
       return NextResponse.json(
-        { success: true, data: result.data, message: "experts fetched successfully" },
+        { success: true, data: result.data, message: "experts days-of-week fetched successfully" },
         { status: 200 }
       );
     }
 
     return NextResponse.json(
-      { success: false, data: [], message: "experts not found" },
+      { success: false, data: [], message: "experts days-of-week not found" },
       { status: 404 }
     );
   } catch (error) {

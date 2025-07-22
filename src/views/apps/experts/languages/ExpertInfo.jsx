@@ -12,12 +12,7 @@ import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
 
 
 const ExpertInfo = ({ expertData }) => {
- const expert = expertData?.data?.expert;
- // console.log("Expert  Info  prooopsc final:", expert);
-
-
-
-
+  const expert = expertData?.data?.expert;
 
 
   return (

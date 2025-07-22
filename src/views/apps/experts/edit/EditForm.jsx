@@ -29,6 +29,8 @@ import CustomTextField from "@core/components/mui/TextField";
 import CustomAutocomplete from '@core/components/mui/Autocomplete'
 
 import apiHelper from "@/utils/apiHelper";
+import { useSession } from "next-auth/react";
+import pageApiHelper from "@/utils/pageApiHelper";
 
 // Zod Imports
 
@@ -87,7 +89,6 @@ const schema = z.object({
 });
 
 const EditForm = ({ expertData, categoryData }) => {
-  // console.log('expertData: ', expertData);
 
 
   // States
@@ -138,6 +139,13 @@ const EditForm = ({ expertData, categoryData }) => {
   const [imagePreview, setImagePreview] = useState(null);
 
   // form submission
+
+   const { data: session } = useSession();
+    const token = session?.accessToken;
+  
+
+
+
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
 
@@ -174,11 +182,11 @@ const EditForm = ({ expertData, categoryData }) => {
         }
       };
 
-      res = await apiHelper.put(`experts/${expertData.id}`, form, null, headerConfig);
+      res = await pageApiHelper.put(`experts/${expertData.id}/edit`, form, token);
 
       if (!res?.success && res?.status === 400) {
 
-        let errors = res?.data?.errors || [];
+        let errors = res?.data?.data?.errors || [];
 
         if (errors) {
           Object.keys(errors).forEach(key => {
@@ -193,7 +201,7 @@ const EditForm = ({ expertData, categoryData }) => {
         return;
       }
 
-      if (res?.success && res?.data?.success) {
+      if (res?.success && res?.data?.data?.success) {
         toast.success("Expert updated successfully");
 
         // Optionally, redirect or perform other actions after successful creation

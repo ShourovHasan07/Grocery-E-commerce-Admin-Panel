@@ -9,20 +9,19 @@ import pageApiHelper from "@/utils/pageApiHelper";
 
 const getExpertData = async (id) => {
 
-  //console.log("Fetching expert data for ID:", id);
   // Vars
   const session = await getServerSession(authOptions)
 
   if (session.accessToken) {
     try {
       // Fetching the categories data
-    const result = await pageApiHelper.get(`experts/${id}/languages`, { pageSize: 200 }, session.accessToken);
+      const result = await pageApiHelper.get(`experts/${id}/language`, { pageSize: 200 }, session.accessToken);
 
-    //console.log("languages data:", result);
-    
+
+
 
       if (result.success) {
-        return result;
+        return result.data;
       }
 
       return null;
@@ -35,7 +34,7 @@ const getExpertData = async (id) => {
 
   return null;
 }
- let result
+let result
 
 // expert option options data
 const getOptionData = async () => {
@@ -45,13 +44,16 @@ const getOptionData = async () => {
   if (session.accessToken) {
     try {
       // Fetching the categories data
-      const result = await apiHelper.get('experts/create/options', session);
+      const result = await pageApiHelper.get('experts/create-options', { pageSize: 200 }, session.accessToken);
+
 
       if (result.success) {
         return result.data;
+
+
       }
-       
-      return null;      
+
+      return null;
     } catch (error) {
       // console.error('Error fetching categories:', error);
 
@@ -69,14 +71,14 @@ export const metadata = {
 const ExpertLanguageApp = async ({ params }) => {
   // Vars
   const { id } = await params;
-  const result  = await getExpertData(id);
-   const expert = result?.data
+  const expertData = await getExpertData(id);
 
-   //console.log("expert data:", expert);
+  const result = await getOptionData();
 
-  const { languages } = await getOptionData();
 
-  return <ExpertLanguage expertData={expert} languageData={languages} />;
+  const languages = result.data.languages
+
+  return <ExpertLanguage expertData={expertData} languageData={languages} />;
 };
 
 export default ExpertLanguageApp;

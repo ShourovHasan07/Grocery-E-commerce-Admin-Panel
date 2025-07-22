@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import routeApiHelper from "@/utils/routeApiHelper";
 
 //Edit Category
-export async function PUT(request, { params }) {
+export async function POST(request, { params }) {
   const token = request.headers.get("authorization");
 
   if (!token) {
@@ -18,7 +18,7 @@ export async function PUT(request, { params }) {
 
     if (!id || !/^\d+$/.test(id)) {
       return NextResponse.json(
-        { success: false, message: "Invalid category ID" },
+        { success: false, message: "Invalid time-slot ID" },
         { status: 400 }
       );
     }
@@ -42,7 +42,10 @@ export async function PUT(request, { params }) {
     }
 
     // Call backend API using apiHelper
-    const response = await routeApiHelper.put(`categories/${id}`, outgoingFormData, token, headerConfig);
+    const response = await routeApiHelper.put(`experts/time-slot/${id}/edit`, outgoingFormData, token, headerConfig);
+    
+
+
 
     if (!response.success) {
       return NextResponse.json(
@@ -59,7 +62,7 @@ export async function PUT(request, { params }) {
       {
         success: true,
         data: response.data,
-        message: "Category updated successfully",
+        message: "time-slot updated successfully",
       },
       { status: 200 }
     );
@@ -84,45 +87,5 @@ export async function PUT(request, { params }) {
 //Delete Category
 
 
-export async function DELETE(request, { params }) {
-  const token = request.headers.get("authorization");
 
-  if (!token) {
-    return NextResponse.json(
-      { success: false, data: null, message: "Authorization header is missing" },
-      { status: 401 }
-    );
-  }
-
-  try {
-    // 1. Validate ID
-    const { id } = await params;
-
-    if (!id || !/^\d+$/.test(id)) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid category ID' },
-        { status: 400 }
-      );
-    }
-
-    const result = await routeApiHelper.delete(`categories/${id}`, token);
-
-    if (!result.success) {
-      return NextResponse.json(
-        { success: false, message: 'Category not found or deletion failed' },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(
-      { success: true, data: result, message: result?.message || 'Category deleted successfully' },
-      { status: 200 }
-    );
-  } catch (error) {
-    return NextResponse.json(
-      { success: false, message: 'Server error' },
-      { status: 500 }
-    );
-  }
-}
 

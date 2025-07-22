@@ -12,14 +12,10 @@ import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
 
 
 const ExpertInfo = ({ expertData }) => {
-const expert = expertData?.data?.expert;
-  //console.log("Expert  Info  prooop  achivement   :", expert);
 
+  const expert = expertData?.data?.expert;
 
-
-
-
-
+  
   return (
     <Card className="mb-4">
       <CardHeader title="Expert Info" />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 import { useParams } from 'next/navigation';
 import Link from "next/link";
@@ -29,7 +30,9 @@ import { toast } from "react-toastify";
 import CustomTextField from "@core/components/mui/TextField";
 import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 
-import apiHelper from "@/utils/apiHelper";
+
+import pageApiHelper from "@/utils/pageApiHelper";
+
 
 const schema = z.object({
   language: z
@@ -66,6 +69,12 @@ const FormList = ({ languageData, languageList }) => {
     }
   });
 
+
+    // from subistion
+    const { data: session } = useSession();
+          const token = session?.accessToken;
+
+
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
 
@@ -75,9 +84,14 @@ const FormList = ({ languageData, languageList }) => {
       form.append("language", formData.language);
       form.append("level", formData.level);
 
-      const res = await apiHelper.post(`experts/${id}/attach/language`, form);
+       const res = await pageApiHelper.post(`experts/${id}/attach/language`, form,token );
 
-      if (!res?.success) {
+
+
+        const response = res?.data;
+      const innerData = response?.data;
+
+     if (!res?.success) {
         if (res?.status === 400) {
           let errors = res?.data?.errors || [];
 
@@ -88,6 +102,10 @@ const FormList = ({ languageData, languageList }) => {
                 message: errors[key]
               });
             });
+
+            toast.error(response?.message || "Something went wrong");
+
+
           }
         } else if (res?.status === 404) {
           toast.error(res?.data?.error || "Sorry! Expert not found");
@@ -96,8 +114,9 @@ const FormList = ({ languageData, languageList }) => {
         return;
       }
 
-      if (res?.data?.languages) {
-        setLanguages(res.data.languages);
+
+      if (response?.success && innerData?.languages) {
+        setLanguages(innerData.languages);
         resetForm({ language: "", level: "" });
         toast.success("Language added successfully");
       }
@@ -115,7 +134,7 @@ const FormList = ({ languageData, languageList }) => {
 
       form.append("language", itemId);
 
-      const res = await apiHelper.post(`experts/${id}/detach/language`, form);
+     const res = await pageApiHelper.post(`experts/${id}/detach/language`, form, token);
 
       if (res?.success && res?.data?.success) {
         setLanguages(prevData => languages.filter((item) => item.id !== itemId));

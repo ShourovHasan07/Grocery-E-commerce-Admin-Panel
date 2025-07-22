@@ -17,7 +17,7 @@ const getExpertData = async (id) => {
       // Fetching the categories data
     const result = await pageApiHelper.get(`experts/${id}/time-slots`, { pageSize: 200 }, session.accessToken);
 
-   // console.log("time-slots data:", result);
+  
 
       if (result.success) {
         return result.data;

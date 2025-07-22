@@ -2,6 +2,7 @@
 
 // React Imports
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 import { useParams } from 'next/navigation';
 
@@ -34,8 +35,10 @@ import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 import CustomAvatar from "@core/components/mui/Avatar";
 
 import CustomTextField from "@core/components/mui/TextField";
-  
-import apiHelper from "@/utils/apiHelper";
+
+
+import pageApiHelper from "@/utils/pageApiHelper";
+
 
 // Zod Imports
 
@@ -50,9 +53,9 @@ const FormList = ({ achievementData, achievementList }) => {
 
   //console.log("Achievement data:", achievementList);
 
-  
 
-  const [achievements, setAchievements] = useState(achievementList );
+
+  const [achievements, setAchievements] = useState(achievementList);
 
   // console.log(achievementData);
   const params = useParams();
@@ -81,15 +84,39 @@ const FormList = ({ achievementData, achievementList }) => {
 
 
   // form submission
+
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+
+
+
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
 
+
+
     try {
+
+
+
+
+
       const form = new FormData();
 
       form.append("achievement", formData.achievement);
 
-      const res = await apiHelper.post(`experts/${id}/attach/achievement`, form);
+
+
+      const res = await pageApiHelper.post(`experts/${id}/attach/achievements`, form, token);
+
+      //console.log("Form expert acivement  submission response:", res);
+
+
+
+      const response = res?.data;
+      const innerData = response?.data;
+
+
 
       if (!res?.success) {
         if (res?.status === 400) {
@@ -102,6 +129,10 @@ const FormList = ({ achievementData, achievementList }) => {
                 message: errors[key]
               });
             });
+
+            toast.error(response?.message || "Something went wrong");
+
+
           }
         } else if (res?.status === 404) {
           toast.error(res?.data?.error || "Sorry! Expert not found");
@@ -110,9 +141,9 @@ const FormList = ({ achievementData, achievementList }) => {
         return;
       }
 
-      if (res?.success && res?.data?.success) {
-        if (res?.data?.achievements) {
-          setAchievements(res.data.achievements);
+      if (response?.success && innerData?.achievements) {
+        if (response?.data?.achievements) {
+          setAchievements(innerData.achievements);
         }
 
         resetForm({
@@ -127,7 +158,7 @@ const FormList = ({ achievementData, achievementList }) => {
     } finally {
       setIsSubmitting(false);
     }
-  };              
+  };
 
   const getAvatar = (params) => {
     const { avatar, name } = params;
@@ -139,17 +170,31 @@ const FormList = ({ achievementData, achievementList }) => {
     }
   };
 
+
+
+
+
+
+
+
   const handleDelete = async (itemId) => {
+
+
+
+
     try {
       const form = new FormData();
 
       form.append("achievement", itemId);
 
-      const res = await apiHelper.post(`experts/${id}/detach/achievement`, form);
+      const res = await pageApiHelper.post(`experts/${id}/detach/achievements`, form, token);
 
+  
       // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {
         setAchievements(prevData => achievements.filter((item) => item.id !== itemId));
+
+
 
         setDialogOpen((prevState) => ({
           ...prevState,
@@ -195,7 +240,7 @@ const FormList = ({ achievementData, achievementList }) => {
                       <MenuItem value="" selected>Select Achievement</MenuItem>
                       {achievementData?.map((achievement) => (
 
-                     
+
 
 
                         <MenuItem key={achievement.id} value={achievement.id}>{achievement.title}</MenuItem>
@@ -204,7 +249,7 @@ const FormList = ({ achievementData, achievementList }) => {
                   )}
                 />
 
-                
+
 
               </Grid>
 
@@ -239,7 +284,7 @@ const FormList = ({ achievementData, achievementList }) => {
       <Card className="mb-4">
         <CardHeader title="Achievement List" />
         <CardContent>
-          <Grid    size={{ xs: 12 }}>
+          <Grid size={{ xs: 12 }}>
             <div className="w-full overflow-x-auto">
               <table className="w-full table-auto border-collapse">
                 <thead>

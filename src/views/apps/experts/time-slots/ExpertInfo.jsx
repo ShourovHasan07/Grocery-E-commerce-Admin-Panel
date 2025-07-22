@@ -14,12 +14,6 @@ import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
 const ExpertInfo = ({ expertData }) => {
 const expert = expertData?.expert
 
- // console.log("Expert  Info time slot3   :", expert);
-
-
-
-
-
 
   return (
     <Card className="mb-4">

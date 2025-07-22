@@ -16,13 +16,9 @@ const getExpertData = async (id) => {
 
     try {
       // Fetching the categories data
-     const result = await pageApiHelper.get(`experts/${id}/achievements`, { pageSize: 200 }, session.accessToken);
+      const result = await pageApiHelper.get(`experts/${id}/achievements`, { pageSize: 200 }, session.accessToken);
 
-      
-      
 
-       
-      
 
       if (result.success) {
         return result.data
@@ -36,7 +32,7 @@ const getExpertData = async (id) => {
     }
   }
 
-  return null; 
+  return null;
 }
 
 
@@ -50,18 +46,15 @@ const getOptionData = async () => {
   if (session.accessToken) {
     try {
       // Fetching the experts data
-      const result = await pageApiHelper.get('experts/create-options',{ pageSize: 200 }, session.accessToken);
+      const result = await pageApiHelper.get('experts/create-options', { pageSize: 200 }, session.accessToken);
 
-      /// console.log("Expert options data:", result);
 
-      
       if (result.success) {
         return result.data;
       }
 
       return null;
     } catch (error) {
-    //console.error('Error fetching categories:', error);
 
       return null;
     }
@@ -77,19 +70,15 @@ export const metadata = {
 
 const ExpertAchievementApp = async ({ params }) => {
   // Vars
-  const { id } = await  params;
+  const { id } = await params;
   const expertData = await getExpertData(id);
 
-  //console.log("Expert Achievement Data:", expertData);
 
-   
+  const result = await getOptionData();
 
-  const result  = await getOptionData();
 
-  
   const achievements = result.data.achievements
 
-    //console.log("Expert Achievements:", achievements);
 
 
   return <ExpertAchievement expertData={expertData} achievementData={achievements} />;

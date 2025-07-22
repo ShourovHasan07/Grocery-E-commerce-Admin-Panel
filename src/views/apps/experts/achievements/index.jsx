@@ -5,8 +5,6 @@ import ExpertInfo from "./ExpertInfo";
 import FormList from "./FormList";
 
 const ExpertAchievement = ({ expertData, achievementData }) => {
-   //console.log("expertdata:", expertData);
-   //console.log("Achievement data:", achievementData);
 
   return (
     <Grid container>
