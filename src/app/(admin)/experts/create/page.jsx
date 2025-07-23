@@ -1,10 +1,11 @@
 import { getServerSession } from "next-auth/next";
 
 import { authOptions } from "@/libs/auth";
-import apiHelper from "@/utils/apiHelper";
+import pageApiHelper from "@/utils/pageApiHelper";
 
 // Component Imports
 import ExpertCreate from "@/views/apps/experts/create";
+
 
 // expert category options data
 const getCategoryData = async () => {
@@ -14,7 +15,7 @@ const getCategoryData = async () => {
   if (session.accessToken) {
     try {
       // Fetching the categories data
-      const result = await apiHelper.get('experts/create/options', session);
+        const result = await pageApiHelper.get('experts/create-options', { pageSize: 200 }, session.accessToken);
 
       if (result.success) {
         return result.data;
@@ -36,9 +37,10 @@ export const metadata = {
 };
 
 const ExpertCreateApp = async () => {
-  //
   // Vars
-  const { categories } = await getCategoryData();
+  const  result  = await getCategoryData();
+
+  const categories = result.data.categories
 
   return <ExpertCreate categoryData={categories} />;
 };

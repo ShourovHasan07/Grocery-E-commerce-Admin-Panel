@@ -6,6 +6,9 @@ import { useRef, useState } from "react";
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
 
+
+import { useSession } from "next-auth/react";
+
 // MUI Imports
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid2";
@@ -31,6 +34,8 @@ import CustomTextField from "@core/components/mui/TextField";
 import CustomAutocomplete from '@core/components/mui/Autocomplete'
 
 import apiHelper from "@/utils/apiHelper";
+import pageApiHelper from "@/utils/pageApiHelper";
+
 
 // Zod Imports
 
@@ -155,7 +160,13 @@ const CreateForm = ({ categoryData }) => {
   const fileInputRef = useRef(null);
   const [imagePreview, setImagePreview] = useState(null);
 
+
+
   // form submission
+
+      const { data: session } = useSession();
+      const token = session?.accessToken;
+
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
 
@@ -185,7 +196,7 @@ const CreateForm = ({ categoryData }) => {
         form.append(`categories[${index}]`, category.id);
       });
 
-      let res;
+      //let res;
 
       const headerConfig = {
         headers: {
@@ -193,7 +204,9 @@ const CreateForm = ({ categoryData }) => {
         }
       };
 
-      res = await apiHelper.post('experts', form, null, headerConfig);
+  const res = await pageApiHelper.post(`experts/create`, form, token, headerConfig);
+
+  //console.log("create expert from res:", res);
 
       if (!res?.success && res?.status === 400) {
 

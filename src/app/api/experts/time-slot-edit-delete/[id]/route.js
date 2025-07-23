@@ -84,7 +84,7 @@ export async function POST(request, { params }) {
 
 
 
-//Delete Category
+
 
 
 
