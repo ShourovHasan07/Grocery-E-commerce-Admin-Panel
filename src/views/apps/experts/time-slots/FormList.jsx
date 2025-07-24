@@ -2,17 +2,15 @@
 
 import React, { useEffect, useState, useRef } from "react";
 
-import { useSession } from "next-auth/react";
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
+import { useSession } from "next-auth/react";
+
 import Chip from "@mui/material/Chip";
 
 // API Helper
-
-import pageApiHelper from "@/utils/pageApiHelper";
-import apiHelper from "@/utils/apiHelper";
 
 // MUI
 import {
@@ -30,6 +28,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // Components
 import { toast } from "react-toastify";
 
+import pageApiHelper from "@/utils/pageApiHelper";
+
 import AppReactDatepicker from "@/libs/styles/AppReactDatepicker";
 import CustomTextField from "@core/components/mui/TextField";
 
@@ -39,8 +39,6 @@ import EditDrawer from "./EditDrawer";
 // Util Imports
 import { activeStatusLabel, activeStatusColor, timeFormat } from "@/utils/helpers";
 
-
-
 // Validation
 const schema = z.object({
   dayOfWeek: z.string(),
@@ -49,44 +47,15 @@ const schema = z.object({
   active: z.boolean().default(true),
 });
 
+const FormList = ({ weekDaysDropdown, availabilityList }) => {
+  const { id: expertId } = useParams();
 
-
-
-const FormList = ({ availabilityList }) => {
-
-
-  // sessoin
-
+  // session
   const { data: session } = useSession();
   const token = session?.accessToken;
 
-
-
   const [availabilityGroups, setAvailabilityGroups] = useState(availabilityList || []);
   const [openDay, setOpenDay] = useState(null);
-  const [weeks, setWeeks] = useState([]);
-
-  useEffect(() => {
-    const getDayOfWeeks = async () => {
-      try {
-        const res = await pageApiHelper.get('experts/create-options/days-of-week', { pageSize: 200 }, token);
-
-
-
-        if (res?.success && res?.data?.data?.success && res?.data?.data?.weekDays) {
-
-
-
-          setWeeks(res?.data?.data?.weekDays);
-        }
-      } catch (error) {
-        // console.error('Error fetching:', error);
-      }
-    };
-
-    getDayOfWeeks();
-
-  }, []);
 
   // DialogEdit  states
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -108,8 +77,6 @@ const FormList = ({ availabilityList }) => {
     editingSlotIdRef.current = editingSlotId;
   }, [editMode, editingSlotId]);
 
-
-  const { id } = useParams();
 
   // Form control
   const { control, reset, handleSubmit, formState: { errors }, setError } = useForm({
@@ -175,7 +142,7 @@ const FormList = ({ availabilityList }) => {
     // edit api Call
     if (editMode && editingSlotId) {
       try {
-        const res = await pageApiHelper.post(`experts/time-slot-edit-delete/${editingSlotId}/edit`, form, token);
+        const res = await pageApiHelper.post(`experts/${expertId}/time-slots/${editingSlotId}/edit`, form, token);
 
         if (!res?.success && res?.status === 400) {
 
@@ -241,7 +208,7 @@ const FormList = ({ availabilityList }) => {
     } else {
       // ✅ Add Mode
       try {
-        const res = await pageApiHelper.post(`experts/${id}/add-time-slot`, form, token);
+        const res = await pageApiHelper.post(`experts/${expertId}/time-slots/create`, form, token);
 
 
         if (!res?.success && res?.status === 400) {
@@ -284,7 +251,7 @@ const FormList = ({ availabilityList }) => {
     const { day, slotId } = deleteTarget;
 
     try {
-      const res = await pageApiHelper.delete(`experts/time-slot-edit-delete/${slotId}/delete`, token);
+      const res = await pageApiHelper.delete(`experts/${expertId}/time-slots/${slotId}/delete`, token);
 
       const data = res?.data.data || res;
 
@@ -349,7 +316,7 @@ const FormList = ({ availabilityList }) => {
                       <MenuItem value="" disabled>
                         Select a Day
                       </MenuItem>
-                      {weeks.length > 0 && weeks.map((day) => (
+                      {weekDaysDropdown.length > 0 && weekDaysDropdown.map((day) => (
                         <MenuItem className="capitalize" key={day.key} value={day.key}>
                           {day.value}
                         </MenuItem>
@@ -516,7 +483,7 @@ const FormList = ({ availabilityList }) => {
 
       {/* Edit Drawer */}
       <EditDrawer
-        weeks={weeks}
+        weeks={weekDaysDropdown}
         open={dialogOpen}
         onClose={handleDialogClose}
         control={control}

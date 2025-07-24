@@ -13,6 +13,7 @@ export async function GET(request, { params }) {
   }
 
   const { id } = await params;
+
   if (!id) {
     return NextResponse.json(
       { success: false, data: null, message: "Expert ID is missing" },

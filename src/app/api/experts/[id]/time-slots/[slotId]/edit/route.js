@@ -14,9 +14,16 @@ export async function POST(request, { params }) {
   }
 
   try {
-    const { id } = await params;
+    const { id, slotId } = await params;
 
     if (!id || !/^\d+$/.test(id)) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid expert ID' },
+        { status: 400 }
+      );
+    }
+
+    if (!slotId || !/^\d+$/.test(slotId)) {
       return NextResponse.json(
         { success: false, message: "Invalid time-slot ID" },
         { status: 400 }
@@ -31,21 +38,8 @@ export async function POST(request, { params }) {
       outgoingFormData.append(key, value);
     }
 
-    let headerConfig = {};
-
-    if (incomingFormData.has('image')) {
-      headerConfig = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      };
-    }
-
     // Call backend API using apiHelper
-    const response = await routeApiHelper.post(`experts/time-slot/${id}/edit`, outgoingFormData, token, headerConfig);
-    
-
-
+    const response = await routeApiHelper.post(`experts/time-slot/${slotId}/edit`, outgoingFormData, token);
 
     if (!response.success) {
       return NextResponse.json(

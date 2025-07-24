@@ -25,10 +25,11 @@ import { z } from "zod";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { useSession } from "next-auth/react";
+
 import CustomTextField from "@core/components/mui/TextField";
 import CustomAutocomplete from '@core/components/mui/Autocomplete'
 
-import { useSession } from "next-auth/react";
 import pageApiHelper from "@/utils/pageApiHelper";
 
 // Zod Imports
@@ -46,6 +47,7 @@ const schema = z.object({
     .string()
     .min(1, "This field is required")
     .min(3, "User Name must be at least 3 characters long"),
+
   // hourlyRate: z
   //   .string()
   //   .min(1, "This field is required")
@@ -155,6 +157,7 @@ const EditForm = ({ expertData, categoryData }) => {
       form.append("address", formData.address.trim());
       form.append("aboutMe", formData.aboutMe.trim());
       form.append("title", formData.title.trim());
+
       // form.append("hourlyRate", formData.hourlyRate);
       form.append("rating", formData.rating);
 

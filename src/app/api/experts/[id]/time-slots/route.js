@@ -2,13 +2,8 @@ import { NextResponse } from 'next/server';
 
 import routeApiHelper from "@/utils/routeApiHelper";
 
-
 export async function GET(request, { params }) {
-
-
-
   const token = request.headers.get("authorization");
-
 
   if (!token) {
     return NextResponse.json(
@@ -20,18 +15,17 @@ export async function GET(request, { params }) {
   const { id } = await params;
 
   try {
-    const result = await routeApiHelper.get(`experts/${id}`, { pageSize: 200 }, token);
-
+    const result = await routeApiHelper.get(`experts/${id}/with-list`, { model: 'availabilities' }, token);
 
     if (result.success) {
       return NextResponse.json(
-        { success: true, data: result.data, message: "experts time-slots  fetched successfully" },
+        { success: true, expert: result?.data?.expert, message: "expert availabilities fetched successfully" },
         { status: 200 }
       );
     }
 
     return NextResponse.json(
-      { success: false, data: [], message: "experts time-slots  not found" },
+      { success: false, data: [], message: "expert availabilities not found" },
       { status: 404 }
     );
   } catch (error) {

@@ -2,17 +2,7 @@ import { NextResponse } from 'next/server';
 
 import routeApiHelper from "@/utils/routeApiHelper";
 
-
-
-
-
-
-
-
-
-//Delete Category
-
-
+//Delete Slot
 export async function DELETE(request, { params }) {
   const token = request.headers.get("authorization");
 
@@ -24,17 +14,23 @@ export async function DELETE(request, { params }) {
   }
 
   try {
-    // 1. Validate ID
-    const { id } = await params;
+    const { id, slotId } = await params;
 
     if (!id || !/^\d+$/.test(id)) {
       return NextResponse.json(
-        { success: false, message: 'Invalid category ID' },
+        { success: false, message: 'Invalid expert ID' },
         { status: 400 }
       );
     }
 
-    const result = await routeApiHelper.delete(`experts/time-slot/${id}/delete`, token);
+    if (!slotId || !/^\d+$/.test(slotId)) {
+      return NextResponse.json(
+        { success: false, message: "Invalid time-slot ID" },
+        { status: 400 }
+      );
+    }
+
+    const result = await routeApiHelper.delete(`experts/time-slot/${slotId}/delete`, token);
 
     if (!result.success) {
       return NextResponse.json(

@@ -2,18 +2,19 @@
 
 import Grid from "@mui/material/Grid2";
 
-import ExpertInfo from "./ExpertInfo";
+import ExpertInfo from "../expertInfo/ExpertInfo";
 import FormList from "./FormList";
 
 
-const ExpertTimeSlot = ({ expertData }) => {
+const ExpertTimeSlot = ({ expert, weekDaysDropdown }) => {
+  const availabilityList = expert?.availabilities || []
 
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>
-        <ExpertInfo expertData={expertData} />
+        <ExpertInfo expert={expert} />
 
-        <FormList availabilityList={expertData?.expert?.availabilities || []} />
+        <FormList weekDaysDropdown={weekDaysDropdown} availabilityList={availabilityList} />
       </Grid>
     </Grid>
   );

@@ -16,6 +16,7 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const model = searchParams.get('model') || 'all';
     const status = searchParams.get('status') || true;
+
     // console.log(model)
 
     const result = await routeApiHelper.get('experts/menu-options', { model, status }, token);

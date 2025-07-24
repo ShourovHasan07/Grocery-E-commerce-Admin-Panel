@@ -13,6 +13,7 @@ export async function POST(request, { params }) {
   }
 
   const { id } = await params;
+
   try {
     const incomingFormData = await request.formData();
 
@@ -23,6 +24,7 @@ export async function POST(request, { params }) {
     }
 
     const result = await routeApiHelper.post(`experts/${id}/attach/achievement`, outgoingFormData, token);
+
     if (result.success) {
       return NextResponse.json(
         { success: true, data: result.data, message: "experts achievement created successfully" },
