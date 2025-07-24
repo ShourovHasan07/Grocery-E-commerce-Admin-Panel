@@ -3,9 +3,12 @@
 // React Imports
 import { useState } from "react";
 
+
 import { useParams } from 'next/navigation';
 
 import Link from "next/link";
+
+import { useSession } from "next-auth/react";
 
 // MUI Imports
 import Card from "@mui/material/Card";
@@ -16,9 +19,6 @@ import CardContent from "@mui/material/CardContent";
 import MenuItem from "@mui/material/MenuItem";
 
 import IconButton from "@mui/material/IconButton";
-
-
-// Util Imports
 
 // Third-party Imports
 import { toast } from "react-toastify";
@@ -35,9 +35,10 @@ import CustomAvatar from "@core/components/mui/Avatar";
 
 import CustomTextField from "@core/components/mui/TextField";
 
-import apiHelper from "@/utils/apiHelper";
 
-// Zod Imports
+import pageApiHelper from "@/utils/pageApiHelper";
+
+import { formattedDate } from "@/utils/formatters";
 
 const schema = z.object({
   achievement: z
@@ -46,14 +47,12 @@ const schema = z.object({
     .positive("Must be positive"),
 });
 
-const FormList = ({ achievementData, achievementList }) => {
-  const [achievements, setAchievements] = useState(achievementList || []);
-
-  // console.log(achievementData);
+const FormList = ({ achievementDropdown, achievementList }) => {
   const params = useParams();
   const id = params.id;
 
   // States
+  const [achievements, setAchievements] = useState(achievementList);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [dialogOpen, setDialogOpen] = useState({
@@ -76,6 +75,9 @@ const FormList = ({ achievementData, achievementList }) => {
 
 
   // form submission
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
 
@@ -84,11 +86,14 @@ const FormList = ({ achievementData, achievementList }) => {
 
       form.append("achievement", formData.achievement);
 
-      const res = await apiHelper.post(`experts/${id}/attach/achievement`, form);
+      const res = await pageApiHelper.post(`experts/${id}/attach/achievement`, form, token);
+
+      const response = res?.data;
+      const innerData = response?.data;
 
       if (!res?.success) {
         if (res?.status === 400) {
-          let errors = res?.data?.errors || [];
+          let errors = innerData?.errors || [];
 
           if (errors) {
             Object.keys(errors).forEach(key => {
@@ -97,18 +102,20 @@ const FormList = ({ achievementData, achievementList }) => {
                 message: errors[key]
               });
             });
+
+            toast.error(response?.message || "Something went wrong");
           }
         } else if (res?.status === 404) {
           toast.error(res?.data?.error || "Sorry! Expert not found");
+        } else {
+          toast.error(res?.data?.error || "Sorry! Error occurred");
         }
 
         return;
       }
 
-      if (res?.success && res?.data?.success) {
-        if (res?.data?.achievements) {
-          setAchievements(res.data.achievements);
-        }
+      if (response?.success && innerData?.achievements) {
+        setAchievements(innerData.achievements);
 
         resetForm({
           achievement: ""
@@ -140,7 +147,8 @@ const FormList = ({ achievementData, achievementList }) => {
 
       form.append("achievement", itemId);
 
-      const res = await apiHelper.post(`experts/${id}/detach/achievement`, form);
+      const res = await pageApiHelper.post(`experts/${id}/detach/achievement`, form, token);
+
 
       // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {
@@ -188,12 +196,14 @@ const FormList = ({ achievementData, achievementList }) => {
                       })}
                     >
                       <MenuItem value="" selected>Select Achievement</MenuItem>
-                      {achievementData?.map((achievement) => (
+                      {achievementDropdown?.map((achievement) => (
                         <MenuItem key={achievement.id} value={achievement.id}>{achievement.title}</MenuItem>
                       ))}
                     </CustomTextField>
                   )}
                 />
+
+
 
               </Grid>
 
@@ -238,6 +248,7 @@ const FormList = ({ achievementData, achievementList }) => {
                     <th className="border px-4 py-2">Image</th>
                     <th className="border px-4 py-2">Title</th>
                     <th className="border px-4 py-2">Subtitle</th>
+                    <th className="border px-4 py-2">Added At</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -262,6 +273,7 @@ const FormList = ({ achievementData, achievementList }) => {
                       </td>
                       <td className="border px-4 py-2">{achievement.title}</td>
                       <td className="border px-4 py-2">{achievement.subTitle}</td>
+                      <td className="border px-4 py-2">{formattedDate(achievement.pivot.createdAt)}</td>
                     </tr>
                   ))}
                 </tbody>

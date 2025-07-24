@@ -8,9 +8,9 @@ import CardContent from "@mui/material/CardContent";
 import Chip from "@mui/material/Chip";
 
 import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
+import { formattedDate } from "@/utils/formatters";
 
-const ExpertInfo = ({ expertData }) => {
-  // console.log('expertData: ', expertData);
+const ExpertInfo = ({ expert }) => {
 
   return (
     <Card className="mb-4">
@@ -26,23 +26,27 @@ const ExpertInfo = ({ expertData }) => {
                   <th className="border px-4 py-2">Email</th>
                   <th className="border px-4 py-2">Phone</th>
                   <th className="border px-4 py-2">Status</th>
+                  <th className="border px-4 py-2">Created At</th>
+                  <th className="border px-4 py-2">Updated At</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td className="border px-4 py-2">{expertData.id}</td>
-                  <td className="border px-4 py-2">{expertData.name}</td>
-                  <td className="border px-4 py-2">{expertData.email}</td>
-                  <td className="border px-4 py-2">{expertData.phone}</td>
+                  <td className="border px-4 py-2">{expert.id}</td>
+                  <td className="border px-4 py-2">{expert.name}</td>
+                  <td className="border px-4 py-2">{expert.email}</td>
+                  <td className="border px-4 py-2">{expert.phone}</td>
                   <td className="border px-4 py-2 text-center">
                     <Chip
                       variant="tonal"
-                      label={activeStatusLabel(expertData.status)}
+                      label={activeStatusLabel(expert.status)}
                       size="small"
-                      color={activeStatusColor(expertData.status)}
+                      color={activeStatusColor(expert.status)}
                       className="capitalize"
                     />
                   </td>
+                  <td className="border px-4 py-2">{formattedDate(expert.createdAt)}</td>
+                  <td className="border px-4 py-2">{formattedDate(expert.updatedAt)}</td>
                 </tr>
               </tbody>
             </table>

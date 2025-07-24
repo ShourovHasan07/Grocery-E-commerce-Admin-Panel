@@ -4,13 +4,14 @@ import { getServerSession } from "next-auth/next";
 import Grid from "@mui/material/Grid2";
 
 import { authOptions } from "@/libs/auth";
-import apiHelper from "@/utils/apiHelper";
 
-// MUI Imports
+import pageApiHelper from "@/utils/pageApiHelper";
 
 // Component Imports
 import LeftOverview from "@/views/apps/experts/view/left-overview";
 import RightOverview from "@/views/apps/experts/view/right-overview";
+
+
 
 const getExpertData = async (id) => {
   // Vars
@@ -19,7 +20,7 @@ const getExpertData = async (id) => {
   if (session.accessToken) {
     try {
       // Fetching the categories data
-      const result = await apiHelper.get(`experts/${id}`, session);
+      const result = await pageApiHelper.get(`experts/${id}`, {}, session.accessToken);
 
       if (result.success) {
         return result.data;
@@ -44,15 +45,15 @@ const ExpertView = async ({ params }) => {
   // Vars
   const { id } = await params
 
-  const { expert } = await getExpertData(id);
+  const { data } = await getExpertData(id);
 
   return (
     <Grid container spacing={6}>
       <Grid size={{ xs: 12, lg: 4, md: 5 }}>
-        <LeftOverview expertData={expert} />
+        <LeftOverview expertData={data.expert} />
       </Grid>
       <Grid size={{ xs: 12, lg: 8, md: 7 }}>
-        <RightOverview expert={expert} />
+        <RightOverview expert={data.expert} />
       </Grid>
     </Grid>
   );

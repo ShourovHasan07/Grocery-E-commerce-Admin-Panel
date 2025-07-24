@@ -4,27 +4,27 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from "@/libs/auth";
 
 import CategoryList from "@/views/apps/categories/list";
-import apiHelper from "@/utils/apiHelper";
+import pageApiHelper from "@/utils/pageApiHelper";
 
 export const metadata = {
   title: "Categories - AskValor",
 };
 
 const getCategoryData = async () => {
-
   const session = await getServerSession(authOptions)
+
+  // console.log("Session:", session);
 
   if (session.accessToken) {
     try {
       // Fetching the categories data
-      const result = await apiHelper.get('categories', { pageSize: 200 }, session);
+      const result = await pageApiHelper.get('categories', { pageSize: 200 }, session.accessToken);
 
       if (result.success) {
         return result.data;
       }
 
-      
-return null;
+      return null;
     } catch (error) {
       // console.error('Error fetching categories:', error);
 
@@ -36,12 +36,9 @@ return null;
 }
 
 const ListApp = async () => {
+const { data } = await getCategoryData();
 
-  const dataCategories = await getCategoryData();
-
-  // console.log(dataCategories);
-
-  return <CategoryList tData={dataCategories} />;
+  return <CategoryList tData={data} />;
 };
 
 export default ListApp;

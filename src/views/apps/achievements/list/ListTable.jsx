@@ -3,6 +3,9 @@
 // React Imports
 import { useState, useMemo } from "react";
 
+import { useSession } from "next-auth/react";
+
+
 // MUI Imports
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -40,7 +43,7 @@ import AddDrawer from './AddDrawer'
 
 // Third-party Imports
 
-import apiHelper from "@/utils/apiHelper";
+import pageApiHelper from "@/utils/pageApiHelper";
 
 // Util Imports
 import { formattedDate } from "@/utils/formatters";
@@ -51,10 +54,12 @@ import TablePaginationComponent from "@components/TablePaginationComponent";
 import CustomTextField from "@core/components/mui/TextField";
 
 // Util Imports
-import { activeStatusLabel, activeStatusColor, popularStatusLabel, popularStatusColor } from "@/utils/helpers";
+import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
+
+
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -91,16 +96,16 @@ const ListTable = ({ tableData }) => {
     data: {},
   });
 
-  // console.log("Data: ", addDrawerOpen.open);
+  //  session - Token
+  const { data: session } = useSession();
+  const token = session?.accessToken;
 
   const handleDelete = async (itemId) => {
     try {
       const deleteEndpoint = `achievements/${itemId}`;
 
       // call the delete API
-      const res = await apiHelper.delete(deleteEndpoint);
-
-      // console.log('Delete result:', res);
+      const res = await pageApiHelper.delete(deleteEndpoint, token);
 
       // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {
@@ -117,8 +122,6 @@ const ListTable = ({ tableData }) => {
       }
 
     } catch (error) {
-      // console.error('Delete failed:', error);
-
       // Show error in toast
       toast.error(error.message)
     }

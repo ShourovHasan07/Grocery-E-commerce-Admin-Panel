@@ -4,20 +4,20 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from "@/libs/auth";
 
 import LanguageList from "@/views/apps/languages/list";
-import apiHelper from "@/utils/apiHelper";
+import pageApiHelper from '@/utils/pageApiHelper';
 
 export const metadata = {
-  title: "Categories - AskValor",
+  title: "Languages - AskValor",
 };
 
 const getData = async () => {
 
   const session = await getServerSession(authOptions)
 
-  if (session.accessToken) {
+  if (session?.accessToken) {
     try {
       // Fetching the languages data
-      const result = await apiHelper.get('languages', { pageSize: 200 }, session);
+      const result = await pageApiHelper.get('languages', { pageSize: 200 }, session.accessToken);
 
       if (result.success) {
         return result.data;
@@ -25,8 +25,6 @@ const getData = async () => {
 
       return null;
     } catch (error) {
-      // console.error('Error fetching languages:', error);
-
       return null;
     }
   }
@@ -35,12 +33,9 @@ const getData = async () => {
 }
 
 const ListApp = async () => {
+  const { data } = await getData();
 
-  const dataLanguages = await getData();
-
-  // console.log(dataLanguages);
-
-  return <LanguageList tData={dataLanguages} />;
+  return <LanguageList tData={data} />;
 };
 
 export default ListApp;

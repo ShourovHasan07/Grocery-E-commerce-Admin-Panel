@@ -4,7 +4,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from "@/libs/auth";
 
 import AchievementList from "@/views/apps/achievements/list";
-import apiHelper from "@/utils/apiHelper";
+
+import pageApiHelper from '@/utils/pageApiHelper';
 
 export const metadata = {
   title: "Achievements - AskValor",
@@ -17,7 +18,9 @@ const getData = async () => {
   if (session.accessToken) {
     try {
       // Fetching the achievements data
-      const result = await apiHelper.get('achievements', { pageSize: 200 }, session);
+      const result = await pageApiHelper.get('achievements', { pageSize: 200 }, session.accessToken);
+
+      
 
       if (result.success) {
         return result.data;
@@ -25,7 +28,7 @@ const getData = async () => {
 
       return null;
     } catch (error) {
-      // console.error('Error fetching achievements:', error);
+     
 
       return null;
     }
@@ -36,11 +39,11 @@ const getData = async () => {
 
 const ListApp = async () => {
 
-  const dataAchievement = await getData();
+  const {data} = await getData();
 
-  // console.log(dataAchievement);
 
-  return <AchievementList tData={dataAchievement} />;
+
+  return <AchievementList tData={data} />;
 };
 
 export default ListApp;

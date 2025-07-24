@@ -3,8 +3,10 @@
 // React Imports
 import { useState, useMemo } from "react";
 
+import { useSession } from "next-auth/react";
+
 // MUI Imports
-import Card from "@mui/material/Card";                        
+import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -40,7 +42,7 @@ import AddDrawer from './AddDrawer'
 
 // Third-party Imports
 
-import apiHelper from "@/utils/apiHelper";
+import pageApiHelper from "@/utils/pageApiHelper";
 
 // Util Imports
 import { formattedDate } from "@/utils/formatters";
@@ -75,8 +77,8 @@ const columnHelper = createColumnHelper();
 const ListTable = ({ tableData }) => {
   // States
   const dataObj = tableData?.categories || [];
-  const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState(...[dataObj]);
+  const [rowSelection, setRowSelection] = useState({});
   const [filteredData, setFilteredData] = useState(data);
   const [globalFilter, setGlobalFilter] = useState("");
 
@@ -91,16 +93,17 @@ const ListTable = ({ tableData }) => {
     data: {},
   });
 
-  // console.log("Data: ", addDrawerOpen.open);
+
+  // Session
+  const { data: session } = useSession();
+  const token = session?.accessToken;
 
   const handleDelete = async (itemId) => {
     try {
       const deleteEndpoint = `categories/${itemId}`;
 
       // call the delete API
-      const res = await apiHelper.delete(deleteEndpoint);
-
-      // console.log('Delete result:', res);
+      const res = await pageApiHelper.delete(deleteEndpoint, token);
 
       // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {

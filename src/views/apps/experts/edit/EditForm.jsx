@@ -25,10 +25,12 @@ import { z } from "zod";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { useSession } from "next-auth/react";
+
 import CustomTextField from "@core/components/mui/TextField";
 import CustomAutocomplete from '@core/components/mui/Autocomplete'
 
-import apiHelper from "@/utils/apiHelper";
+import pageApiHelper from "@/utils/pageApiHelper";
 
 // Zod Imports
 
@@ -45,12 +47,13 @@ const schema = z.object({
     .string()
     .min(1, "This field is required")
     .min(3, "User Name must be at least 3 characters long"),
-  hourlyRate: z
-    .string()
-    .min(1, "This field is required")
-    .transform((val) => val === "" || val === undefined ? undefined : Number(val))
-    .refine((val) => val === undefined || !isNaN(val), "Must be a valid number")
-    .refine((val) => val === undefined || val >= 0, "Hourly rate must be a positive number"),
+
+  // hourlyRate: z
+  //   .string()
+  //   .min(1, "This field is required")
+  //   .transform((val) => val === "" || val === undefined ? undefined : Number(val))
+  //   .refine((val) => val === undefined || !isNaN(val), "Must be a valid number")
+  //   .refine((val) => val === undefined || val >= 0, "Hourly rate must be a positive number"),
   rating: z
     .string()
     .min(1, "This field is required")
@@ -87,9 +90,6 @@ const schema = z.object({
 });
 
 const EditForm = ({ expertData, categoryData }) => {
-  // console.log('expertData: ', expertData);
-
-
   // States
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -138,6 +138,10 @@ const EditForm = ({ expertData, categoryData }) => {
   const [imagePreview, setImagePreview] = useState(null);
 
   // form submission
+
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
 
@@ -153,7 +157,8 @@ const EditForm = ({ expertData, categoryData }) => {
       form.append("address", formData.address.trim());
       form.append("aboutMe", formData.aboutMe.trim());
       form.append("title", formData.title.trim());
-      form.append("hourlyRate", formData.hourlyRate);
+
+      // form.append("hourlyRate", formData.hourlyRate);
       form.append("rating", formData.rating);
 
 
@@ -174,11 +179,11 @@ const EditForm = ({ expertData, categoryData }) => {
         }
       };
 
-      res = await apiHelper.put(`experts/${expertData.id}`, form, null, headerConfig);
+      res = await pageApiHelper.put(`experts/${expertData.id}/edit`, form, token);
 
       if (!res?.success && res?.status === 400) {
 
-        let errors = res?.data?.errors || [];
+        let errors = res?.data?.data?.errors || [];
 
         if (errors) {
           Object.keys(errors).forEach(key => {
@@ -193,7 +198,7 @@ const EditForm = ({ expertData, categoryData }) => {
         return;
       }
 
-      if (res?.success && res?.data?.success) {
+      if (res?.success && res?.data?.data?.success) {
         toast.success("Expert updated successfully");
 
         // Optionally, redirect or perform other actions after successful creation
@@ -327,32 +332,6 @@ const EditForm = ({ expertData, categoryData }) => {
               />
 
               <Controller
-                name="aboutMe"
-                control={control}
-                rules={{ required: false }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    value={field.value || ''}
-                    fullWidth
-                    multiline
-                    minRows={8}
-                    className="mb-4"
-                    label="About Me"
-                    placeholder="About Me"
-                    {...(errors.aboutMe && {
-                      error: true,
-                      helperText: errors.aboutMe.message,
-                    })}
-                  />
-                )}
-              />
-
-            </Grid>
-
-            <Grid size={{ md: 6 }}>
-
-              <Controller
                 name="address"
                 control={control}
                 rules={{ required: false }}
@@ -371,6 +350,9 @@ const EditForm = ({ expertData, categoryData }) => {
                 )}
               />
 
+            </Grid>
+
+            <Grid size={{ md: 6 }}>
               <Controller
                 name="title"
                 control={control}
@@ -391,7 +373,7 @@ const EditForm = ({ expertData, categoryData }) => {
               />
 
               <Grid container spacing={2}>
-                <Grid size={{ md: 6 }}>
+                {/* <Grid size={{ md: 6 }}>
                   <Controller
                     name="hourlyRate"
                     control={control}
@@ -415,9 +397,9 @@ const EditForm = ({ expertData, categoryData }) => {
                       />
                     )}
                   />
-                </Grid>
+                </Grid> */}
 
-                <Grid size={{ md: 6 }}>
+                <Grid size={{ md: 12 }}>
                   <Controller
                     name="rating"
                     control={control}
@@ -455,6 +437,7 @@ const EditForm = ({ expertData, categoryData }) => {
                     multiple
                     options={categoryData || []}
                     id='categories'
+                    className="mb-4"
                     getOptionLabel={option => option.name || ''}
                     renderInput={params => (
                       <CustomTextField
@@ -481,7 +464,30 @@ const EditForm = ({ expertData, categoryData }) => {
                   />
                 )}
               />
-              <div className="flex items-center gap-2 mt-2">
+
+              <Controller
+                name="aboutMe"
+                control={control}
+                rules={{ required: false }}
+                render={({ field }) => (
+                  <CustomTextField
+                    {...field}
+                    value={field.value || ''}
+                    fullWidth
+                    multiline
+                    minRows={6}
+                    className="mb-2"
+                    label="About Me"
+                    placeholder="About Me"
+                    {...(errors.aboutMe && {
+                      error: true,
+                      helperText: errors.aboutMe.message,
+                    })}
+                  />
+                )}
+              />
+
+              <div className="flex items-center gap-2">
                 <Controller
                   name="status"
                   control={control}

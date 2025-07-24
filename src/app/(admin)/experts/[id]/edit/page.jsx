@@ -5,6 +5,7 @@ import apiHelper from "@/utils/apiHelper";
 
 // Component Imports
 import ExpertEdit from "@/views/apps/experts/edit";
+import pageApiHelper from "@/utils/pageApiHelper";
 
 const getExpertData = async (id) => {
   // Vars
@@ -13,7 +14,7 @@ const getExpertData = async (id) => {
   if (session.accessToken) {
     try {
       // Fetching the categories data
-      const result = await apiHelper.get(`experts/${id}`, session);
+      const result = await pageApiHelper.get(`experts/${id}/edit`, {}, session.accessToken);
 
       if (result.success) {
         return result.data;
@@ -21,7 +22,6 @@ const getExpertData = async (id) => {
 
       return null;
     } catch (error) {
-      // console.error('Error fetching categories:', error);
 
       return null;
     }
@@ -38,7 +38,7 @@ const getCategoryData = async () => {
   if (session.accessToken) {
     try {
       // Fetching the categories data
-      const result = await apiHelper.get('experts/create/options', session);
+      const result = await pageApiHelper.get('experts/create-edit-options', {}, session.accessToken);
 
       if (result.success) {
         return result.data;
@@ -46,7 +46,7 @@ const getCategoryData = async () => {
 
       return null;
     } catch (error) {
-      // console.error('Error fetching categories:', error);
+      ;
 
       return null;
     }
@@ -60,13 +60,14 @@ export const metadata = {
 };
 
 const ExpertEditApp = async ({ params }) => {
-  // Vars
   const { id } = await params;
-  const { expert } = await getExpertData(id);
-  const { categories } = await getCategoryData();
+  const editExpert = await getExpertData(id);
+  const result = await getCategoryData();
 
+  const categories = result?.data?.categories || [];
+  const expertData = editExpert?.data?.expert || {}
 
-  return <ExpertEdit expertData={expert} categoryData={categories} />;
+  return <ExpertEdit expertData={expertData} categoryData={categories} />;
 };
 
 export default ExpertEditApp;

@@ -5,14 +5,14 @@ import Grid from "@mui/material/Grid2";
 import ExpertInfo from "../expertInfo/ExpertInfo";
 import FormList from "./FormList";
 
-const ExpertLanguage = ({ expertData, languageData }) => {
-  // console.log(expertData)
+const ExpertLanguage = ({ expert, languageDropdown }) => {
+  const languageList = expert?.languages || []
 
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>
-        <ExpertInfo expertData={expertData} />
-        <FormList languageData={languageData} languageList={expertData?.languages || []} />
+        <ExpertInfo expert={expert} />
+        <FormList languageDropdown={languageDropdown} languageList={languageList} />
       </Grid>
     </Grid>
   );

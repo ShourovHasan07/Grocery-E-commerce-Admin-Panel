@@ -6,6 +6,8 @@ import { useRef, useState } from "react";
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
 
+import { useSession } from "next-auth/react";
+
 // MUI Imports
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid2";
@@ -30,10 +32,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CustomTextField from "@core/components/mui/TextField";
 import CustomAutocomplete from '@core/components/mui/Autocomplete'
 
-import apiHelper from "@/utils/apiHelper";
+import pageApiHelper from "@/utils/pageApiHelper";
 
 // Zod Imports
-
 const schema = z.object({
   name: z
     .string()
@@ -47,20 +48,21 @@ const schema = z.object({
     .string()
     .min(1, "This field is required")
     .min(3, "User Name must be at least 3 characters long"),
-  password: z
-    .string()
-    .min(1, "This field is required")
-    .min(6, "Password must be at least 6 characters long"),
-  confirm_password: z
-    .string()
-    .min(1, "This field is required")
-    .min(6, "Confirm Password must be at least 6 characters long"),
-  hourlyRate: z
-    .string()
-    .min(1, "This field is required")
-    .transform((val) => val === "" || val === undefined ? undefined : Number(val))
-    .refine((val) => val === undefined || !isNaN(val), "Must be a valid number")
-    .refine((val) => val === undefined || val >= 0, "Hourly rate must be a positive number"),
+
+  // password: z
+  //   .string()
+  //   .min(1, "This field is required")
+  //   .min(6, "Password must be at least 6 characters long"),
+  // confirm_password: z
+  //   .string()
+  //   .min(1, "This field is required")
+  //   .min(6, "Confirm Password must be at least 6 characters long"),
+  // hourlyRate: z
+  //   .string()
+  //   .min(1, "This field is required")
+  //   .transform((val) => val === "" || val === undefined ? undefined : Number(val))
+  //   .refine((val) => val === undefined || !isNaN(val), "Must be a valid number")
+  //   .refine((val) => val === undefined || val >= 0, "Hourly rate must be a positive number"),
   rating: z
     .string()
     .min(1, "This field is required")
@@ -155,7 +157,10 @@ const CreateForm = ({ categoryData }) => {
   const fileInputRef = useRef(null);
   const [imagePreview, setImagePreview] = useState(null);
 
-  // form submission
+  //form submission
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
 
@@ -167,12 +172,12 @@ const CreateForm = ({ categoryData }) => {
       form.append("userName", formData.userName.trim());
       form.append("status", formData.status.toString());
       form.append("isVerified", formData.status.toString());
-      form.append("password", formData.password.trim());
+      form.append("password", Math.random(12));
       form.append("phone", formData.phone.trim());
       form.append("address", formData.address.trim());
       form.append("aboutMe", formData.aboutMe.trim());
       form.append("title", formData.title.trim());
-      form.append("hourlyRate", formData.hourlyRate);
+      form.append("hourlyRate", 0);
       form.append("rating", formData.rating);
 
 
@@ -185,7 +190,7 @@ const CreateForm = ({ categoryData }) => {
         form.append(`categories[${index}]`, category.id);
       });
 
-      let res;
+      //let res;
 
       const headerConfig = {
         headers: {
@@ -193,7 +198,9 @@ const CreateForm = ({ categoryData }) => {
         }
       };
 
-      res = await apiHelper.post('experts', form, null, headerConfig);
+      const res = await pageApiHelper.post(`experts/create`, form, token, headerConfig);
+
+      //console.log("create expert from res:", res);
 
       if (!res?.success && res?.status === 400) {
 
@@ -207,7 +214,6 @@ const CreateForm = ({ categoryData }) => {
             });
           });
         }
-
 
         return;
       }
@@ -284,7 +290,7 @@ const CreateForm = ({ categoryData }) => {
                 )}
               />
 
-              <Controller
+              {/* <Controller
                 name="password"
                 control={control}
                 rules={{ required: true }}
@@ -368,7 +374,7 @@ const CreateForm = ({ categoryData }) => {
                     })}
                   />
                 )}
-              />
+              /> */}
 
               <Controller
                 name="userName"
@@ -471,7 +477,7 @@ const CreateForm = ({ categoryData }) => {
               />
 
               <Grid container spacing={2}>
-                <Grid size={{ md: 6 }}>
+                {/* <Grid size={{ md: 6 }}>
                   <Controller
                     name="hourlyRate"
                     control={control}
@@ -495,9 +501,9 @@ const CreateForm = ({ categoryData }) => {
                       />
                     )}
                   />
-                </Grid>
+                </Grid> */}
 
-                <Grid size={{ md: 6 }}>
+                <Grid size={{ md: 12 }}>
                   <Controller
                     name="rating"
                     control={control}

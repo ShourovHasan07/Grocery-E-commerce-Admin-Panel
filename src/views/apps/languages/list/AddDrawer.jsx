@@ -1,5 +1,7 @@
 // React Imports
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+
+import { useSession } from "next-auth/react";
 
 // MUI Imports
 import Grid from "@mui/material/Grid2";
@@ -10,7 +12,6 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Switch from '@mui/material/Switch'
 
 import { useForm, Controller } from "react-hook-form";
 
@@ -22,7 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // Third-party Imports
 import { toast } from "react-toastify";
 
-import apiHelper from "@/utils/apiHelper";
+import pageApiHelper from "@/utils/pageApiHelper";
 
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
@@ -45,12 +46,8 @@ const AddDrawer = (props) => {
 
   const { data } = drawerData;
 
-  // refs
-  const fileInputRef = useRef(null);
-
   // States
   const [formData, setFormData] = useState(initialData);
-  const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Hooks
@@ -82,6 +79,10 @@ const AddDrawer = (props) => {
   }, [data, resetForm]);
 
   // form submission
+
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
 
@@ -91,7 +92,7 @@ const AddDrawer = (props) => {
       form.append("name", formData.name.trim());
       form.append("status", formData.active.toString());
 
-      let res, toastMessage;
+      let response, toastMessage;
 
       const headerConfig = {
         headers: {
@@ -100,14 +101,16 @@ const AddDrawer = (props) => {
       };
 
       if (setType === 'edit') {
-        res = await apiHelper.put(`languages/${data.id}`, form, null, headerConfig);
+        response = await pageApiHelper.put(`languages/${data.id}`, form, token, headerConfig);
         toastMessage = "Language updated successfully";
       } else {
-        res = await apiHelper.post('languages', form, null, headerConfig);
+        response = await pageApiHelper.post('languages', form, token, headerConfig);
         toastMessage = "Language created successfully";
       }
 
-      if (!res?.success && (res?.status === 400 || res?.status === 404)) {
+      const res = response?.data;
+
+      if (!response?.success && (response?.status === 400 || response?.status === 404)) {
         if (res?.status === 404) {
           toast.error("Language not found");
 
@@ -144,14 +147,7 @@ const AddDrawer = (props) => {
 
         handleClose();
         setFormData(initialData);
-        setImagePreview(null);
         resetForm(initialData);
-
-
-        // Reset file input
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
 
         toast.success(toastMessage);
       }
@@ -166,14 +162,7 @@ const AddDrawer = (props) => {
   const handleReset = () => {
     handleClose();
     setFormData(initialData);
-    setImagePreview(null);
     resetForm(initialData);
-
-
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
   };
 
   return (

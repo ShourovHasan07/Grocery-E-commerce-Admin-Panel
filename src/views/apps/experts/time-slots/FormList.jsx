@@ -2,10 +2,15 @@
 
 import React, { useEffect, useState, useRef } from "react";
 
+
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
+import { useSession } from "next-auth/react";
+
 import Chip from "@mui/material/Chip";
+
+// API Helper
 
 // MUI
 import {
@@ -23,9 +28,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // Components
 import { toast } from "react-toastify";
 
+import pageApiHelper from "@/utils/pageApiHelper";
+
 import AppReactDatepicker from "@/libs/styles/AppReactDatepicker";
 import CustomTextField from "@core/components/mui/TextField";
-import apiHelper from "@/utils/apiHelper";
+
 import DialogDelete from "./DialogDelete";
 import EditDrawer from "./EditDrawer";
 
@@ -40,29 +47,15 @@ const schema = z.object({
   active: z.boolean().default(true),
 });
 
+const FormList = ({ weekDaysDropdown, availabilityList }) => {
+  const { id: expertId } = useParams();
 
-const FormList = ({ availabilityList }) => {
+  // session
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+
   const [availabilityGroups, setAvailabilityGroups] = useState(availabilityList || []);
   const [openDay, setOpenDay] = useState(null);
-  const [weeks, setWeeks] = useState([]);
-
-  useEffect(() => {
-    const getDayOfWeeks = async () => {
-      try {
-        const res = await apiHelper.get('experts/create/options/days-of-week');
-
-        if (res?.success && res?.data?.success && res?.data?.weekDays) {
-          // console.log(res.data.weekDays)
-          setWeeks(res?.data?.weekDays);
-        }
-      } catch (error) {
-        // console.error('Error fetching:', error);
-      }
-    };
-
-    getDayOfWeeks();
-
-  }, []);
 
   // DialogEdit  states
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -84,8 +77,6 @@ const FormList = ({ availabilityList }) => {
     editingSlotIdRef.current = editingSlotId;
   }, [editMode, editingSlotId]);
 
-
-  const { id } = useParams();
 
   // Form control
   const { control, reset, handleSubmit, formState: { errors }, setError } = useForm({
@@ -134,7 +125,7 @@ const FormList = ({ availabilityList }) => {
 
   //OnSubmit Handler
   const onSubmit = async (formData) => {
-    // console.log(formData)
+
     if (formData.endTime <= formData.startTime) {
       toast.error("End time must be after start time");
 
@@ -151,11 +142,11 @@ const FormList = ({ availabilityList }) => {
     // edit api Call
     if (editMode && editingSlotId) {
       try {
-        const res = await apiHelper.post(`experts/time-slot/${editingSlotId}/edit`, form);
+        const res = await pageApiHelper.post(`experts/${expertId}/time-slots/${editingSlotId}/edit`, form, token);
 
         if (!res?.success && res?.status === 400) {
 
-          let errors = res?.data?.errors || [];
+          let errors = res?.data?.data?.errors || [];
 
           if (errors) {
             Object.keys(errors).forEach(key => {
@@ -170,9 +161,9 @@ const FormList = ({ availabilityList }) => {
           return;
         }
 
-        if (res?.data?.success && res?.data?.timeSlot) {
+        if (res?.data?.data?.success && res?.data?.data?.timeSlot) {
 
-          const updatedSlot = res.data.timeSlot;
+          const updatedSlot = res.data.data.timeSlot;
 
           setAvailabilityGroups((prevGroups) =>
             prevGroups.map((group) => {
@@ -217,11 +208,12 @@ const FormList = ({ availabilityList }) => {
     } else {
       // ✅ Add Mode
       try {
-        const res = await apiHelper.post(`experts/${id}/add/time-slot`, form);
+        const res = await pageApiHelper.post(`experts/${expertId}/time-slots/create`, form, token);
+
 
         if (!res?.success && res?.status === 400) {
 
-          let errors = res?.data?.errors || [];
+          let errors = res?.data?.data?.errors || [];
 
           if (errors) {
             Object.keys(errors).forEach(key => {
@@ -236,8 +228,8 @@ const FormList = ({ availabilityList }) => {
           return;
         }
 
-        if (res?.success && res?.data?.availabilities) {
-          setAvailabilityGroups(res.data.availabilities)
+        if (res?.success && res?.data?.data?.availabilities) {
+          setAvailabilityGroups(res.data.data.availabilities)
 
           toast.success("Time slot added successfully");
           reset();
@@ -245,7 +237,7 @@ const FormList = ({ availabilityList }) => {
       } catch (error) {
 
         const errMsg =
-          error?.res?.data?.message ||
+          error?.res?.data?.data?.message ||
           error?.message ||
           "Server error occurred";
 
@@ -259,8 +251,9 @@ const FormList = ({ availabilityList }) => {
     const { day, slotId } = deleteTarget;
 
     try {
-      const res = await apiHelper.delete(`experts/time-slot/${slotId}/delete`);
-      const data = res?.data || res;
+      const res = await pageApiHelper.delete(`experts/${expertId}/time-slots/${slotId}/delete`, token);
+
+      const data = res?.data.data || res;
 
       if (data?.success) {
         toast.success("Slot deleted successfully!");
@@ -323,7 +316,7 @@ const FormList = ({ availabilityList }) => {
                       <MenuItem value="" disabled>
                         Select a Day
                       </MenuItem>
-                      {weeks.length > 0 && weeks.map((day) => (
+                      {weekDaysDropdown.length > 0 && weekDaysDropdown.map((day) => (
                         <MenuItem className="capitalize" key={day.key} value={day.key}>
                           {day.value}
                         </MenuItem>
@@ -490,7 +483,7 @@ const FormList = ({ availabilityList }) => {
 
       {/* Edit Drawer */}
       <EditDrawer
-        weeks={weeks}
+        weeks={weekDaysDropdown}
         open={dialogOpen}
         onClose={handleDialogClose}
         control={control}

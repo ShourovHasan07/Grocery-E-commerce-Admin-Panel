@@ -1,6 +1,8 @@
 // React Imports
 import { useEffect, useRef, useState } from "react";
 
+import { useSession } from "next-auth/react";
+
 // MUI Imports
 import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
@@ -22,7 +24,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // Third-party Imports
 import { toast } from "react-toastify";
 
-import apiHelper from "@/utils/apiHelper";
+import pageApiHelper from "@/utils/pageApiHelper";
+
 
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
@@ -128,6 +131,9 @@ const AddDrawer = (props) => {
   };
 
   // form submission
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
 
@@ -136,7 +142,7 @@ const AddDrawer = (props) => {
 
       form.append("title", formData.title.trim());
       form.append("subTitle", formData.subTitle.trim());
-      form.append("color", formData.color.toString());
+      form.append("color", colorCode);
       form.append("status", formData.active.toString());
 
       // Append image if exists
@@ -144,7 +150,7 @@ const AddDrawer = (props) => {
         form.append("image", formData.image[0]);
       }
 
-      let res, toastMessage;
+      let response, toastMessage;
 
       const headerConfig = {
         headers: {
@@ -153,14 +159,16 @@ const AddDrawer = (props) => {
       };
 
       if (setType === 'edit') {
-        res = await apiHelper.put(`achievements/${data.id}`, form, null, headerConfig);
+        response = await pageApiHelper.put(`achievements/${data.id}`, form, token, headerConfig);
         toastMessage = "Achievement updated successfully";
       } else {
-        res = await apiHelper.post('achievements', form, null, headerConfig);
+        response = await pageApiHelper.post('achievements', form, token, headerConfig);
         toastMessage = "Achievement created successfully";
       }
 
-      if (!res?.success && (res?.status === 400 || res?.status === 404)) {
+      const res = response?.data;
+
+      if (!response?.success && (response?.status === 400 || response?.status === 404)) {
         if (res?.status === 404) {
           toast.error("Achievement not found");
 
@@ -177,7 +185,6 @@ const AddDrawer = (props) => {
             });
           });
         }
-
 
         return;
       }
@@ -342,7 +349,7 @@ const AddDrawer = (props) => {
                     helperText: errors.color?.message || "This field is required.",
                   })}
                 />
-                <HexColorPicker color={colorCode} className="" onChange={setColorCode} />
+                <HexColorPicker color={colorCode} className="w-full" onChange={setColorCode} />
               </>
             )}
           />
