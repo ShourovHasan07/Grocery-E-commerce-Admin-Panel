@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server';
 import routeApiHelper from "@/utils/routeApiHelper";
 
 export async function GET(request, { params }) {
-
   const token = request.headers.get("authorization");
 
   if (!token) {
@@ -19,12 +18,11 @@ export async function GET(request, { params }) {
   try {
     const result = await routeApiHelper.get(`experts/${id}/with-list`, { model: 'achievements' }, token);
 
-    console.log(result)
-
+    // console.log(result)
 
     if (result.success) {
       return NextResponse.json(
-        { success: true, expert: result?.data?.expert || [], message: "experts fetched successfully" },
+        { success: true, expert: result?.data?.expert || [], message: "expert fetched successfully" },
         { status: 200 }
       );
     }

@@ -1,14 +1,12 @@
 import { getServerSession } from "next-auth/next";
 
 import { authOptions } from "@/libs/auth";
-import apiHelper from "@/utils/apiHelper";
 
 // Component Imports
 import ExpertLanguage from "@/views/apps/experts/languages";
 import pageApiHelper from "@/utils/pageApiHelper";
 
-const getExpertData = async (id) => {
-
+const getExpertWithListData = async (id) => {
   // Vars
   const session = await getServerSession(authOptions)
 
@@ -16,9 +14,6 @@ const getExpertData = async (id) => {
     try {
       // Fetching the categories data
       const result = await pageApiHelper.get(`experts/${id}/language`, { pageSize: 200 }, session.accessToken);
-
-
-
 
       if (result.success) {
         return result.data;
@@ -34,23 +29,19 @@ const getExpertData = async (id) => {
 
   return null;
 }
-let result
 
 // expert option options data
 const getOptionData = async () => {
   // Vars
   const session = await getServerSession(authOptions)
 
-  if (session.accessToken) {
+  if (session?.accessToken) {
     try {
       // Fetching the categories data
-      const result = await pageApiHelper.get('experts/create-options', { pageSize: 200 }, session.accessToken);
-
+      const result = await pageApiHelper.get('experts/menu-options', { model: 'languages' }, session.accessToken);
 
       if (result.success) {
         return result.data;
-
-
       }
 
       return null;
@@ -71,14 +62,12 @@ export const metadata = {
 const ExpertLanguageApp = async ({ params }) => {
   // Vars
   const { id } = await params;
-  const expertData = await getExpertData(id);
+  const { expert } = await getExpertWithListData(id);
 
   const result = await getOptionData();
+  const languages = result?.data?.languages || [];
 
-
-  const languages = result.data.languages
-
-  return <ExpertLanguage expertData={expertData} languageData={languages} />;
+  return <ExpertLanguage expert={expert} languageDropdown={languages} />;
 };
 
 export default ExpertLanguageApp;

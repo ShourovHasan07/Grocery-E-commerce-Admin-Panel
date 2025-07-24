@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 
 import routeApiHelper from "@/utils/routeApiHelper";
 
-// experts Language delete
-export async function POST(request, { params }) {
+
+// experts LANG Update
+export async function PUT(request, { params }) {
   const token = request.headers.get("authorization");
 
   if (!token) {
@@ -19,7 +20,7 @@ export async function POST(request, { params }) {
 
     if (!id || !/^\d+$/.test(id)) {
       return NextResponse.json(
-        { success: false, message: 'Invalid expert language  ID' },
+        { success: false, message: 'Invalid expert ID' },
         { status: 400 }
       );
     }
@@ -32,17 +33,17 @@ export async function POST(request, { params }) {
       outgoingFormData.append(key, value);
     }
 
-    const result = await routeApiHelper.post(`experts/${id}/detach/language`, outgoingFormData, token);
+    const result = await routeApiHelper.put(`experts/${id}/update/language`, outgoingFormData, token);
 
     if (!result.success) {
       return NextResponse.json(
-        { success: false, message: 'expert language  not found or deletion failed' },
-        { status: 404 }
+        { success: false, message: 'expert language update failed' },
+        { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { success: true, data: result, message: result?.message || 'expert language  deleted successfully' },
+      { success: true, data: result.data, message: result?.message || 'expert updated successfully' },
       { status: 200 }
     );
   } catch (error) {

@@ -3,14 +3,12 @@ import { NextResponse } from 'next/server';
 import routeApiHelper from "@/utils/routeApiHelper";
 
 
-export async function GET(request,{ params }) {
+export async function GET(request, { params }) {
 
 
 
   const token = request.headers.get("authorization");
 
-
-     
 
   if (!token) {
     return NextResponse.json(
@@ -19,11 +17,11 @@ export async function GET(request,{ params }) {
     );
   }
 
-   const { id } = await params;
+  const { id } = await params;
 
   try {
     const result = await routeApiHelper.get(`experts/${id}`, { pageSize: 200 }, token);
-     
+
 
     if (result.success) {
       return NextResponse.json(
