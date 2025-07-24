@@ -14,7 +14,7 @@ const getData = async () => {
 
   const session = await getServerSession(authOptions)
 
-  if (session.accessToken) {
+  if (session?.accessToken) {
     try {
       // Fetching the languages data
       const result = await pageApiHelper.get('languages', { pageSize: 200 }, session.accessToken);
@@ -25,8 +25,6 @@ const getData = async () => {
 
       return null;
     } catch (error) {
-    
-
       return null;
     }
   }
@@ -35,10 +33,8 @@ const getData = async () => {
 }
 
 const ListApp = async () => {
+  const { data } = await getData();
 
-  const { data }  = await getData();
-
-  
   return <LanguageList tData={data} />;
 };
 

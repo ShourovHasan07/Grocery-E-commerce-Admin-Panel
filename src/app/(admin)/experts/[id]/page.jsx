@@ -5,8 +5,6 @@ import Grid from "@mui/material/Grid2";
 
 import { authOptions } from "@/libs/auth";
 
-
-// third party apihelper 
 import pageApiHelper from "@/utils/pageApiHelper";
 
 // Component Imports
@@ -22,11 +20,7 @@ const getExpertData = async (id) => {
   if (session.accessToken) {
     try {
       // Fetching the categories data
-      const result = await pageApiHelper.get(`experts/${id}`,  { pageSize: 200 }, session.accessToken);
-   
-      
-
-     
+      const result = await pageApiHelper.get(`experts/${id}`, {}, session.accessToken);
 
       if (result.success) {
         return result.data;
@@ -49,10 +43,9 @@ export const metadata = {
 
 const ExpertView = async ({ params }) => {
   // Vars
-  const { id } = await  params 
+  const { id } = await params
 
-
-  const {data }= await getExpertData(id);
+  const { data } = await getExpertData(id);
 
   return (
     <Grid container spacing={6}>

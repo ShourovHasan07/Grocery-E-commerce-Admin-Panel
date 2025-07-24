@@ -7,18 +7,14 @@ import pageApiHelper from "@/utils/pageApiHelper";
 import ExpertAchievement from "@/views/apps/experts/achievements";
 
 
-const getExpertData = async (id) => {
+const getExpertWithListData = async (id) => {
   // Vars
   const session = await getServerSession(authOptions)
 
-  if (session.accessToken) {
-
-
+  if (session?.accessToken) {
     try {
       // Fetching the categories data
       const result = await pageApiHelper.get(`experts/${id}/achievements`, { pageSize: 200 }, session.accessToken);
-
-
 
       if (result.success) {
         return result.data
@@ -35,18 +31,15 @@ const getExpertData = async (id) => {
   return null;
 }
 
-
-
-
 // expert option options data
 const getOptionData = async () => {
   // Vars
   const session = await getServerSession(authOptions)
 
-  if (session.accessToken) {
+  if (session?.accessToken) {
     try {
       // Fetching the experts data
-      const result = await pageApiHelper.get('experts/create-options', { pageSize: 200 }, session.accessToken);
+      const result = await pageApiHelper.get('experts/menu-options', { model: 'achievements' }, session.accessToken);
 
 
       if (result.success) {
@@ -71,17 +64,12 @@ export const metadata = {
 const ExpertAchievementApp = async ({ params }) => {
   // Vars
   const { id } = await params;
-  const expertData = await getExpertData(id);
-
+  const { expert } = await getExpertWithListData(id);
 
   const result = await getOptionData();
+  const achievements = result?.data?.achievements || [];
 
-
-  const achievements = result.data.achievements
-
-
-
-  return <ExpertAchievement expertData={expertData} achievementData={achievements} />;
+  return <ExpertAchievement expert={expert} achievementDropdown={achievements} />;
 };
 
 export default ExpertAchievementApp;

@@ -41,7 +41,7 @@ export async function PUT(request, { params }) {
       };
     }
 
-    // Call backend API using apiHelper
+    // Call backend API
     const response = await routeApiHelper.put(`categories/${id}`, outgoingFormData, token, headerConfig);
 
     if (!response.success) {
@@ -75,15 +75,7 @@ export async function PUT(request, { params }) {
   }
 }
 
-
-
-
-
-
-
 //Delete Category
-
-
 export async function DELETE(request, { params }) {
   const token = request.headers.get("authorization");
 
@@ -95,7 +87,6 @@ export async function DELETE(request, { params }) {
   }
 
   try {
-    // 1. Validate ID
     const { id } = await params;
 
     if (!id || !/^\d+$/.test(id)) {

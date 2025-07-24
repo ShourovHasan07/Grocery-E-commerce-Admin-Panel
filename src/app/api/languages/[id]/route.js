@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import routeApiHelper from "@/utils/routeApiHelper";
 
-//Edit Languages
+//Edit Language
 export async function PUT(request, { params }) {
   const token = request.headers.get("authorization");
 
@@ -41,7 +41,7 @@ export async function PUT(request, { params }) {
       };
     }
 
-    // Call backend API using apiHelper
+    // Call backend API
     const response = await routeApiHelper.put(`languages/${id}`, outgoingFormData, token, headerConfig);
 
     if (!response.success) {
@@ -59,7 +59,7 @@ export async function PUT(request, { params }) {
       {
         success: true,
         data: response.data,
-        message: "languages updated successfully",
+        message: "Language updated successfully",
       },
       { status: 200 }
     );
@@ -75,7 +75,7 @@ export async function PUT(request, { params }) {
   }
 }
 
-//Delete Languages
+//Delete Language
 export async function DELETE(request, { params }) {
   const token = request.headers.get("authorization");
 
@@ -87,7 +87,6 @@ export async function DELETE(request, { params }) {
   }
 
   try {
-    // 1. Validate ID
     const { id } = await params;
 
     if (!id || !/^\d+$/.test(id)) {
@@ -107,7 +106,7 @@ export async function DELETE(request, { params }) {
     }
 
     return NextResponse.json(
-      { success: true, data: result, message: result?.message || 'languages deleted successfully' },
+      { success: true, data: result, message: result?.message || 'Language deleted successfully' },
       { status: 200 }
     );
   } catch (error) {

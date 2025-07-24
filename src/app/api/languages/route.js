@@ -17,13 +17,13 @@ export async function GET(request) {
 
     if (result.success) {
       return NextResponse.json(
-        { success: true, data: result.data, message: " languages fetched successfully" },
+        { success: true, data: result.data, message: "Language fetched successfully" },
         { status: 200 }
       );
     }
 
     return NextResponse.json(
-      { success: false, data: [], message: "languages not found" },
+      { success: false, data: [], message: "Language not found" },
       { status: 404 }
     );
   } catch (error) {
@@ -34,8 +34,7 @@ export async function GET(request) {
   }
 }
 
-
-//Add Languages
+//Add Language
 export async function POST(request) {
   const token = request.headers.get("authorization");
 
@@ -68,16 +67,15 @@ export async function POST(request) {
 
     const result = await routeApiHelper.post('languages', outgoingFormData, token, headerConfig);
 
-   
     if (result.success) {
       return NextResponse.json(
-        { success: true, data: result.data, message: "languages created successfully" },
+        { success: true, data: result.data, message: "Language created successfully" },
         { status: 200 }
       );
     }
 
     return NextResponse.json(
-      { success: false, data: result.data, message: result.message || "languages creation failed" },
+      { success: false, data: result.data, message: result.message || "Language creation failed" },
       { status: result.status || 400 }
     );
 

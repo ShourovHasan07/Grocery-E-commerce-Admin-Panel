@@ -3,21 +3,18 @@ import { getServerSession } from 'next-auth';
 
 import ExpertList from "@/views/apps/experts/list";
 
-
 import { authOptions } from "@/libs/auth";
-
-
 import pageApiHelper from '@/utils/pageApiHelper';
 
 const getExpertData = async () => {
 
   const session = await getServerSession(authOptions)
 
-  if (session.accessToken) {
+  if (session?.accessToken) {
     try {
       // Fetching the experts data
       const result = await pageApiHelper.get('experts', { pageSize: 200 }, session.accessToken);
-   
+
 
       if (result.success) {
         return result.data;
@@ -39,8 +36,8 @@ export const metadata = {
 };
 
 const ExpertListApp = async () => {
-  // Vars
-  const{ data }= await getExpertData();
+  //expert data
+  const { data } = await getExpertData();
 
   return <ExpertList listData={data} />;
 };

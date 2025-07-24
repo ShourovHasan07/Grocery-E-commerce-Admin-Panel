@@ -1,16 +1,18 @@
 // MUI Imports
 import Grid from "@mui/material/Grid2";
 
-import ExpertInfo from "./ExpertInfo";
+import ExpertInfo from "../expertInfo/ExpertInfo";
 import FormList from "./FormList";
 
-const ExpertAchievement = ({ expertData, achievementData }) => {
+const ExpertAchievement = ({ expert, achievementDropdown }) => {
+
+  const achievementList = expert.achievements || []
 
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>
-        <ExpertInfo expertData={expertData} />
-        <FormList achievementData={achievementData} achievementList={expertData?.data?.expert?.achievements || []} />
+        <ExpertInfo expert={expert} />
+        <FormList achievementDropdown={achievementDropdown} achievementList={achievementList} />
       </Grid>
     </Grid>
   );

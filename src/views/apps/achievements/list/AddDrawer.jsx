@@ -29,8 +29,6 @@ import pageApiHelper from "@/utils/pageApiHelper";
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
 
-
-
 // Vars
 const initialData = {
   title: "",
@@ -131,20 +129,19 @@ const AddDrawer = (props) => {
     onChange(files);
   };
 
-        // form submission
+  // form submission
+  const { data: session } = useSession();
+  const token = session?.accessToken;
 
-        const { data: session } = useSession();
-        const token = session?.accessToken;
-     
-          const onSubmit = async (formData) => {
-          setIsSubmitting(true);
+  const onSubmit = async (formData) => {
+    setIsSubmitting(true);
 
     try {
       const form = new FormData();
 
       form.append("title", formData.title.trim());
       form.append("subTitle", formData.subTitle.trim());
-      form.append("color", formData.color.toString());
+      form.append("color", colorCode);
       form.append("status", formData.active.toString());
 
       // Append image if exists
@@ -152,8 +149,7 @@ const AddDrawer = (props) => {
         form.append("image", formData.image[0]);
       }
 
-        let response, toastMessage;
-
+      let response, toastMessage;
 
       const headerConfig = {
         headers: {
@@ -162,17 +158,16 @@ const AddDrawer = (props) => {
       };
 
       if (setType === 'edit') {
-        response  = await pageApiHelper.put(`achievements/${data.id}`, form, token, headerConfig);
+        response = await pageApiHelper.put(`achievements/${data.id}`, form, token, headerConfig);
         toastMessage = "Achievement updated successfully";
       } else {
-         response  = await pageApiHelper.post('achievements', form, token, headerConfig);
+        response = await pageApiHelper.post('achievements', form, token, headerConfig);
         toastMessage = "Achievement created successfully";
-
       }
 
       const res = response?.data;
 
-      if (! response ?.success && ( response ?.status === 400 ||  response ?.status === 404)) {
+      if (!response?.success && (response?.status === 400 || response?.status === 404)) {
         if (res?.status === 404) {
           toast.error("Achievement not found");
 
@@ -189,7 +184,6 @@ const AddDrawer = (props) => {
             });
           });
         }
-
 
         return;
       }
@@ -354,7 +348,7 @@ const AddDrawer = (props) => {
                     helperText: errors.color?.message || "This field is required.",
                   })}
                 />
-                <HexColorPicker color={colorCode} className="" onChange={setColorCode} />
+                <HexColorPicker color={colorCode} className="w-full" onChange={setColorCode} />
               </>
             )}
           />

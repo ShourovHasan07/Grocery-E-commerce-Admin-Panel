@@ -34,7 +34,6 @@ export async function GET(request) {
   }
 }
 
-
 //Add Category
 export async function POST(request) {
   const token = request.headers.get("authorization");
@@ -67,7 +66,6 @@ export async function POST(request) {
 
 
     const result = await routeApiHelper.post('categories', outgoingFormData, token, headerConfig);
-
     // console.log("resData:", result);
     if (result.success) {
       return NextResponse.json(

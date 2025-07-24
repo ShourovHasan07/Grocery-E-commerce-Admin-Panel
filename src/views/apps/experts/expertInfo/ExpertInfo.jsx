@@ -8,19 +8,9 @@ import CardContent from "@mui/material/CardContent";
 import Chip from "@mui/material/Chip";
 
 import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
+import { formattedDate } from "@/utils/formatters";
 
-
-
-const ExpertInfo = ({ expertData }) => {
-
-  
-const expert = expertData?.data?.expert;
-
-
-
-
-
-
+const ExpertInfo = ({ expert }) => {
 
   return (
     <Card className="mb-4">
@@ -36,6 +26,8 @@ const expert = expertData?.data?.expert;
                   <th className="border px-4 py-2">Email</th>
                   <th className="border px-4 py-2">Phone</th>
                   <th className="border px-4 py-2">Status</th>
+                  <th className="border px-4 py-2">Created At</th>
+                  <th className="border px-4 py-2">Updated At</th>
                 </tr>
               </thead>
               <tbody>
@@ -53,6 +45,8 @@ const expert = expertData?.data?.expert;
                       className="capitalize"
                     />
                   </td>
+                  <td className="border px-4 py-2">{formattedDate(expert.createdAt)}</td>
+                  <td className="border px-4 py-2">{formattedDate(expert.updatedAt)}</td>
                 </tr>
               </tbody>
             </table>

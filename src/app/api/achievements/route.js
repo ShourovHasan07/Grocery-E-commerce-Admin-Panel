@@ -35,8 +35,7 @@ export async function GET(request) {
 }
 
 
-//Add Category
-
+//Add Achievement
 export async function POST(request) {
   const token = request.headers.get("authorization");
 
@@ -66,10 +65,8 @@ export async function POST(request) {
       };
     }
 
-
     const result = await routeApiHelper.post('achievements', outgoingFormData, token, headerConfig);
 
- 
     if (result.success) {
       return NextResponse.json(
         { success: true, data: result.data, message: "achievements created successfully" },

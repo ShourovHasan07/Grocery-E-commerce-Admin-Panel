@@ -12,10 +12,10 @@ const getCategoryData = async () => {
   // Vars
   const session = await getServerSession(authOptions)
 
-  if (session.accessToken) {
+  if (session?.accessToken) {
     try {
       // Fetching the categories data
-        const result = await pageApiHelper.get('experts/create-options', { pageSize: 200 }, session.accessToken);
+      const result = await pageApiHelper.get('experts/create-edit-options', {}, session.accessToken);
 
       if (result.success) {
         return result.data;
@@ -38,9 +38,9 @@ export const metadata = {
 
 const ExpertCreateApp = async () => {
   // Vars
-  const  result  = await getCategoryData();
+  const result = await getCategoryData();
 
-  const categories = result.data.categories
+  const categories = result?.data?.categories || [];
 
   return <ExpertCreate categoryData={categories} />;
 };

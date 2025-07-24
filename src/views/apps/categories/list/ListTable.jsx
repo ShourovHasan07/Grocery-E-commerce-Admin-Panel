@@ -95,7 +95,6 @@ const ListTable = ({ tableData }) => {
 
 
   // Session
-
   const { data: session } = useSession();
   const token = session?.accessToken;
 

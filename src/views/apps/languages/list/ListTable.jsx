@@ -33,8 +33,6 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 
-import CustomAvatar from "@core/components/mui/Avatar";// Util Imports
-import { getInitials } from "@/utils/getInitials";
 import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 import AddDrawer from './AddDrawer'
 
@@ -52,11 +50,10 @@ import TablePaginationComponent from "@components/TablePaginationComponent";
 import CustomTextField from "@core/components/mui/TextField";
 
 // Util Imports
-import { activeStatusLabel, activeStatusColor, popularStatusLabel, popularStatusColor } from "@/utils/helpers";
+import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
-
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -93,13 +90,9 @@ const ListTable = ({ tableData }) => {
     data: {},
   });
 
-
-  //sesson
-
+  //session
   const { data: session } = useSession();
   const token = session?.accessToken;
-
-
 
   const handleDelete = async (itemId) => {
     try {
@@ -107,8 +100,6 @@ const ListTable = ({ tableData }) => {
 
       // call the delete API
       const res = await pageApiHelper.delete(deleteEndpoint, token);
-
-   ;
 
       // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {
@@ -125,8 +116,6 @@ const ListTable = ({ tableData }) => {
       }
 
     } catch (error) {
-
-
       // Show error in toast
       toast.error(error.message)
     }

@@ -18,9 +18,6 @@ import MenuItem from "@mui/material/MenuItem";
 
 import IconButton from "@mui/material/IconButton";
 
-
-// Util Imports
-
 // Third-party Imports
 import { toast } from "react-toastify";
 import { Controller, useForm } from "react-hook-form";
@@ -39,8 +36,7 @@ import CustomTextField from "@core/components/mui/TextField";
 
 import pageApiHelper from "@/utils/pageApiHelper";
 
-
-// Zod Imports
+import { formattedDate } from "@/utils/formatters";
 
 const schema = z.object({
   achievement: z
@@ -49,19 +45,12 @@ const schema = z.object({
     .positive("Must be positive"),
 });
 
-const FormList = ({ achievementData, achievementList }) => {
-
-  //console.log("Achievement data:", achievementList);
-
-
-
-  const [achievements, setAchievements] = useState(achievementList);
-
-  // console.log(achievementData);
+const FormList = ({ achievementDropdown, achievementList }) => {
   const params = useParams();
   const id = params.id;
 
   // States
+  const [achievements, setAchievements] = useState(achievementList);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [dialogOpen, setDialogOpen] = useState({
@@ -84,43 +73,25 @@ const FormList = ({ achievementData, achievementList }) => {
 
 
   // form submission
-
   const { data: session } = useSession();
   const token = session?.accessToken;
-
-
 
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
 
-
-
     try {
-
-
-
-
-
       const form = new FormData();
 
       form.append("achievement", formData.achievement);
 
-
-
-      const res = await pageApiHelper.post(`experts/${id}/attach/achievements`, form, token);
-
-      //console.log("Form expert acivement  submission response:", res);
-
-
+      const res = await pageApiHelper.post(`experts/${id}/attach/achievement`, form, token);
 
       const response = res?.data;
       const innerData = response?.data;
 
-
-
       if (!res?.success) {
         if (res?.status === 400) {
-          let errors = res?.data?.errors || [];
+          let errors = innerData?.errors || [];
 
           if (errors) {
             Object.keys(errors).forEach(key => {
@@ -131,20 +102,18 @@ const FormList = ({ achievementData, achievementList }) => {
             });
 
             toast.error(response?.message || "Something went wrong");
-
-
           }
         } else if (res?.status === 404) {
           toast.error(res?.data?.error || "Sorry! Expert not found");
+        } else {
+          toast.error(res?.data?.error || "Sorry! Error occurred");
         }
 
         return;
       }
 
       if (response?.success && innerData?.achievements) {
-        if (response?.data?.achievements) {
-          setAchievements(innerData.achievements);
-        }
+        setAchievements(innerData.achievements);
 
         resetForm({
           achievement: ""
@@ -170,31 +139,18 @@ const FormList = ({ achievementData, achievementList }) => {
     }
   };
 
-
-
-
-
-
-
-
   const handleDelete = async (itemId) => {
-
-
-
-
     try {
       const form = new FormData();
 
       form.append("achievement", itemId);
 
-      const res = await pageApiHelper.post(`experts/${id}/detach/achievements`, form, token);
+      const res = await pageApiHelper.post(`experts/${id}/detach/achievement`, form, token);
 
-  
+
       // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {
         setAchievements(prevData => achievements.filter((item) => item.id !== itemId));
-
-
 
         setDialogOpen((prevState) => ({
           ...prevState,
@@ -238,11 +194,7 @@ const FormList = ({ achievementData, achievementList }) => {
                       })}
                     >
                       <MenuItem value="" selected>Select Achievement</MenuItem>
-                      {achievementData?.map((achievement) => (
-
-
-
-
+                      {achievementDropdown?.map((achievement) => (
                         <MenuItem key={achievement.id} value={achievement.id}>{achievement.title}</MenuItem>
                       ))}
                     </CustomTextField>
@@ -294,6 +246,7 @@ const FormList = ({ achievementData, achievementList }) => {
                     <th className="border px-4 py-2">Image</th>
                     <th className="border px-4 py-2">Title</th>
                     <th className="border px-4 py-2">Subtitle</th>
+                    <th className="border px-4 py-2">Added At</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -318,6 +271,7 @@ const FormList = ({ achievementData, achievementList }) => {
                       </td>
                       <td className="border px-4 py-2">{achievement.title}</td>
                       <td className="border px-4 py-2">{achievement.subTitle}</td>
+                      <td className="border px-4 py-2">{formattedDate(achievement.pivot.createdAt)}</td>
                     </tr>
                   ))}
                 </tbody>

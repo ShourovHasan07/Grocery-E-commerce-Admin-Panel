@@ -13,7 +13,7 @@ export async function GET(request) {
   }
 
   try {
-    const result = await routeApiHelper.get('experts/create/options/days-of-week', { pageSize: 200 }, token);
+    const result = await routeApiHelper.get('experts/create/options/days-of-week', {}, token);
 
     if (result.success) {
       return NextResponse.json(

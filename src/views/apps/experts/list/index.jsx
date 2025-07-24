@@ -5,8 +5,7 @@ import Grid from "@mui/material/Grid2";
 import ListTable from "./ListTable";
 
 const UserList = ({ listData }) => {
-
-   //console.log("UserList data:", listData);
+  //console.log("UserList data:", listData);
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>

@@ -1,10 +1,8 @@
- import { NextResponse } from 'next/server';
- 
- import routeApiHelper from "@/utils/routeApiHelper";
- 
+import { NextResponse } from 'next/server';
 
-   
-   export async function POST(request) {
+import routeApiHelper from "@/utils/routeApiHelper";
+
+export async function POST(request) {
   const token = request.headers.get("authorization");
 
   if (!token) {

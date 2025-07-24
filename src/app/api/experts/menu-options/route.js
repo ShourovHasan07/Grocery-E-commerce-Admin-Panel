@@ -1,10 +1,8 @@
-
 import { NextResponse } from 'next/server';
 
 import routeApiHelper from "@/utils/routeApiHelper";
 
-export async function GET(request, { params }) {
-
+export async function GET(request) {
   const token = request.headers.get("authorization");
 
   if (!token) {
@@ -14,23 +12,23 @@ export async function GET(request, { params }) {
     );
   }
 
-  const { id } = await params;
-
   try {
-    const result = await routeApiHelper.get(`experts/${id}/with-list`, { model: 'achievements' }, token);
+    const { searchParams } = new URL(request.url);
+    const model = searchParams.get('model') || 'all';
+    const status = searchParams.get('status') || true;
+    // console.log(model)
 
-    console.log(result)
-
+    const result = await routeApiHelper.get('experts/menu-options', { model, status }, token);
 
     if (result.success) {
       return NextResponse.json(
-        { success: true, expert: result?.data?.expert || [], message: "experts fetched successfully" },
+        { success: true, data: result.data, message: "experts create-options fetched successfully" },
         { status: 200 }
       );
     }
 
     return NextResponse.json(
-      { success: false, data: [], message: "experts not found" },
+      { success: false, data: [], message: "experts create-options not found" },
       { status: 404 }
     );
   } catch (error) {
@@ -40,3 +38,9 @@ export async function GET(request, { params }) {
     );
   }
 }
+
+
+
+
+
+

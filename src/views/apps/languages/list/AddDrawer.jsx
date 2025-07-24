@@ -1,5 +1,5 @@
 // React Imports
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 
 // MUI Imports
@@ -11,7 +11,6 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Switch from '@mui/material/Switch'
 
 import { useForm, Controller } from "react-hook-form";
 
@@ -46,12 +45,8 @@ const AddDrawer = (props) => {
 
   const { data } = drawerData;
 
-  // refs
-  const fileInputRef = useRef(null);
-
   // States
   const [formData, setFormData] = useState(initialData);
-  const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Hooks
@@ -87,8 +82,6 @@ const AddDrawer = (props) => {
   const { data: session } = useSession();
   const token = session?.accessToken;
 
-
-
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
 
@@ -111,9 +104,6 @@ const AddDrawer = (props) => {
         toastMessage = "Language updated successfully";
       } else {
         response = await pageApiHelper.post('languages', form, token, headerConfig);
-
-
-
         toastMessage = "Language created successfully";
       }
 
@@ -156,14 +146,7 @@ const AddDrawer = (props) => {
 
         handleClose();
         setFormData(initialData);
-        setImagePreview(null);
         resetForm(initialData);
-
-
-        // Reset file input
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
 
         toast.success(toastMessage);
       }
@@ -178,14 +161,7 @@ const AddDrawer = (props) => {
   const handleReset = () => {
     handleClose();
     setFormData(initialData);
-    setImagePreview(null);
     resetForm(initialData);
-
-
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
   };
 
   return (

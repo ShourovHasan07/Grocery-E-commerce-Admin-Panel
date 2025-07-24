@@ -2,14 +2,10 @@
 
 import Grid from "@mui/material/Grid2";
 
-import ExpertInfo from "./ExpertInfo";
+import ExpertInfo from "../expertInfo/ExpertInfo";
 import FormList from "./FormList";
 
 const ExpertLanguage = ({ expertData, languageData }) => {
-
- 
-  
- 
 
   return (
     <Grid container>

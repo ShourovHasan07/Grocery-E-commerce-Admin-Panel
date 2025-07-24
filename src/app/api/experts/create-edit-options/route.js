@@ -13,7 +13,7 @@ export async function GET(request) {
   }
 
   try {
-    const result = await routeApiHelper.get('experts/create/options', { pageSize: 200 }, token);
+    const result = await routeApiHelper.get('experts/create-edit-options', {}, token);
 
     if (result.success) {
       return NextResponse.json(

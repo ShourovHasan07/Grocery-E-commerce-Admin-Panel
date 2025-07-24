@@ -53,7 +53,7 @@ import TablePaginationComponent from "@components/TablePaginationComponent";
 import CustomTextField from "@core/components/mui/TextField";
 
 // Util Imports
-import { activeStatusLabel, activeStatusColor, popularStatusLabel, popularStatusColor } from "@/utils/helpers";
+import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
@@ -95,26 +95,17 @@ const ListTable = ({ tableData }) => {
     data: {},
   });
 
-
-
-
-//  session - Token
-
-        const { data: session } = useSession();
-        const token = session?.accessToken;
-  
-            
-
-    
+  //  session - Token
+  const { data: session } = useSession();
+  const token = session?.accessToken;
 
   const handleDelete = async (itemId) => {
     try {
       const deleteEndpoint = `achievements/${itemId}`;
 
       // call the delete API
-      const res = await pageApiHelper.delete(deleteEndpoint,token);
+      const res = await pageApiHelper.delete(deleteEndpoint, token);
 
-    
       // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {
         setData(prevData => prevData.filter((item) => item.id !== itemId));
@@ -130,8 +121,6 @@ const ListTable = ({ tableData }) => {
       }
 
     } catch (error) {
-   
-
       // Show error in toast
       toast.error(error.message)
     }

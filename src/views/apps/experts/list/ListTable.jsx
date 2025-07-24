@@ -2,14 +2,12 @@
 
 // React Imports
 import { useState, useMemo } from "react";
+import { useSession } from "next-auth/react";
 
 // Next Imports
 import Link from "next/link";
 
 import { toast } from "react-toastify";
-
-
-// Util Imports
 
 // MUI Imports
 import Card from "@mui/material/Card";
@@ -40,7 +38,7 @@ import {
 
 import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 import { activeStatusLabel, activeStatusColor, popularStatusLabel, popularStatusColor } from "@/utils/helpers";
-import apiHelper from "@/utils/apiHelper";
+import pageApiHelper from "@/utils/pageApiHelper";
 
 // Util Imports
 import { formattedDate } from "@/utils/formatters";
@@ -264,12 +262,16 @@ const ListTable = ({ tableData }) => {
     }
   };
 
+  // Session
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+
   const handleDelete = async (itemId) => {
     try {
       const deleteEndpoint = `experts/${itemId}`;
 
       // call the delete API
-      const res = await apiHelper.delete(deleteEndpoint);
+      const res = await pageApiHelper.delete(deleteEndpoint, token);
 
       // console.log('Delete result:', res);
 

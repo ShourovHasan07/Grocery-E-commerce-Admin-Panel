@@ -2,22 +2,9 @@ import { NextResponse } from 'next/server';
 
 import routeApiHelper from "@/utils/routeApiHelper";
 
-
-
-
-// view Data GET requst 
-
-
-export async function GET(request,{ params }) {
-
-  
-
-
-
+// view Data GET request
+export async function GET(request, { params }) {
   const token = request.headers.get("authorization");
-
-
-     
 
   if (!token) {
     return NextResponse.json(
@@ -26,15 +13,14 @@ export async function GET(request,{ params }) {
     );
   }
 
-   const { id } = await params;
+  const { id } = await params;
 
   try {
-    const result = await routeApiHelper.get(`experts/${id}`, { pageSize: 200 }, token);
-     
+    const result = await routeApiHelper.get(`experts/${id}`, {}, token);
 
     if (result.success) {
       return NextResponse.json(
-        { success: true, data: result.data, message: "experts fetched successfully" },
+        { success: true, data: result.data, message: "expert fetched successfully" },
         { status: 200 }
       );
     }
@@ -51,18 +37,8 @@ export async function GET(request,{ params }) {
   }
 }
 
-
-
-
-
-
-
-
 //submit dada PUT request
-
-
-
-export async function PUT(request,{params}) {
+export async function PUT(request, { params }) {
   const token = request.headers.get("authorization");
 
   if (!token) {
@@ -72,10 +48,7 @@ export async function PUT(request,{params}) {
     );
   }
 
-
   const { id } = await params;
- 
-
 
   try {
     const incomingFormData = await request.formData();
@@ -97,17 +70,17 @@ export async function PUT(request,{params}) {
     }
 
 
-    const result = await routeApiHelper.put(`experts/${id}`,  outgoingFormData, token, headerConfig);
+    const result = await routeApiHelper.put(`experts/${id}`, outgoingFormData, token, headerConfig);
 
     if (result.success) {
       return NextResponse.json(
-        { success: true, data: result.data, message: "experts update successfully" },
+        { success: true, data: result.data, message: "expert update successfully" },
         { status: 200 }
       );
     }
 
     return NextResponse.json(
-      { success: false, data: result.data, message: result.message || "experts update failed" },
+      { success: false, data: result.data, message: result.message || "expert update failed" },
       { status: result.status || 400 }
     );
 
