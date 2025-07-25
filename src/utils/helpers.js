@@ -85,28 +85,79 @@ export const parseJWT = token => {
 }
 
 // 👉 Status
+// export const activeStatusLabel = status => {
+//   switch (status) {
+//     case false:
+//       return 'Inactive'
+//     case true:
+//       return 'Active'
+//     default:
+//       return 'N/A'
+//   }
+// }
+
+
 export const activeStatusLabel = status => {
   switch (status) {
     case false:
-      return 'Inactive'
+      return 'Inactive';
     case true:
-      return 'Active'
+      return 'Active';
+    case 'completed':
+      return 'Completed';
+    case 'pending':
+      return 'Pending';
+    case 'cancelled':
+      return 'Cancelled';
     default:
-      return 'N/A'
+      return String(status); // যেমন "processing", etc.
   }
 }
 
+
+
+
+
+
+
+
+
 // 👉 Status Color
+// export const activeStatusColor = status => {
+//   switch (status) {
+//     case false:
+//       return 'warning'
+//     case true:
+//       return 'success'
+//     case completed:
+//       return 'success'
+//     default:
+//       return 'secondary'
+//   }
+// }
+
+
 export const activeStatusColor = status => {
   switch (status) {
-    case false:
-      return 'warning'
     case true:
-      return 'success'
+      return 'success';      
+    case false:
+      return 'warning';      
+    case 'completed':
+      return 'success';      // Completed booking
+    case 'pending':
+      return 'warning';     
+    case 'cancelled':
+      return 'error'
     default:
-      return 'secondary'
+      return 'default';     
   }
 }
+
+
+
+
+
 
 // 👉 Popular Status
 export const popularStatusLabel = popular => {
