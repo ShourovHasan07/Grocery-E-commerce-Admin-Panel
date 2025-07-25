@@ -36,7 +36,7 @@ const LanguageList = ({ expertData }) => {
                   ))}
                   {(!expertData.languages || expertData.languages.length === 0) && (
                     <tr>
-                      <td colSpan={2} className="border px-4 py-2 text-center">
+                      <td colSpan={3} className="border px-4 py-2 text-center">
                         No languages found
                       </td>
                     </tr>
