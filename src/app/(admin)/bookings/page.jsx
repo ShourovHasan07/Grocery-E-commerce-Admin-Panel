@@ -19,9 +19,9 @@ const getData = async () => {
     try {
       // Fetching the languages data
       const result = await pageApiHelper.get('bookings', { pageSize: 200 }, session.accessToken);
+
+
       //console.log("Bookings Data:", result);
-
-
       if (result.success) {
         return result.data;
       }
@@ -37,7 +37,7 @@ const getData = async () => {
 
 const ListApp = async () => {
   const result = await getData();
-   const bookingsData = result.data 
+  const bookingsData = result.data
 
   return <BookingsList tData={bookingsData} />;
 };

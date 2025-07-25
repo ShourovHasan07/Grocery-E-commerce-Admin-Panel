@@ -3,7 +3,9 @@
 // React Imports
 import { useState, useMemo } from "react";
 
-import { useSession } from "next-auth/react";    
+import Link from "next/link";
+
+import { useSession } from "next-auth/react";
 
 // MUI Imports
 import Card from "@mui/material/Card";
@@ -15,7 +17,6 @@ import IconButton from "@mui/material/IconButton";
 import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
 
-import { toast } from "react-toastify";
 
 import classnames from "classnames";
 
@@ -34,13 +35,11 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 
-import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 
 
 
 // Third-party Imports
-
-import pageApiHelper from "@/utils/pageApiHelper";
+import Tooltip from '@mui/material/Tooltip';
 
 // Util Imports
 import { formattedDate } from "@/utils/formatters";
@@ -87,63 +86,24 @@ const ListTable = ({ tableData }) => {
     data: {},
   });
 
-  
 
   //session
   const { data: session } = useSession();
   const token = session?.accessToken;
-
-  const handleDelete = async (itemId) => {
-    try {
-      const deleteEndpoint = `bookings/${itemId}`;
-
-      // call the delete API
-      const res = await pageApiHelper.delete(deleteEndpoint, token);
-
-      // Update the data state after successful deletion
-      if (res?.success && res?.data?.success) {
-        setData(prevData => prevData.filter((item) => item.id !== itemId));
-        setFilteredData(prevData => prevData.filter((item) => item.id !== itemId));
-
-        setDialogOpen((prevState) => ({
-          ...prevState,
-          open: !prevState.open,
-          data: {},
-        }));
-
-        toast.success("Deleted successfully");
-      }
-
-    } catch (error) {
-      // Show error in toast
-      toast.error(error.message)
-    }
-  };
 
   const columns = useMemo(
     () => [
       columnHelper.accessor("action", {
         header: "Action",
         cell: ({ row }) => (
-
-
-
-
-          <div className="flex items-center">    
-
-
-           
-
-            <IconButton onClick={() => setDialogOpen((prevState) => ({
-              ...prevState,
-              open: !prevState.open,
-              data: row.original
-            }))}>
-             
-             
-             
-              {/* <i className="tabler-trash text-textSecondary" /> */}
-            </IconButton>
+          <div className="flex items-center">
+            <Tooltip title="Detail">
+              <IconButton>
+                <Link href="#" className="flex">
+                  <i className="tabler-eye text-secondary" />
+                </Link>
+              </IconButton>
+            </Tooltip>
           </div>
         ),
         enableSorting: false,
@@ -263,7 +223,7 @@ const ListTable = ({ tableData }) => {
             <MenuItem value="50">50</MenuItem>
           </CustomTextField>
           <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
-            
+
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -353,17 +313,6 @@ const ListTable = ({ tableData }) => {
           }}
         />
       </Card>
-      
-
-      <ConfirmDialog
-        dialogData={dialogOpen}
-        handleCloseDialog={() => setDialogOpen((prevState) => ({
-          ...prevState,
-          open: !prevState.open,
-          data: {},
-        }))}
-        handleDelete={() => { handleDelete(dialogOpen.data.id); }}
-      />
     </>
   );
 };

@@ -6,27 +6,25 @@ import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid2";
 import MenuItem from "@mui/material/MenuItem";
 
-import { stringToBoolean } from "@/utils/helpers";
-
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
+import { BOOKING_STATUS } from "@configs/constants"
 
 const TableFilters = ({ setData, tableData }) => {
   // States
   const [search, setInputSearch] = useState("");
   const [status, setStatus] = useState("");
-  const [isPopular, setIsPopular] = useState("");
 
   useEffect(() => {
     const filteredData = tableData?.filter((item) => {
-      if (search && !item.name.toLowerCase().includes(search.toLowerCase())) return false;
-      if (status && status != '' && item.status !== stringToBoolean(status)) return false;
+      if (search && !item.user.name.toLowerCase().includes(search.toLowerCase())) return false;
+      if (status && status != '' && item.status !== status) return false;
 
       return true;
     });
 
     setData(filteredData || []);
-  }, [search, status, isPopular, tableData, setData]);
+  }, [search, status, tableData, setData]);
 
   return (
     <CardContent>
@@ -56,8 +54,9 @@ const TableFilters = ({ setData, tableData }) => {
             }}
           >
             <MenuItem value="">All</MenuItem>
-            <MenuItem value="true">Active</MenuItem>
-            <MenuItem value="false">Inactive</MenuItem>
+            {BOOKING_STATUS.length > 0 && BOOKING_STATUS.map((status) => (
+              <MenuItem key={status.key} value={status.key}>{status.value}</MenuItem>
+            ))}
           </CustomTextField>
         </Grid>
       </Grid>
