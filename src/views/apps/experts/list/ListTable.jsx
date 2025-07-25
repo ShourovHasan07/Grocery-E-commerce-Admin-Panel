@@ -20,6 +20,7 @@ import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
 import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
+import Tooltip from '@mui/material/Tooltip';
 
 
 // Third-party Imports
@@ -99,44 +100,57 @@ const ListTable = ({ tableData }) => {
         header: "Action",
         cell: ({ row }) => (
           <div className="text-wrap w-[150px]">
-            <IconButton>
-              <Link href={`/experts/${row.original.id}`} className="flex">
-                <i className="tabler-eye text-secondary" />
-              </Link>
-            </IconButton>
+            <Tooltip title="Detail">
+              <IconButton>
+                <Link href={`/experts/${row.original.id}`} className="flex">
+                  <i className="tabler-eye text-secondary" />
+                </Link>
+              </IconButton>
+            </Tooltip>
 
-            <IconButton>
-              <Link href={`/experts/${row.original.id}/achievements`} className="flex">
-                <i className="tabler-award text-success" />
-              </Link>
-            </IconButton>
+            <Tooltip title="Achievements" arrow placement="top">
+              <IconButton>
+                <Link href={`/experts/${row.original.id}/achievements`} className="flex">
+                  <i className="tabler-award text-success" />
+                </Link>
+              </IconButton>
+            </Tooltip>
 
-            <IconButton>
-              <Link href={`/experts/${row.original.id}/languages`} className="flex">
-                <i className="tabler-abc text-info" />
-              </Link>
-            </IconButton>
+            <Tooltip title="Languages" arrow placement="top">
+              <IconButton>
+                <Link href={`/experts/${row.original.id}/languages`} className="flex">
+                  <i className="tabler-abc text-info" />
+                </Link>
+              </IconButton>
+            </Tooltip>
 
-            <IconButton>
-              <Link href={`/experts/${row.original.id}/time-slots`} className="flex">
-                <i className="tabler-clock text-info" />
-              </Link>
-            </IconButton>
+            <Tooltip title="Time Slots" arrow placement="top">
+              <IconButton>
+                <Link href={`/experts/${row.original.id}/time-slots`} className="flex">
+                  <i className="tabler-clock text-info" />
+                </Link>
+              </IconButton>
+            </Tooltip>
 
-            <IconButton>
-              <Link href={`/experts/${row.original.id}/edit`} className="flex">
-                <i className="tabler-edit text-primary" />
-              </Link>
-            </IconButton>
 
-            <IconButton onClick={() => setDialogOpen((prevState) => ({
-              ...prevState,
-              open: !prevState.open,
-              id: row.original.id,
-            }))}
-            >
-              <i className="tabler-trash text-error" />
-            </IconButton>
+            <Tooltip title="Edit" arrow placement="top">
+              <IconButton>
+                <Link href={`/experts/${row.original.id}/edit`} className="flex">
+                  <i className="tabler-edit text-primary" />
+                </Link>
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Delete" arrow placement="top">
+              <IconButton onClick={() => setDialogOpen((prevState) => ({
+                ...prevState,
+                open: !prevState.open,
+                id: row.original.id,
+              }))}
+              >
+                <i className="tabler-trash text-error" />
+              </IconButton>
+            </Tooltip>
           </div>
         ),
         enableSorting: false,

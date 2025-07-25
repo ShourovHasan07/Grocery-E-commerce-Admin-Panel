@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid2";
 
 import CategoryList from "./CategoryList";
 import LanguageList from "./LanguageList";
+import AchievementList from "./AchievementList";
 import TimeSlots from "./TimeSlots";
 
 const RightOverview = ({ expert }) => {
@@ -16,6 +17,10 @@ const RightOverview = ({ expert }) => {
 
         <Grid mb={{ xs: 3 }}>
           <LanguageList expertData={expert} />
+        </Grid>
+
+        <Grid mb={{ xs: 3 }}>
+          <AchievementList expertData={expert} />
         </Grid>
 
         <Grid>
