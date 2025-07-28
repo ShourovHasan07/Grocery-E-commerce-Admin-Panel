@@ -62,7 +62,7 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Store the itemRank info
   addMeta({
     itemRank,
-  });
+  });  
 
   // Return if the item should be filtered in/out
   return itemRank.passed;
@@ -75,7 +75,12 @@ const ListTable = ({ tableData }) => {
   //console.log("Table Data:", tableData);
 
   // States
-  const dataObj = tableData?.bookings || [];
+
+  const dataObj = tableData?.users || [];
+
+  //console.log("Data Object:", dataObj);
+
+
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState(...[dataObj]);
   const [filteredData, setFilteredData] = useState(data);
@@ -99,7 +104,7 @@ const ListTable = ({ tableData }) => {
           <div className="flex items-center">
             {/* <Tooltip title="Detail">
               <IconButton>
-                <Link href="#" className="flex">
+                <Link href={`/users/${row.original.id}`} className="flex">
                   <i className="tabler-eye text-secondary" />
                 </Link>
               </IconButton>
@@ -114,33 +119,20 @@ const ListTable = ({ tableData }) => {
       },
       {
         header: "User Name",
-        cell: ({ row }) => <Typography>{row.original.user.name}</Typography>,
+        cell: ({ row }) => <Typography  className="text-wrap w-[200px]"   >{row.original.name}</Typography>,
       },
-      {
-        header: "expert Name",
-        cell: ({ row }) => <Typography>{row.original.expert.name}</Typography>,
-      },
-      {
-        header: "fee ",
-        cell: ({ row }) => <Typography>{row.original.fee}</Typography>,
-      },
-      {
-        header: "Service Charge",
-        cell: ({ row }) => (
-          <Typography className="text-center w-full block">
-            {row.original.serviceCharge}
-          </Typography>
-        ),
-      }
+      
+      
+      
 
       ,
       {
-        header: "discount",
-        cell: ({ row }) => <Typography className="text-center w-full block" >{row.original.discount}</Typography>,
+        header:   "email",
+        cell: ({ row }) => <Typography className="w-full block" >{row.original.email}</Typography>,
       },
       {
-        header: "total",
-        cell: ({ row }) => <Typography className="text-center w-full block" >{row.original.total}</Typography>,
+        header: "phone",
+        cell: ({ row }) => <Typography className=" w-full block" >{row.original.phone}</Typography>,
       },
 
       columnHelper.accessor("status", {
@@ -203,13 +195,13 @@ const ListTable = ({ tableData }) => {
     getPaginationRowModel: getPaginationRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),  
   });
 
   return (
     <>
       <Card>
-        <CardHeader title="Booking List" className="pbe-4" />
+        <CardHeader title="Client List" className="pbe-4" />
         <TableFilters setData={setFilteredData} tableData={data} />
         <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
           <CustomTextField
