@@ -7,12 +7,10 @@ import { authOptions } from "@/libs/auth";
 
 import pageApiHelper from "@/utils/pageApiHelper";
 
-import UsersListDetails from "@/views/apps/users/userDetails Table";
+import UsersDetails from "@/views/apps/users/userDetail";
 
 
-
-
-const getUserstData = async (id) => {
+const getUserData = async (id) => {
   // Vars
   const session = await getServerSession(authOptions)
 
@@ -21,10 +19,8 @@ const getUserstData = async (id) => {
       // Fetching the categories data
       const result = await pageApiHelper.get(`users/${id}`, {}, session.accessToken);
 
-      console.log("User Details Data:", result);
-
-      if (result.success) {
-        return result.data;
+      if (result.success && result?.data?.data) {
+        return result.data.data;
       }
 
       return null;
@@ -42,11 +38,13 @@ export const metadata = {
   title: "users Detail's - AskValor",
 };
 
-const ListApp = async () => {
-  const result = await getUserstData();
-  const usersData = result
+const UserApp = async ({ params }) => {
+  const { id } = await params
+  const res = await getUserData(id);
+  const user = res?.user || []
+  // console.log(user)
 
-  return < UsersListDetails tData={usersData} />;
+  return <UsersDetails user={user} />;
 };
 
-export default ListApp;
+export default UserApp;

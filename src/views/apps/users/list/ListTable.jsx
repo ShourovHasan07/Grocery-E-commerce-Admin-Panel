@@ -62,7 +62,7 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Store the itemRank info
   addMeta({
     itemRank,
-  });  
+  });
 
   // Return if the item should be filtered in/out
   return itemRank.passed;
@@ -102,13 +102,13 @@ const ListTable = ({ tableData }) => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-            {/* <Tooltip title="Detail">
+            <Tooltip title="Detail">
               <IconButton>
                 <Link href={`/users/${row.original.id}`} className="flex">
                   <i className="tabler-eye text-secondary" />
                 </Link>
               </IconButton>
-            </Tooltip> */}
+            </Tooltip>
           </div>
         ),
         enableSorting: false,
@@ -119,22 +119,16 @@ const ListTable = ({ tableData }) => {
       },
       {
         header: "User Name",
-        cell: ({ row }) => <Typography  className="text-wrap w-[200px]"   >{row.original.name}</Typography>,
+        cell: ({ row }) => <Typography className="text-wrap w-[200px]"   >{row.original.name}</Typography>,
       },
-      
-      
-      
-
-      ,
       {
-        header:   "email",
+        header: "email",
         cell: ({ row }) => <Typography className="w-full block" >{row.original.email}</Typography>,
       },
       {
         header: "phone",
         cell: ({ row }) => <Typography className=" w-full block" >{row.original.phone}</Typography>,
       },
-
       columnHelper.accessor("status", {
         header: "Status",
         cell: ({ row }) => (
@@ -142,9 +136,6 @@ const ListTable = ({ tableData }) => {
             <Chip
               variant="tonal"
               label={activeStatusLabel(row.original.status)}
-
-
-
               size="small"
               color={activeStatusColor(row.original.status)}
               className="capitalize"
@@ -195,7 +186,7 @@ const ListTable = ({ tableData }) => {
     getPaginationRowModel: getPaginationRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    getFacetedMinMaxValues: getFacetedMinMaxValues(),  
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
   });
 
   return (
@@ -214,9 +205,6 @@ const ListTable = ({ tableData }) => {
             <MenuItem value="25">25</MenuItem>
             <MenuItem value="50">50</MenuItem>
           </CustomTextField>
-          <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
-
-          </div>
         </div>
         <div className="overflow-x-auto">
           <table className={tableStyles.table}>
