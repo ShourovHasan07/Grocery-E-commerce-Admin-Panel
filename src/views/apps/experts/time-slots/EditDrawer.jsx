@@ -77,7 +77,7 @@ const EditDrawer = (props) => {
                       selected={field.value}
                       onChange={field.onChange}
                       dateFormat="h:mm aa"
-                      customInput={<CustomTextField label="Start Time" fullWidth />}
+                      customInput={<CustomTextField label="Start Time (GMT)" fullWidth />}
                     />
                   )}
                 />
@@ -95,7 +95,7 @@ const EditDrawer = (props) => {
                       selected={field.value}
                       onChange={field.onChange}
                       dateFormat="h:mm aa"
-                      customInput={<CustomTextField label="End Time" fullWidth />}
+                      customInput={<CustomTextField label="End Time (GMT)" fullWidth />}
                     />
                   )}
                 />

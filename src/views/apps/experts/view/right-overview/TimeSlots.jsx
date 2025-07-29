@@ -68,8 +68,8 @@ const TimeSlots = ({ expertData }) => {
                                 <TableHead>
                                   <TableRow>
                                     <TableCell>ID</TableCell>
-                                    <TableCell>Start</TableCell>
-                                    <TableCell>End</TableCell>
+                                    <TableCell>Start Time (GMT)</TableCell>
+                                    <TableCell>End Time (GMT)</TableCell>
                                     <TableCell>Status</TableCell>
                                   </TableRow>
                                 </TableHead>

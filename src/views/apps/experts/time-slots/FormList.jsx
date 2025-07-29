@@ -341,7 +341,7 @@ const FormList = ({ weekDaysDropdown, availabilityList }) => {
                       showTimeSelectOnly
                       dateFormat="h:mm aa"
                       id="start-time-picker"
-                      customInput={<CustomTextField label="Start Time" fullWidth />}
+                      customInput={<CustomTextField label="Start Time (GMT)" fullWidth />}
                     />
                   )}
                 />
@@ -364,7 +364,7 @@ const FormList = ({ weekDaysDropdown, availabilityList }) => {
                       showTimeSelectOnly
                       dateFormat="h:mm aa"
                       id="end-time-picker"
-                      customInput={<CustomTextField label="End Time" fullWidth />}
+                      customInput={<CustomTextField label="End Time (GMT)" fullWidth />}
                     />
                   )}
                 />
@@ -432,8 +432,8 @@ const FormList = ({ weekDaysDropdown, availabilityList }) => {
                                 <TableRow>
                                   <TableCell className="w-[150px]">Action</TableCell>
                                   <TableCell>ID</TableCell>
-                                  <TableCell>Start</TableCell>
-                                  <TableCell>End</TableCell>
+                                  <TableCell>Start Time (GMT)</TableCell>
+                                  <TableCell>End Time (GMT)</TableCell>
                                   <TableCell>Status</TableCell>
                                 </TableRow>
                               </TableHead>
