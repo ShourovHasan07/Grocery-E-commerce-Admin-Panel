@@ -5,8 +5,6 @@ import { useState, useMemo } from "react";
 
 import Link from "next/link";
 
-import { useSession } from "next-auth/react";
-
 // MUI Imports
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -75,21 +73,16 @@ const ListTable = ({ tableData }) => {
   //console.log("Table Data:", tableData);
 
   // States
-  const dataObj = tableData?.bookings || [];
+
+  const dataObj = tableData?.users || [];
+
+  //console.log("Data Object:", dataObj);
+
+
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState(...[dataObj]);
   const [filteredData, setFilteredData] = useState(data);
   const [globalFilter, setGlobalFilter] = useState("");
-
-  const [dialogOpen, setDialogOpen] = useState({
-    open: false,
-    data: {},
-  });
-
-
-  //session
-  const { data: session } = useSession();
-  const token = session?.accessToken;
 
   const columns = useMemo(
     () => [
@@ -97,13 +90,13 @@ const ListTable = ({ tableData }) => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-            {/* <Tooltip title="Detail">
+            <Tooltip title="Detail">
               <IconButton>
-                <Link href="#" className="flex">
+                <Link href={`/users/${row.original.id}`} className="flex">
                   <i className="tabler-eye text-secondary" />
                 </Link>
               </IconButton>
-            </Tooltip> */}
+            </Tooltip>
           </div>
         ),
         enableSorting: false,
@@ -114,45 +107,23 @@ const ListTable = ({ tableData }) => {
       },
       {
         header: "User Name",
-        cell: ({ row }) => <Typography>{row.original.user.name}</Typography>,
+        cell: ({ row }) => <Typography className="text-wrap w-[200px]">{row.original.name || ''}</Typography>,
       },
       {
-        header: "expert Name",
-        cell: ({ row }) => <Typography>{row.original.expert.name}</Typography>,
+        header: "email",
+        cell: ({ row }) => <Typography className="w-full block">{row.original.email}</Typography>,
       },
       {
-        header: "fee ",
-        cell: ({ row }) => <Typography>{row.original.fee}</Typography>,
+        header: "phone",
+        cell: ({ row }) => <Typography className=" w-full block">{row.original.phone}</Typography>,
       },
-      {
-        header: "Service Charge",
-        cell: ({ row }) => (
-          <Typography className="text-center w-full block">
-            {row.original.serviceCharge}
-          </Typography>
-        ),
-      }
-
-      ,
-      {
-        header: "discount",
-        cell: ({ row }) => <Typography className="text-center w-full block" >{row.original.discount}</Typography>,
-      },
-      {
-        header: "total",
-        cell: ({ row }) => <Typography className="text-center w-full block" >{row.original.total}</Typography>,
-      },
-
       columnHelper.accessor("status", {
         header: "Status",
         cell: ({ row }) => (
-          <div className="flex items-center gap-3 text-center   ">
+          <div className="flex items-center gap-3 text-center">
             <Chip
               variant="tonal"
               label={activeStatusLabel(row.original.status)}
-
-
-
               size="small"
               color={activeStatusColor(row.original.status)}
               className="capitalize"
@@ -209,7 +180,7 @@ const ListTable = ({ tableData }) => {
   return (
     <>
       <Card>
-        <CardHeader title="Booking List" className="pbe-4" />
+        <CardHeader title="Client List" className="pbe-4" />
         <TableFilters setData={setFilteredData} tableData={data} />
         <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
           <CustomTextField
@@ -222,9 +193,6 @@ const ListTable = ({ tableData }) => {
             <MenuItem value="25">25</MenuItem>
             <MenuItem value="50">50</MenuItem>
           </CustomTextField>
-          <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
-
-          </div>
         </div>
         <div className="overflow-x-auto">
           <table className={tableStyles.table}>
