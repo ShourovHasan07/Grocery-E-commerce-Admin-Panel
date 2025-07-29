@@ -6,11 +6,45 @@ import Grid from "@mui/material/Grid2";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Chip from "@mui/material/Chip";
+import { useRouter } from "next/navigation";
+
 
 import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
 import { formattedDate } from "@/utils/formatters";
+import NotFound from "@/components/Not-Found -component/NotFound";
+
+
+
+
+
+
+
+
+
+
+
 
 const UserInfo = ({ user }) => {
+
+  const router = useRouter();
+
+  
+
+  // if user data is invalid
+  if (!user || Object.keys(user).length === 0) {
+    return (
+      <NotFound
+        title="Client Information Unavailable"
+        message="We couldn't find the requested client details. Please check the request or try again later."
+        buttonLabel="Back to Client List"
+        redirectPath="/users"
+      />
+    );
+  }
+
+  
+
+
 
   return (
     <Card className="mb-4">
@@ -57,6 +91,7 @@ const UserInfo = ({ user }) => {
                   <th className="border px-4 py-2 w-1/5">UpdatedAt</th>
                   <td className="border px-4 py-2 w-4/5">{formattedDate(user.updatedAt)}</td>
                 </tr>
+
               </tbody>
             </table>
           </div>
