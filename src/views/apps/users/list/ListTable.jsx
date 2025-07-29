@@ -5,8 +5,6 @@ import { useState, useMemo } from "react";
 
 import Link from "next/link";
 
-import { useSession } from "next-auth/react";
-
 // MUI Imports
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -86,16 +84,6 @@ const ListTable = ({ tableData }) => {
   const [filteredData, setFilteredData] = useState(data);
   const [globalFilter, setGlobalFilter] = useState("");
 
-  const [dialogOpen, setDialogOpen] = useState({
-    open: false,
-    data: {},
-  });
-
-
-  //session
-  const { data: session } = useSession();
-  const token = session?.accessToken;
-
   const columns = useMemo(
     () => [
       columnHelper.accessor("action", {
@@ -119,20 +107,20 @@ const ListTable = ({ tableData }) => {
       },
       {
         header: "User Name",
-        cell: ({ row }) => <Typography className="text-wrap w-[200px]"   >{row.original.name}</Typography>,
+        cell: ({ row }) => <Typography className="text-wrap w-[200px]">{row.original.name || ''}</Typography>,
       },
       {
         header: "email",
-        cell: ({ row }) => <Typography className="w-full block" >{row.original.email}</Typography>,
+        cell: ({ row }) => <Typography className="w-full block">{row.original.email}</Typography>,
       },
       {
         header: "phone",
-        cell: ({ row }) => <Typography className=" w-full block" >{row.original.phone}</Typography>,
+        cell: ({ row }) => <Typography className=" w-full block">{row.original.phone}</Typography>,
       },
       columnHelper.accessor("status", {
         header: "Status",
         cell: ({ row }) => (
-          <div className="flex items-center gap-3 text-center   ">
+          <div className="flex items-center gap-3 text-center">
             <Chip
               variant="tonal"
               label={activeStatusLabel(row.original.status)}

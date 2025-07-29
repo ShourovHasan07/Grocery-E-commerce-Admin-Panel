@@ -42,6 +42,7 @@ const UserApp = async ({ params }) => {
   const { id } = await params
   const res = await getUserData(id);
   const user = res?.user || []
+
   // console.log(user)
 
   return <UsersDetails user={user} />;
