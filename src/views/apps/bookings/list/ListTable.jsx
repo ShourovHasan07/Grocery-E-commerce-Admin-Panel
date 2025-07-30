@@ -97,13 +97,13 @@ const ListTable = ({ tableData }) => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-            {/* <Tooltip title="Detail">
+            <Tooltip title="Detail">
               <IconButton>
-                <Link href="#" className="flex">
+                <Link href={`/bookings/${row.original.id}`} className="flex">
                   <i className="tabler-eye text-secondary" />
                 </Link>
               </IconButton>
-            </Tooltip> */}
+            </Tooltip>
           </div>
         ),
         enableSorting: false,

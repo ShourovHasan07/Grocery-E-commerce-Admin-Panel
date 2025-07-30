@@ -15,27 +15,16 @@ import NotFound from "@/components/Not-Found -component/NotFound";
 
 
 
-
-
-
-
-
-
-
-
-
 const UserInfo = ({ user }) => {
 
-  const router = useRouter();
-
-  
+ 
 
   // if user data is invalid
   if (!user || Object.keys(user).length === 0) {
     return (
       <NotFound
-        title="Client Information Unavailable"
-        message="We couldn't find the requested client details. Please check the request or try again later."
+        title="Client  Not Found"
+        message="Sorry, we could not find the booking you requested."
         buttonLabel="Back to Client List"
         redirectPath="/users"
       />
@@ -43,9 +32,6 @@ const UserInfo = ({ user }) => {
   }
 
   
-
-
-
   return (
     <Card className="mb-4">
       <CardHeader title="Client  Info" />

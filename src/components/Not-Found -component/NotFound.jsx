@@ -16,7 +16,7 @@ const NotFound = ({
     <div className="flex items-center justify-center min-h-[300px] px-4">
       <Card className="p-6 max-w-md w-full shadow-md border border-slate-200 bg-slate-50">
         <div className="space-y-4 text-center">
-          <div className="flex justify-center text-indigo-500">
+          <div className="flex justify-center text-red-500">
             <InfoOutlinedIcon fontSize="large" />
           </div>
           <Typography variant="h6" className="text-red-500  text-xl font-semibold">
