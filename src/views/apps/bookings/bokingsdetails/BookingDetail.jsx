@@ -6,24 +6,17 @@ import Grid from "@mui/material/Grid2";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Chip from "@mui/material/Chip";
-import { useRouter } from "next/navigation";
 
 
-import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
+import { bookingStatusLabel, bookingStatusColor } from "@/utils/helpers";
 import { formattedDate } from "@/utils/formatters";
-import NotFound from "@/components/Not-Found -component/NotFound";
+import NotFound from "@/components/NotFound";
 import Link from "@/components/Link";
-
 
 
 const BookingInfo = ({ booking }) => {
 
-  //console.log("Bookingdetails component  :", booking);
-
-
-  const router = useRouter();
-
-  // if user data is invalid
+  // if 404
   const isBookingInvalid =
     !booking ||
     typeof booking !== "object" ||
@@ -42,8 +35,6 @@ const BookingInfo = ({ booking }) => {
     );
   }
 
-
-
   return (
     <Card className="mb-4">
       <CardHeader title="Booking  Info" />
@@ -57,52 +48,40 @@ const BookingInfo = ({ booking }) => {
                   <td className="border px-4 py-2 w-4/5">{booking.id}</td>
                 </tr>
                 <tr className="text-left">
-                  <th className="border px-4 py-2 w-1/5">user ID</th>
-                  <td className="border px-4 py-2 w-4/5">{booking.userId}</td>
+                  <th className="border px-4 py-2 w-1/5 align-top">Client Name</th>
+                  <td className="border px-4 py-2 w-4/5">
+                    <Link className="text-info" href={`/users/${booking.user.id}`}>
+                      {booking.user.name}
+                    </Link>
+                  </td>
                 </tr>
                 <tr className="text-left">
-                  <th className="border px-4 py-2 w-1/5">Expert ID</th>
-                  <td className="border px-4 py-2 w-4/5">{booking.expertId}</td>
-                </tr>
-                <tr className="text-left">
-                  <th className="border px-4 py-2 w-1/5">Availability ID</th>
-                  <td className="border px-4 py-2 w-4/5">{booking.availabilityId}</td>
-                </tr>
-                <tr className="text-left">
-                  <th className="border px-4 py-2 w-1/5">TimeSlot ID</th>
-                  <td className="border px-4 py-2 w-4/5">{booking.timeSlotId}</td>
-                </tr>
-                <tr className="text-left">
-                  <th className="border px-4 py-2 w-1/5">SessionFee ID</th>
-                  <td className="border px-4 py-2 w-4/5">{booking.sessionFeeId}</td>
+                  <th className="border px-4 py-2 w-1/5 align-top">Expert Name</th>
+                  <td className="border px-4 py-2 w-4/5">
+                    <Link className="text-info" href={`/experts/${booking.expert.id}`}>
+                      {booking.expert.name}
+                    </Link>
+                  </td>
                 </tr>
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-1/5">Booking Date</th>
                   <td className="border px-4 py-2 w-4/5">{booking.bookingDate}</td>
                 </tr>
                 <tr className="text-left">
-                  <th className="border px-4 py-2 w-1/5">Start Time</th>
-                  <td className="border px-4 py-2 w-4/5">{booking.startTime}</td>
+                  <th className="border px-4 py-2 w-1/5">Start At</th>
+                  <td className="border px-4 py-2 w-4/5">{formattedDate(booking.startAt)}</td>
                 </tr>
                 <tr className="text-left">
-                  <th className="border px-4 py-2 w-1/5">End Time</th>
-                  <td className="border px-4 py-2 w-4/5">{booking.endTime}</td>
+                  <th className="border px-4 py-2 w-1/5">End At</th>
+                  <td className="border px-4 py-2 w-4/5">{formattedDate(booking.endAt)}</td>
                 </tr>
                 <tr className="text-left">
-                  <th className="border px-4 py-2 w-1/5">Time Min</th>
-                  <td className="border px-4 py-2 w-4/5">{booking.timeMin}</td>
-                </tr>
-                <tr className="text-left">
-                  <th className="border px-4 py-2 w-1/5">Payment Option</th>
-                  <td className="border px-4 py-2 w-4/5">{booking.paymentOption}</td>
-                </tr>
-                <tr className="text-left">
-                  <th className="border px-4 py-2 w-1/5">Transaction ID</th>
-                  <td className="border px-4 py-2 w-4/5">{booking.transactionId}</td>
+                  <th className="border px-4 py-2 w-1/5">Booking Time</th>
+                  <td className="border px-4 py-2 w-4/5">{booking.timeMin} mins</td>
                 </tr>
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-1/5">Fee</th>
-                  <td className="border px-4 py-2 w-4/5">{booking.Fee}</td>
+                  <td className="border px-4 py-2 w-4/5">{booking.fee}</td>
                 </tr>
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-1/5">Service Charge</th>
@@ -122,93 +101,59 @@ const BookingInfo = ({ booking }) => {
                   <td className="border px-4 py-2 w-4/5">
                     <Chip
                       variant="tonal"
-                      label={activeStatusLabel(booking.status)}
+                      label={bookingStatusLabel(booking.status)}
                       size="small"
-                      color={activeStatusColor(booking.status)}
+                      color={bookingStatusColor(booking.status)}
                       className="capitalize"
                     />
                   </td>
                 </tr>
-
-
-
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-1/5">CreatedAt</th>
                   <td className="border px-4 py-2 w-4/5">{formattedDate(booking.createdAt)}</td>
                 </tr>
-
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-1/5">UpdatedAt</th>
                   <td className="border px-4 py-2 w-4/5">{formattedDate(booking.updatedAt)}</td>
                 </tr>
 
-
-
                 <tr className="text-left">
-                  <th className="border px-4 py-2 w-1/5 align-top">Expert</th>
+                  <th className="border px-4 py-2 w-1/5 align-top">Transactions</th>
                   <td className="border px-4 py-2 w-4/5">
-                    <Link href={`/experts/${booking.expert.id}`} className="text-blue-600 hover:underline">
-                      {booking.expert.name}
-                    </Link>
+                    {booking.transactions?.length > 0 ? (
+                      <div className="overflow-x-auto">
+                        <table className="table-auto w-full border-collapse border">
+                          <thead>
+                            <tr className="bg-gray-100 text-sm">
+                              <th className="border px-2 py-1">ID</th>
+                              <th className="border px-2 py-1">Transaction ID</th>
+                              <th className="border px-2 py-1">Amount</th>
+                              <th className="border px-2 py-1">Type</th>
+                              <th className="border px-2 py-1">Method</th>
+                              <th className="border px-2 py-1">Status</th>
+                              <th className="border px-2 py-1">Created At</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {booking.transactions.map((txn, index) => (
+                              <tr key={txn.id || index} className="text-sm">
+                                <td className="border px-2 py-1">{txn.id}</td>
+                                <td className="border px-2 py-1">{txn.transactionId}</td>
+                                <td className="border px-2 py-1">{txn.amount}</td>
+                                <td className="border px-2 py-1 capitalize">{txn.type}</td>
+                                <td className="border px-2 py-1 capitalize">{txn.paymentMethod}</td>
+                                <td className=" px-2 py-1">{txn.status}</td>
+                                <td className="border px-2 py-1">{formattedDate(txn.createdAt)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="text-sm text-red-500">No transaction found.</div>
+                    )}
                   </td>
                 </tr>
-
-
-                <tr className="text-left">
-                  <th className="border px-4 py-2 w-1/5 align-top">Client</th>
-                  <td className="border px-4 py-2 w-4/5">
-                    <Link href={`/users/${booking.user.id}`} className="text-blue-600 hover:underline">
-                      {booking.user.name}
-                    </Link>
-                  </td>
-                </tr>
-
-               
-
-
-                <tr className="text-left">
-  <th className="border px-4 py-2 w-1/5 align-top">Transactions</th>
-  <td className="border px-4 py-2 w-4/5">
-    {booking.transactions?.length > 0 ? (
-      <div className="overflow-x-auto">
-        <table className="table-auto w-full border-collapse border">
-          <thead>
-            <tr className="bg-gray-100 text-sm">
-              <th className="border px-2 py-1">#</th>
-              <th className="border px-2 py-1">Transaction ID</th>
-              <th className="border px-2 py-1">User ID</th>
-              <th className="border px-2 py-1">Expert ID</th>
-              <th className="border px-2 py-1">Booking ID</th>
-              <th className="border px-2 py-1">Amount</th>
-              <th className="border px-2 py-1">Type</th>
-              <th className="border px-2 py-1">Method</th>
-              <th className="border px-2 py-1">Status</th>
-              <th className="border px-2 py-1">Created At</th>
-            </tr>
-          </thead>
-          <tbody>
-            {booking.transactions.map((txn, index) => (
-              <tr key={txn.id || index} className="text-sm">
-                <td className="border px-2 py-1 text-center">{index + 1}</td>
-                <td className="border px-2 py-1">{txn.formattedId}</td>
-                <td className="border px-2 py-1">{txn.userId}</td>
-                <td className="border px-2 py-1">{txn.expertId}</td>
-                <td className="border px-2 py-1">{txn.bookingId}</td>
-                <td className="border px-2 py-1">{txn.amount}</td>
-                <td className="border px-2 py-1">{txn.type}</td>
-                <td className="border px-2 py-1">{txn.paymentMethod}</td>
-                <td className=" px-2 py-1">{txn.status}</td>
-                <td className="border px-2 py-1">{formattedDate(txn.createdAt)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    ) : (
-      <div className="text-sm text-red-500">No transactions found.</div>
-    )}
-  </td>
-</tr>
 
 
 

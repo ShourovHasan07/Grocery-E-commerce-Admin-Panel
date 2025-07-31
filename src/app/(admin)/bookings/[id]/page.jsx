@@ -8,7 +8,7 @@ import { authOptions } from "@/libs/auth";
 import pageApiHelper from "@/utils/pageApiHelper";
 
 import BookingsDetails from "@/views/apps/bookings/bokingsdetails/BookingDetail";
-import NotFound from "@/components/Not-Found -component/NotFound";
+import NotFound from "@/components/NotFound";
 
 
 const getBookingData = async (id) => {
@@ -47,15 +47,16 @@ const UserApp = async ({ params }) => {
   const { id } = await params
   const result = await getBookingData(id);
   const bookings = result
-  
-if (!result || !result.booking || !result.booking.id) {
-  return <NotFound
-    title="Booking Not Found"
-    message="Sorry, we could not find the booking you requested."
-    buttonLabel="Back to booking List"
-    redirectPath="/bookings"
-  />;
-}
+
+  if (!result || !result.booking || !result.booking.id) {
+    return <NotFound
+      title="Booking Not Found"
+      message="Sorry, we could not find the booking you requested."
+      buttonLabel="Back to booking List"
+      redirectPath="/bookings"
+    />;
+  }
+
   // console.log(user)
 
   return <BookingsDetails booking={bookings.booking} />;

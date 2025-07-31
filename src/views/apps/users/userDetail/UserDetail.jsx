@@ -6,32 +6,25 @@ import Grid from "@mui/material/Grid2";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Chip from "@mui/material/Chip";
-import { useRouter } from "next/navigation";
-
 
 import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
 import { formattedDate } from "@/utils/formatters";
-import NotFound from "@/components/Not-Found -component/NotFound";
-
+import NotFound from "@/components/NotFound";
 
 
 const UserInfo = ({ user }) => {
-
- 
-
-  // if user data is invalid
+  //if 404
   if (!user || Object.keys(user).length === 0) {
     return (
       <NotFound
         title="Client  Not Found"
-        message="Sorry, we could not find the booking you requested."
+        message="Sorry, we could not find the client you requested."
         buttonLabel="Back to Client List"
         redirectPath="/users"
       />
     );
   }
 
-  
   return (
     <Card className="mb-4">
       <CardHeader title="Client  Info" />

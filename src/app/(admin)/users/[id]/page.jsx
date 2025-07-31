@@ -35,7 +35,7 @@ const getUserData = async (id) => {
 }
 
 export const metadata = {
-  title: "users Detail's - AskValor",
+  title: "User Detail's - AskValor",
 };
 
 const UserApp = async ({ params }) => {

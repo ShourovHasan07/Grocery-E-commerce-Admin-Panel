@@ -10,7 +10,6 @@ const UsersList = ({ tData, }) => {
     <Grid container>
       <Grid size={{ xs: 12 }}>
         <ListTable tableData={tData} />
-        
       </Grid>
     </Grid>
   );
