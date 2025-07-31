@@ -78,6 +78,9 @@ importers:
       '@tanstack/react-table':
         specifier: 8.20.6
         version: 8.20.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tinymce/tinymce-react':
+        specifier: ^6.3.0
+        version: 6.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tinymce@8.0.1)
       '@tiptap/extension-color':
         specifier: ^2.12.0
         version: 2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/extension-text-style@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0)))
@@ -186,6 +189,9 @@ importers:
       server-only:
         specifier: 0.0.1
         version: 0.0.1
+      tinymce:
+        specifier: ^8.0.1
+        version: 8.0.1
       valibot:
         specifier: 0.42.1
         version: 0.42.1(typescript@5.8.3)
@@ -1281,6 +1287,16 @@ packages:
   '@tanstack/table-core@8.20.5':
     resolution: {integrity: sha512-P9dF7XbibHph2PFRz8gfBKEXEY/HJPOhym8CHmjF8y3q5mWpKx9xtZapXQUWCgkqvsK0R46Azuz+VaxD4Xl+Tg==}
     engines: {node: '>=12'}
+
+  '@tinymce/tinymce-react@6.3.0':
+    resolution: {integrity: sha512-E++xnn0XzDzpKr40jno2Kj7umfAE6XfINZULEBBeNjTMvbACWzA6CjiR6V8eTDc9yVmdVhIPqVzV4PqD5TZ/4g==}
+    peerDependencies:
+      react: ^19.0.0 || ^18.0.0 || ^17.0.1 || ^16.7.0
+      react-dom: ^19.0.0 || ^18.0.0 || ^17.0.1 || ^16.7.0
+      tinymce: ^8.0.0 || ^7.0.0 || ^6.0.0 || ^5.5.1
+    peerDependenciesMeta:
+      tinymce:
+        optional: true
 
   '@tiptap/core@2.12.0':
     resolution: {integrity: sha512-3qX8oGVKFFZzQ0vit+ZolR6AJIATBzmEmjAA0llFhWk4vf3v64p1YcXcJsOBsr5scizJu5L6RYWEFatFwqckRg==}
@@ -4110,6 +4126,9 @@ packages:
     resolution: {integrity: sha512-mEwzpUgrLySlveBwEVDMKk5B57bhLPYovRfPAXD5gA/98Opn0rCDj3GtLwFvCvH5RK9uPCExUROW5NjDwvqkxw==}
     engines: {node: '>=12.0.0'}
 
+  tinymce@8.0.1:
+    resolution: {integrity: sha512-KQ/+KaWmkIzSkNCYmqhXD2mftt+EEhz1bd1QCVopa2DNkoJ/rYFXhMnYGg1gVcRQa43xkmmv0Jj0ph+05VY0hQ==}
+
   tinyqueue@3.0.0:
     resolution: {integrity: sha512-gRa9gwYU3ECmQYv3lslts5hxuIa90veaEcxDYuu3QGOIAEM2mOZkVHp48ANJuu1CURtRdHKUBY5Lm1tHV+sD4g==}
 
@@ -5247,6 +5266,14 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
 
   '@tanstack/table-core@8.20.5': {}
+
+  '@tinymce/tinymce-react@6.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tinymce@8.0.1)':
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    optionalDependencies:
+      tinymce: 8.0.1
 
   '@tiptap/core@2.12.0(@tiptap/pm@2.12.0)':
     dependencies:
@@ -8480,6 +8507,8 @@ snapshots:
     dependencies:
       fdir: 6.4.4(picomatch@4.0.2)
       picomatch: 4.0.2
+
+  tinymce@8.0.1: {}
 
   tinyqueue@3.0.0: {}
 
