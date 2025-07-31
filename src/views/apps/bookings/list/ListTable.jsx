@@ -50,7 +50,7 @@ import TablePaginationComponent from "@components/TablePaginationComponent";
 import CustomTextField from "@core/components/mui/TextField";
 
 // Util Imports
-import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
+import { bookingStatusLabel, bookingStatusColor } from "@/utils/helpers";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
@@ -81,12 +81,6 @@ const ListTable = ({ tableData }) => {
   const [filteredData, setFilteredData] = useState(data);
   const [globalFilter, setGlobalFilter] = useState("");
 
-  const [dialogOpen, setDialogOpen] = useState({
-    open: false,
-    data: {},
-  });
-
-
   //session
   const { data: session } = useSession();
   const token = session?.accessToken;
@@ -97,13 +91,13 @@ const ListTable = ({ tableData }) => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-            {/* <Tooltip title="Detail">
+            <Tooltip title="Detail">
               <IconButton>
-                <Link href="#" className="flex">
+                <Link className="flex" href={`/bookings/${row.original.id}`}>
                   <i className="tabler-eye text-secondary" />
                 </Link>
               </IconButton>
-            </Tooltip> */}
+            </Tooltip>
           </div>
         ),
         enableSorting: false,
@@ -113,15 +107,19 @@ const ListTable = ({ tableData }) => {
         cell: ({ row }) => <Typography>{row.original.id}</Typography>,
       },
       {
-        header: "User Name",
+        header: "Client Name",
         cell: ({ row }) => <Typography>{row.original.user.name}</Typography>,
       },
       {
-        header: "expert Name",
+        header: "Expert Name",
         cell: ({ row }) => <Typography>{row.original.expert.name}</Typography>,
       },
       {
-        header: "fee ",
+        header: "Time (min)",
+        cell: ({ row }) => <Typography>{row.original.timeMin} mins</Typography>,
+      },
+      {
+        header: "Fee",
         cell: ({ row }) => <Typography>{row.original.fee}</Typography>,
       },
       {
@@ -131,36 +129,33 @@ const ListTable = ({ tableData }) => {
             {row.original.serviceCharge}
           </Typography>
         ),
-      }
-
-      ,
+      },
       {
         header: "discount",
-        cell: ({ row }) => <Typography className="text-center w-full block" >{row.original.discount}</Typography>,
+        cell: ({ row }) => <Typography className="text-center w-full block">{row.original.discount}</Typography>,
       },
       {
         header: "total",
-        cell: ({ row }) => <Typography className="text-center w-full block" >{row.original.total}</Typography>,
+        cell: ({ row }) => <Typography className="text-center w-full block">{row.original.total}</Typography>,
       },
-
+      {
+        header: "Start At",
+        cell: ({ row }) => <Typography className="text-center w-full block">{formattedDate(row.original.startAt)}</Typography>,
+      },
       columnHelper.accessor("status", {
         header: "Status",
         cell: ({ row }) => (
-          <div className="flex items-center gap-3 text-center   ">
+          <div className="flex items-center gap-3 text-center">
             <Chip
               variant="tonal"
-              label={activeStatusLabel(row.original.status)}
-
-
-
+              label={bookingStatusLabel(row.original.status)}
               size="small"
-              color={activeStatusColor(row.original.status)}
+              color={bookingStatusColor(row.original.status)}
               className="capitalize"
             />
           </div>
         ),
       }),
-
       columnHelper.accessor("createdAt", {
         header: "Created At",
         cell: ({ row }) => (

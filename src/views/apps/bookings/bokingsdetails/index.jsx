@@ -2,17 +2,17 @@
 import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import ListTable from "./ListTable";
+import BookingDetail from "./BookingDetail";
 
 
-const UsersList = ({ tData, }) => {
+const BookingsDetails = ({ booking }) => {
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>
-        <ListTable tableData={tData} />
+        <BookingDetail booking={booking.booking} />
       </Grid>
     </Grid>
   );
 };
 
-export default UsersList;
+export default BookingsDetails;

@@ -34,8 +34,6 @@ import {
 } from "@tanstack/react-table";
 
 
-
-
 // Third-party Imports
 import Tooltip from '@mui/material/Tooltip';
 
@@ -71,13 +69,7 @@ const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
   //console.log("Table Data:", tableData);
-
-  // States
-
   const dataObj = tableData?.users || [];
-
-  //console.log("Data Object:", dataObj);
-
 
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState(...[dataObj]);
@@ -92,7 +84,7 @@ const ListTable = ({ tableData }) => {
           <div className="flex items-center">
             <Tooltip title="Detail">
               <IconButton>
-                <Link href={`/users/${row.original.id}`} className="flex">
+                <Link className="flex" href={`/users/${row.original.id}`}>
                   <i className="tabler-eye text-secondary" />
                 </Link>
               </IconButton>
@@ -115,7 +107,7 @@ const ListTable = ({ tableData }) => {
       },
       {
         header: "phone",
-        cell: ({ row }) => <Typography className=" w-full block">{row.original.phone}</Typography>,
+        cell: ({ row }) => <Typography className="w-full block">{row.original.phone}</Typography>,
       },
       columnHelper.accessor("status", {
         header: "Status",
@@ -268,8 +260,6 @@ const ListTable = ({ tableData }) => {
             )}
           </table>
         </div>
-
-
 
         <TablePagination
           component={() => <TablePaginationComponent table={table} />}

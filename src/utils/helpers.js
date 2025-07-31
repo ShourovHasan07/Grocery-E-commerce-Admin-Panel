@@ -85,79 +85,66 @@ export const parseJWT = token => {
 }
 
 // 👉 Status
-// export const activeStatusLabel = status => {
-//   switch (status) {
-//     case false:
-//       return 'Inactive'
-//     case true:
-//       return 'Active'
-//     default:
-//       return 'N/A'
-//   }
-// }
-
-
 export const activeStatusLabel = status => {
   switch (status) {
     case false:
-      return 'Inactive';
+      return 'Inactive'
     case true:
-      return 'Active';
-    case 'completed':
-      return 'Completed';
-    case 'pending':
-      return 'Pending';
-    case 'cancelled':
-      return 'Cancelled';
+      return 'Active'
     default:
-      return String(status); // যেমন "processing", etc.
+      return 'N/A'
   }
 }
-
-
-
-
-
-
-
 
 
 // 👉 Status Color
-// export const activeStatusColor = status => {
-//   switch (status) {
-//     case false:
-//       return 'warning'
-//     case true:
-//       return 'success'
-//     case completed:
-//       return 'success'
-//     default:
-//       return 'secondary'
-//   }
-// }
-
-
 export const activeStatusColor = status => {
   switch (status) {
-    case true:
-      return 'success';      
     case false:
-      return 'warning';      
-    case 'completed':
-      return 'success';      // Completed booking
-    case 'pending':
-      return 'warning';     
-    case 'cancelled':
-      return 'error'
+      return 'warning'
+    case true:
+      return 'success'
+    case completed:
+      return 'success'
     default:
-      return 'default';     
+      return 'secondary'
   }
 }
 
+//pending, confirmed, ongoing, completed, cancelled,
+export const bookingStatusLabel = status => {
+  switch (status) {
+    case 'cancelled':
+      return 'Cancelled';
+    case 'completed':
+      return 'Completed';
+    case 'ongoing':
+      return 'Ongoing';
+    case 'confirmed':
+      return 'Upcoming';
+    case 'pending':
+      return 'Pending';
+    default:
+      return String(status);
+  }
+}
 
-
-
-
+export const bookingStatusColor = status => {
+  switch (status) {
+    case 'cancelled':
+      return 'error';
+    case 'completed':
+      return 'success';
+    case 'ongoing':
+      return 'info';
+    case 'confirmed':
+      return 'primary';
+    case 'pending':
+      return 'warning';
+    default:
+      return 'default';
+  }
+}
 
 // 👉 Popular Status
 export const popularStatusLabel = popular => {

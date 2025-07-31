@@ -13,17 +13,14 @@ import { stringToBoolean } from "@/utils/helpers";
 
 const TableFilters = ({ setData, tableData }) => {
 
-  //console.log("TableFilters tableData:", tableData);
-
-
   // States
   const [search, setInputSearch] = useState("");
   const [status, setStatus] = useState("");
 
   useEffect(() => {
     const filteredData = tableData?.filter((item) => {
-   if (search && !item?.name?.toLowerCase().includes(search.toLowerCase())) return false;
-     if (status && status != '' && item.status !== stringToBoolean(status)) return false;
+      if (search && !item?.name?.toLowerCase().includes(search.toLowerCase())) return false;
+      if (status && status != '' && item.status !== stringToBoolean(status)) return false;
 
       return true;
     });
