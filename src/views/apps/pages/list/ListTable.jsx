@@ -5,25 +5,24 @@ import { useState, useMemo } from "react";
 
 import Link from "next/link";
 
-import { useSession } from "next-auth/react";
-
 import { toast } from "react-toastify";
+import { useSession } from "next-auth/react";
 
 // MUI Imports
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
 import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
-import Tooltip from '@mui/material/Tooltip';
 
 
-// Third-party Imports
+
 import classnames from "classnames";
+
 import { rankItem } from "@tanstack/match-sorter-utils";
+
 import {
   createColumnHelper,
   flexRender,
@@ -37,21 +36,21 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 
-import ConfirmDialog from "@components/dialogs/ConfirmDialog";
-import { activeStatusLabel, activeStatusColor, popularStatusLabel, popularStatusColor } from "@/utils/helpers";
-import pageApiHelper from "@/utils/pageApiHelper";
 
-// Util Imports
-import { formattedDate } from "@/utils/formatters";
+// Third-party Imports
+import Tooltip from '@mui/material/Tooltip';
+
+import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 
 // Component Imports
 import TableFilters from "./TableFilters";
 import TablePaginationComponent from "@components/TablePaginationComponent";
 import CustomTextField from "@core/components/mui/TextField";
-import CustomAvatar from "@core/components/mui/Avatar";
 
 // Util Imports
-import { getInitials } from "@/utils/getInitials";
+import { formattedDate } from "@/utils/formatters";
+import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
+import pageApiHelper from "@/utils/pageApiHelper";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
@@ -74,11 +73,7 @@ const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
 
-  // console.log("tableData data:", tableData);
-  // States
-  const dataObj = tableData?.experts || [];
-
-  // console.log("ListTable dataObj:", dataObj);
+  const dataObj = tableData?.pages || [];
 
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState(...[dataObj]);
@@ -90,50 +85,23 @@ const ListTable = ({ tableData }) => {
     id: null,
   });
 
-  // Hooks
-
   const columns = useMemo(
     () => [
       columnHelper.accessor("action", {
         header: "Action",
         cell: ({ row }) => (
-          <div className="text-wrap w-[150px]">
+          <div className="flex items-center">
             <Tooltip title="Detail">
               <IconButton>
-                <Link href={`/experts/${row.original.id}`} className="flex">
+                <Link href={`/pages/${row.original.id}`} className="flex">
                   <i className="tabler-eye text-secondary" />
                 </Link>
               </IconButton>
             </Tooltip>
 
-            <Tooltip title="Achievements" arrow placement="top">
-              <IconButton>
-                <Link href={`/experts/${row.original.id}/achievements`} className="flex">
-                  <i className="tabler-award text-success" />
-                </Link>
-              </IconButton>
-            </Tooltip>
-
-            <Tooltip title="Languages" arrow placement="top">
-              <IconButton>
-                <Link href={`/experts/${row.original.id}/languages`} className="flex">
-                  <i className="tabler-abc text-info" />
-                </Link>
-              </IconButton>
-            </Tooltip>
-
-            <Tooltip title="Time Slots" arrow placement="top">
-              <IconButton>
-                <Link href={`/experts/${row.original.id}/time-slots`} className="flex">
-                  <i className="tabler-clock text-info" />
-                </Link>
-              </IconButton>
-            </Tooltip>
-
-
             <Tooltip title="Edit" arrow placement="top">
               <IconButton>
-                <Link href={`/experts/${row.original.id}/edit`} className="flex">
+                <Link href={`/pages/${row.original.id}/edit`} className="flex">
                   <i className="tabler-edit text-primary" />
                 </Link>
               </IconButton>
@@ -158,44 +126,17 @@ const ListTable = ({ tableData }) => {
         cell: ({ row }) => <Typography>{row.original.id}</Typography>,
       },
       {
-        header: "Name",
-        cell: ({ row }) => <Typography className="text-wrap w-[200px]">{row.original.name}</Typography>,
-      },
-      columnHelper.accessor("image", {
-        header: "Image",
-        cell: ({ row }) => (
-          <div className="flex items-center gap-3">
-            {getAvatar({
-              avatar: row.original.image,
-              name: row.original.name,
-            })}
-          </div>
-        ),
-      }),
-      {
-        header: "Email",
-        cell: ({ row }) => <Typography>{row.original.email}</Typography>,
-      },
-      {
-        header: "User Name",
-        cell: ({ row }) => <Typography>{row.original.userName}</Typography>,
-      },
-      {
-        header: "Phone",
-        cell: ({ row }) => <Typography>{row.original.phone}</Typography>,
-      },
-      {
-        header: "Address",
-        cell: ({ row }) => <Typography>{row.original.address}</Typography>,
-      },
-      {
         header: "Title",
-        cell: ({ row }) => <Typography>{row.original.title}</Typography>,
+        cell: ({ row }) => <Typography className="text-wrap w-[150px]">{row.original.title}</Typography>,
+      },
+      {
+        header: "Url",
+        cell: ({ row }) => <Typography>{row.original.url}</Typography>,
       },
       columnHelper.accessor("status", {
         header: "Status",
         cell: ({ row }) => (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 text-center">
             <Chip
               variant="tonal"
               label={activeStatusLabel(row.original.status)}
@@ -206,20 +147,7 @@ const ListTable = ({ tableData }) => {
           </div>
         ),
       }),
-      columnHelper.accessor("isPopular", {
-        header: "Verified",
-        cell: ({ row }) => (
-          <div className="flex items-center gap-3">
-            <Chip
-              variant="tonal"
-              label={popularStatusLabel(row.original.isVerified)}
-              size="small"
-              color={popularStatusColor(row.original.isVerified)}
-              className="capitalize"
-            />
-          </div>
-        ),
-      }),
+
       columnHelper.accessor("createdAt", {
         header: "Created At",
         cell: ({ row }) => (
@@ -252,8 +180,7 @@ const ListTable = ({ tableData }) => {
         pageSize: 10,
       },
     },
-    enableRowSelection: true, //enable row selection for all rows
-    // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
+    enableRowSelection: true,
     globalFilterFn: fuzzyFilter,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
@@ -266,23 +193,13 @@ const ListTable = ({ tableData }) => {
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
   });
 
-  const getAvatar = (params) => {
-    const { avatar, name } = params;
-
-    if (avatar) {
-      return <CustomAvatar src={avatar} size={50} />;
-    } else {
-      return <CustomAvatar size={50}>{getInitials(name)}</CustomAvatar>;
-    }
-  };
-
   // Session
   const { data: session } = useSession();
   const token = session?.accessToken;
 
   const handleDelete = async (itemId) => {
     try {
-      const deleteEndpoint = `experts/${itemId}`;
+      const deleteEndpoint = `pages/${itemId}`;
 
       // call the delete API
       const res = await pageApiHelper.delete(deleteEndpoint, token);
@@ -313,7 +230,7 @@ const ListTable = ({ tableData }) => {
   return (
     <>
       <Card>
-        <CardHeader title="Expert List" className="pbe-4" />
+        <CardHeader title="Page List" className="pbe-4" />
         <TableFilters setData={setFilteredData} tableData={data} />
         <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
           <CustomTextField
@@ -326,17 +243,6 @@ const ListTable = ({ tableData }) => {
             <MenuItem value="25">25</MenuItem>
             <MenuItem value="50">50</MenuItem>
           </CustomTextField>
-          <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
-            <Button
-              variant="contained"
-              component={Link}
-              startIcon={<i className="tabler-plus" />}
-              href={"experts/create"}
-              className="max-sm:is-full"
-            >
-              Add New Expert
-            </Button>
-          </div>
         </div>
         <div className="overflow-x-auto">
           <table className={tableStyles.table}>
@@ -412,6 +318,7 @@ const ListTable = ({ tableData }) => {
             )}
           </table>
         </div>
+
         <TablePagination
           component={() => <TablePaginationComponent table={table} />}
           count={table.getFilteredRowModel().rows.length}
@@ -421,17 +328,17 @@ const ListTable = ({ tableData }) => {
             table.setPageIndex(page);
           }}
         />
-      </Card>
 
-      <ConfirmDialog
-        dialogData={dialogOpen}
-        handleCloseDialog={() => setDialogOpen((prevState) => ({
-          ...prevState,
-          open: !prevState.open,
-          id: null,
-        }))}
-        handleDelete={() => { handleDelete(dialogOpen.id); }}
-      />
+        <ConfirmDialog
+          dialogData={dialogOpen}
+          handleCloseDialog={() => setDialogOpen((prevState) => ({
+            ...prevState,
+            open: !prevState.open,
+            id: null,
+          }))}
+          handleDelete={() => { handleDelete(dialogOpen.id); }}
+        />
+      </Card>
     </>
   );
 };

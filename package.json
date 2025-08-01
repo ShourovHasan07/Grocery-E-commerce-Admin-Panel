@@ -37,6 +37,7 @@
     "@reduxjs/toolkit": "2.5.0",
     "@tanstack/match-sorter-utils": "8.19.4",
     "@tanstack/react-table": "8.20.6",
+    "@tinymce/tinymce-react": "^6.3.0",
     "@tiptap/extension-color": "^2.12.0",
     "@tiptap/extension-list-item": "^2.12.0",
     "@tiptap/extension-placeholder": "^2.12.0",
@@ -73,6 +74,7 @@
     "react-use": "17.6.0",
     "recharts": "2.15.0",
     "server-only": "0.0.1",
+    "tinymce": "^8.0.1",
     "valibot": "0.42.1",
     "zod": "^3.25.28"
   },
