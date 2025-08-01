@@ -5,10 +5,10 @@ import { authOptions } from "@/libs/auth";
 
 
 import pageApiHelper from '@/utils/pageApiHelper';
-import PagesList  from '@/views/apps/pages/list';
+import PagesList from '@/views/apps/pages/list';
 
 export const metadata = {
-  title: "users - AskValor",
+  title: "Pages - AskValor",
 };
 
 const getData = async () => {
@@ -38,7 +38,7 @@ const ListApp = async () => {
   const result = await getData();
   const usersData = result.data
 
-  return <PagesList tData={usersData} />; 
+  return <PagesList tData={usersData} />;
 };
 
 export default ListApp;

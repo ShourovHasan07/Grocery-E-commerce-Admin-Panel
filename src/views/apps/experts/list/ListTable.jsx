@@ -7,8 +7,6 @@ import Link from "next/link";
 
 import { useSession } from "next-auth/react";
 
-// Next Imports
-
 import { toast } from "react-toastify";
 
 // MUI Imports

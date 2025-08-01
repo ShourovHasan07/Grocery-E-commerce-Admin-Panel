@@ -5,15 +5,18 @@ import { useState, useMemo } from "react";
 
 import Link from "next/link";
 
+import { toast } from "react-toastify";
+import { useSession } from "next-auth/react";
+
 // MUI Imports
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
 import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
+
 
 
 import classnames from "classnames";
@@ -37,8 +40,7 @@ import {
 // Third-party Imports
 import Tooltip from '@mui/material/Tooltip';
 
-// Util Imports
-import { formattedDate } from "@/utils/formatters";
+import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 
 // Component Imports
 import TableFilters from "./TableFilters";
@@ -46,7 +48,9 @@ import TablePaginationComponent from "@components/TablePaginationComponent";
 import CustomTextField from "@core/components/mui/TextField";
 
 // Util Imports
+import { formattedDate } from "@/utils/formatters";
 import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
+import pageApiHelper from "@/utils/pageApiHelper";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
@@ -76,6 +80,11 @@ const ListTable = ({ tableData }) => {
   const [filteredData, setFilteredData] = useState(data);
   const [globalFilter, setGlobalFilter] = useState("");
 
+  const [dialogOpen, setDialogOpen] = useState({
+    open: false,
+    id: null,
+  });
+
   const columns = useMemo(
     () => [
       columnHelper.accessor("action", {
@@ -84,9 +93,28 @@ const ListTable = ({ tableData }) => {
           <div className="flex items-center">
             <Tooltip title="Detail">
               <IconButton>
-                <Link className="flex" href={`/users/${row.original.id}`}>
+                <Link href={`/pages/${row.original.id}`} className="flex">
                   <i className="tabler-eye text-secondary" />
                 </Link>
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Edit" arrow placement="top">
+              <IconButton>
+                <Link href={`/pages/${row.original.id}/edit`} className="flex">
+                  <i className="tabler-edit text-primary" />
+                </Link>
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Delete" arrow placement="top">
+              <IconButton onClick={() => setDialogOpen((prevState) => ({
+                ...prevState,
+                open: !prevState.open,
+                id: row.original.id,
+              }))}
+              >
+                <i className="tabler-trash text-error" />
               </IconButton>
             </Tooltip>
           </div>
@@ -164,6 +192,40 @@ const ListTable = ({ tableData }) => {
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
   });
+
+  // Session
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+
+  const handleDelete = async (itemId) => {
+    try {
+      const deleteEndpoint = `pages/${itemId}`;
+
+      // call the delete API
+      const res = await pageApiHelper.delete(deleteEndpoint, token);
+
+      // console.log('Delete result:', res);
+
+      // Update the data state after successful deletion
+      if (res?.success && res?.data?.success) {
+        setData(prevData => prevData.filter((item) => item.id !== itemId));
+        setFilteredData(prevData => prevData.filter((item) => item.id !== itemId));
+
+        setDialogOpen((prevState) => ({
+          ...prevState,
+          open: !prevState.open,
+        }));
+
+        toast.success("Deleted successfully");
+      }
+
+    } catch (error) {
+      // console.error('Delete failed:', error);
+
+      // Show error in toast
+      toast.error(error.message)
+    }
+  };
 
   return (
     <>
@@ -265,6 +327,16 @@ const ListTable = ({ tableData }) => {
           onPageChange={(_, page) => {
             table.setPageIndex(page);
           }}
+        />
+
+        <ConfirmDialog
+          dialogData={dialogOpen}
+          handleCloseDialog={() => setDialogOpen((prevState) => ({
+            ...prevState,
+            open: !prevState.open,
+            id: null,
+          }))}
+          handleDelete={() => { handleDelete(dialogOpen.id); }}
         />
       </Card>
     </>
