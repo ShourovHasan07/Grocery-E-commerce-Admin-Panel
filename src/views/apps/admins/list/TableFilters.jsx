@@ -8,24 +8,26 @@ import MenuItem from "@mui/material/MenuItem";
 
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
+import { stringToBoolean } from "@/utils/helpers";
 
 const TableFilters = ({ setData, tableData }) => {
   // States
   const [search, setInputSearch] = useState("");
-  const [role, setRole] = useState("");
   const [status, setStatus] = useState("");
 
   useEffect(() => {
-    const filteredData = tableData?.filter((user) => {
-      if (search && !user.fullName.toLowerCase().includes(search.toLowerCase())) return false;
-      if (role && user.role !== role) return false;
-      if (status && user.status !== status) return false;
+    const filteredData = tableData?.filter((item) => {
+      if (search &&
+        !item.name.toLowerCase().includes(search.toLowerCase()) &&
+        !item.email.toLowerCase().includes(search.toLowerCase())
+      ) return false;
+      if (status && status != '' && item.status !== stringToBoolean(status)) return false;
 
       return true;
     });
 
     setData(filteredData || []);
-  }, [search, role, status, tableData, setData]);
+  }, [search, status, tableData, setData]);
 
   return (
     <CardContent>
@@ -42,26 +44,6 @@ const TableFilters = ({ setData, tableData }) => {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 4 }}>
-          <CustomTextField
-            label="Role"
-            select
-            fullWidth
-            id="select-role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            slotProps={{
-              select: { displayEmpty: true },
-            }}
-          >
-            <MenuItem value="">All</MenuItem>
-            <MenuItem value="admin">Admin</MenuItem>
-            <MenuItem value="author">Author</MenuItem>
-            <MenuItem value="editor">Editor</MenuItem>
-            <MenuItem value="maintainer">Maintainer</MenuItem>
-            <MenuItem value="subscriber">Subscriber</MenuItem>
-          </CustomTextField>
-        </Grid>
         <Grid size={{ xs: 12, sm: 4 }}>
           <CustomTextField
             label="Status"

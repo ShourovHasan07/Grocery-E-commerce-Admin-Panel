@@ -20,61 +20,64 @@ import Checkbox from "@mui/material/Checkbox";
 // Third-party Imports
 import { toast } from "react-toastify";
 import { Controller, useForm } from "react-hook-form";
-import { valibotResolver } from "@hookform/resolvers/valibot";
-import { email, object, minLength, string, pipe, nonEmpty } from "valibot";
+
+
 
 // Components Imports
 import CustomTextField from "@core/components/mui/TextField";
+import { useRouter } from 'next/navigation';
 
-const schema = object({
-  role_id: pipe(
-    string(),
-    nonEmpty("This field is required"),
-  ),
-  name: pipe(
-    string(),
-    nonEmpty("This field is required"),
-    minLength(3, "Name must be at least 3 characters long"),
-  ),
-  phone: pipe(
-    string(),
-    nonEmpty("This field is required"),
-    minLength(3, "Phone must be at least 3 characters long"),
-  ),
-  email: pipe(
-    string(),
-    minLength(1, "This field is required"),
-    email("Please enter a valid email address"),
-  ),
-  password: pipe(
-    string(),
-    nonEmpty("This field is required"),
-    minLength(6, "Password must be at least 6 characters long"),
-  ),
-  confirm_password: pipe(
-    string(),
-    nonEmpty("This field is required"),
-    minLength(6, "Confirm Password must be at least 6 characters long"),
-  ),
-});
+import { useSession } from "next-auth/react";
 
-const UserCreateForm = () => {
+
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod"; // 
+import pageApiHelper from "@/utils/pageApiHelper";
+
+
+
+// Validation Schema
+const schema = z
+  .object({
+    name: z.string().min(3, "Name must be at least 3 characters"),
+    email: z.string().email("Please enter a valid email address"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirm_password: z.string().min(6, "Confirm Password must be at least 6 characters"),
+    status: z.boolean().default(true),
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    message: "Passwords do not match",
+    path: ["confirm_password"],
+  });
+
+
+
+
+
+const CreateForm = () => {
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false);
   const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+
 
   // Hooks
+
+
+  const router = useRouter();
+
+
   const {
     control,
-    reset,
     handleSubmit,
+    reset,
+    setError,
     formState: { errors },
   } = useForm({
-    resolver: valibotResolver(schema),
+    resolver: zodResolver(schema),
     defaultValues: {
-      role_id: "",
       name: "",
-      phone: "",
       email: "",
       password: "",
       confirm_password: "",
@@ -82,9 +85,64 @@ const UserCreateForm = () => {
     },
   });
 
-  const handleClickShowPassword = () => setIsPasswordShown((show) => !show);
-  const handleClickShowConfirmPassword = () => setIsConfirmPasswordShown((show) => !show);
-  const onSubmit = () => toast.success("Form Submitted");
+
+
+
+
+
+  //form submission
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+
+  const onSubmit = async (formData) => {
+
+    // console.log (formData)
+
+
+    setIsSubmitting(true);
+    try {
+      const form = new FormData();
+      form.append("name", formData.name.trim());
+      form.append("email", formData.email.trim());
+      form.append("password", formData.password);
+      form.append("status", formData.status.toString());
+
+
+
+      const headerConfig = {
+        headers: { "Content-Type": "multipart/form-data" },
+      };
+
+      const res = await pageApiHelper.post(`admins`, form, token, headerConfig);
+
+
+      //console.log(res)
+
+      if (!res?.success && res?.status === 400) {
+        const errors = res?.data?.data?.errors || {};
+        Object.keys(errors).forEach((key) => {
+          setError(key, { type: "server", message: errors[key] });
+        });
+        return;
+      }
+
+      if (res?.success && res?.data?.success) {
+        toast.success("Admin created successfully");
+        reset();
+        router.push("/admins");
+      }
+    } catch (error) {
+      toast.error(error.message || "Something went wrong");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+
+
+
+
+
 
   return (
     <Card>
@@ -93,30 +151,6 @@ const UserCreateForm = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={{ md: 6 }}>
             <Grid size={{ md: 6 }}>
-              <Controller
-                name="role_id"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    select
-                    fullWidth
-                    className="mb-4"
-                    label="Role"
-                    {...(errors.role_id && {
-                      error: true,
-                      helperText: errors.role_id.message,
-                    })}
-                  >
-                    <MenuItem value="" selected>Select Role</MenuItem>
-                    <MenuItem value="1">Admin</MenuItem>
-                  </CustomTextField>
-                )}
-              />
-
-
-
               <Controller
                 name="name"
                 control={control}
@@ -159,7 +193,7 @@ const UserCreateForm = () => {
             </Grid>
 
             <Grid size={{ md: 6 }}>
-              <Controller
+              {/* <Controller
                 name="phone"
                 control={control}
                 rules={{ required: false }}
@@ -176,47 +210,30 @@ const UserCreateForm = () => {
                     })}
                   />
                 )}
-              />
+              /> */}
 
               <Controller
                 name="password"
                 control={control}
-                rules={{ required: true }}
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
                     fullWidth
-                    className="mb-4"
-                    label="Password"
-                    placeholder="············"
-                    id="form-validation-scheme-password"
                     type={isPasswordShown ? "text" : "password"}
-                    slotProps={{
-                      input: {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              edge="end"
-                              onClick={handleClickShowPassword}
-                              onMouseDown={(e) => e.preventDefault()}
-                              aria-label="toggle password visibility"
-                            >
-                              <i
-                                className={
-                                  isPasswordShown
-                                    ? "tabler-eye-off"
-                                    : "tabler-eye"
-                                }
-                              />
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      },
+                    label="Password"
+                    placeholder="Password"
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                    className="mb-4"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={() => setIsPasswordShown((prev) => !prev)}>
+                            <i className={isPasswordShown ? "tabler-eye-off" : "tabler-eye"} />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
                     }}
-                    {...(errors.password && {
-                      error: true,
-                      helperText: errors.password.message,
-                    })}
                   />
                 )}
               />
@@ -224,45 +241,29 @@ const UserCreateForm = () => {
               <Controller
                 name="confirm_password"
                 control={control}
-                rules={{ required: true }}
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
                     fullWidth
-                    className="mb-4"
-                    label="Confirm Password"
-                    placeholder="············"
-                    id="form-validation-scheme-password-confirmed"
                     type={isConfirmPasswordShown ? "text" : "password"}
-                    slotProps={{
-                      input: {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              edge="end"
-                              onClick={handleClickShowConfirmPassword}
-                              onMouseDown={(e) => e.preventDefault()}
-                              aria-label="toggle password visibility"
-                            >
-                              <i
-                                className={
-                                  isConfirmPasswordShown
-                                    ? "tabler-eye-off"
-                                    : "tabler-eye"
-                                }
-                              />
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      },
+                    label="Confirm Password"
+                    placeholder="Confirm Password"
+                    error={!!errors.confirm_password}
+                    helperText={errors.confirm_password?.message}
+                    className="mb-4"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={() => setIsConfirmPasswordShown((prev) => !prev)}>
+                            <i className={isConfirmPasswordShown ? "tabler-eye-off" : "tabler-eye"} />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
                     }}
-                    {...(errors.confirm_password && {
-                      error: true,
-                      helperText: errors.confirm_password.message,
-                    })}
                   />
                 )}
               />
+
 
               <Controller
                 name="status"
@@ -283,11 +284,12 @@ const UserCreateForm = () => {
               <Button
                 variant="tonal"
                 color="secondary"
-                type="reset"
+                type="button"
                 onClick={() => reset()}
               >
                 Reset
               </Button>
+
               <Button
                 variant="tonal"
                 color="error"
@@ -304,4 +306,4 @@ const UserCreateForm = () => {
   );
 };
 
-export default UserCreateForm;
+export default CreateForm;

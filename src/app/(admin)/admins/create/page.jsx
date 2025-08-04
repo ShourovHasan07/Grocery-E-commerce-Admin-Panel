@@ -4,6 +4,19 @@ import UserCreate from "@/views/apps/admins/create";
 // Data Imports
 import { getUserData } from "@/app/server/actions";
 
+// Component Imports
+  import { getServerSession } from 'next-auth';
+  
+  import ExpertList from "@/views/apps/experts/list";
+  
+  import { authOptions } from "@/libs/auth";
+  import pageApiHelper from '@/utils/pageApiHelper';
+  
+
+
+
+
+
 /**
  * ! If you need data using an API call, uncomment the below API code, update the `process.env.API_URL` variable in the
  * ! `.env` file found at root of your project and also update the API endpoints like `/apps/user-list` in below example.
@@ -23,6 +36,52 @@ import { getUserData } from "@/app/server/actions";
 export const metadata = {
   title: "Admins - AskValor",
 };
+
+
+
+
+
+
+
+
+
+
+
+ const getAdminData = async () => {
+  
+    const session = await getServerSession(authOptions)
+  
+    if (session?.accessToken) {
+      try {
+        // Fetching the experts data
+        const result = await pageApiHelper.post('admins', { pageSize: 200 }, session.accessToken);
+        console.log("admins data page.jsx:",result)
+  
+        if (result.success) {
+          return result.data;
+        }
+  
+        return null;
+      } catch (error) {
+        // console.error('Error fetching experts:', error);
+  
+        return null;
+      }
+    }
+  
+    return null;
+  }
+  
+ 
+  
+  
+
+
+
+
+
+
+
 
 const UserListApp = async () => {
   // Vars

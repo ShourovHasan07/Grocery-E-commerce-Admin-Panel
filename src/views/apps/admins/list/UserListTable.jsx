@@ -47,6 +47,11 @@ import { getInitials } from "@/utils/getInitials";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
+import { activeStatusColor, activeStatusLabel } from "@/utils/helpers";
+import { useSession } from "next-auth/react";
+import ConfirmDialog from "@/components/dialogs/ConfirmDialog";
+import { toast } from "react-toastify";
+import pageApiHelper from "@/utils/pageApiHelper";
 
 // Styled Components
 const Icon = styled("i")({});
@@ -65,21 +70,30 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 };
 
 
-const userStatusObj = {
-  active: "success",
-  pending: "warning",
-  inactive: "secondary",
-};
+
 
 // Column Definitions
 const columnHelper = createColumnHelper();
 
 const UserListTable = ({ tableData }) => {
+
+
+
+  //console.log("  admin  UserListTable tableData:", tableData);
+
+
   // States
+
+  const dataObj = tableData?.admins || [];
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState(...[tableData]);
+  const [data, setData] = useState(...[dataObj]);
   const [filteredData, setFilteredData] = useState(data);
   const [globalFilter, setGlobalFilter] = useState("");
+
+  const [dialogOpen, setDialogOpen] = useState({
+    open: false,
+    id: null,
+  });
 
   // Hooks
 
@@ -89,28 +103,28 @@ const UserListTable = ({ tableData }) => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-            <IconButton>
-              <Link href={"/apps/user/view"} className="flex">
+            {/* <IconButton>
+              <Link href={`/admins/${row.original.id}`} className="flex">
                 <i className="tabler-eye text-textSecondary" />
               </Link>
-            </IconButton>
+            </IconButton> */}
 
             <IconButton>
-              <Link href={"/admins/edit"} className="flex">
+              <Link href={`/admins/${row.original.id}/edit`} className="flex">
                 <i className="tabler-edit text-textPrimary" />
               </Link>
             </IconButton>
 
-            <IconButton
-              onClick={() =>
-                setData(
-                  data?.filter((product) => product.id !== row.original.id),
-                )
-              }
+            <IconButton onClick={() => setDialogOpen((prevState) => ({
+              ...prevState,
+              open: !prevState.open,
+              id: row.original.id,
+            }))}
             >
-              <i className="tabler-trash text-textSecondary" />
+              <i className="tabler-trash text-error" />
             </IconButton>
-          </div>
+
+          </div >
         ),
         enableSorting: false,
       }),
@@ -118,31 +132,33 @@ const UserListTable = ({ tableData }) => {
         header: "ID",
         cell: ({ row }) => <Typography>{row.original.id}</Typography>,
       },
-      columnHelper.accessor("fullName", {
+      columnHelper.accessor("name", {
         header: "Name",
-        cell: ({ row }) => <Typography>{row.original.fullName}</Typography>,
+        cell: ({ row }) => <Typography>{row.original.name}</Typography>,
       }),
       {
         header: "Email",
         cell: ({ row }) => <Typography>{row.original.email}</Typography>,
       },
-      {
-        header: "Phone",
-        cell: ({ row }) => <Typography>{row.original.contact}</Typography>,
-      },
-      {
-        header: "Role",
-        cell: ({ row }) => <Typography>{row.original.role}</Typography>,
-      },
+      // {
+      //   header: "Phone",
+      //   cell: ({ row }) => <Typography>{row.original.contact}</Typography>,
+      // },
+      // {
+      //   header: "Role",
+      //   cell: ({ row }) => <Typography>{row.original.role}</Typography>,
+      // },
+
+
       columnHelper.accessor("status", {
         header: "Status",
         cell: ({ row }) => (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 text-center">
             <Chip
               variant="tonal"
-              label={row.original.status}
+              label={activeStatusLabel(row.original.status)}
               size="small"
-              color={userStatusObj[row.original.status]}
+              color={activeStatusColor(row.original.status)}
               className="capitalize"
             />
           </div>
@@ -204,6 +220,46 @@ const UserListTable = ({ tableData }) => {
     }
   };
 
+
+
+
+
+  // Session
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+
+  const handleDelete = async (itemId) => {
+    try {
+      const deleteEndpoint = `admins/${itemId}`;
+
+      // call the delete API
+      const res = await pageApiHelper.delete(deleteEndpoint, token);
+      // Update the data state after successful deletion
+      if (res?.success && res?.data?.success) {
+        setData(prevData => prevData.filter((item) => item.id !== itemId));
+        setFilteredData(prevData => prevData.filter((item) => item.id !== itemId));
+
+        setDialogOpen((prevState) => ({
+          ...prevState,
+          open: !prevState.open,
+        }));
+
+        toast.success("Deleted  successfully");
+      }
+
+    } catch (error) {
+      // console.error('Delete failed:', error);
+
+      // Show error in toast
+      toast.error(error.message)
+    }
+  };
+
+
+
+
+
+
   return (
     <>
       <Card>
@@ -228,7 +284,7 @@ const UserListTable = ({ tableData }) => {
               href={"admins/create"}
               className="max-sm:is-full"
             >
-              Add New User
+              Add New Admin
             </Button>
           </div>
         </div>
@@ -316,6 +372,19 @@ const UserListTable = ({ tableData }) => {
           }}
         />
       </Card>
+
+      <ConfirmDialog
+        dialogData={dialogOpen}
+        handleCloseDialog={() => setDialogOpen((prevState) => ({
+          ...prevState,
+          open: !prevState.open,
+          id: null,
+        }))}
+        handleDelete={() => { handleDelete(dialogOpen.id); }}
+      />
+
+
+
     </>
   );
 };
