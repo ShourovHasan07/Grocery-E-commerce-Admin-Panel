@@ -1,34 +1,61 @@
 // Component Imports
-import UserList from "@/views/apps/admins/list";
+import { getServerSession } from 'next-auth';
+
+import AdminList from "@/views/apps/admins/list";
 
 // Data Imports
-import { getUserData } from "@/app/server/actions";
+//import { getUserData } from "@/app/server/actions";
 
-/**
- * ! If you need data using an API call, uncomment the below API code, update the `process.env.API_URL` variable in the
- * ! `.env` file found at root of your project and also update the API endpoints like `/apps/user-list` in below example.
- * ! Also, remove the above server action import and the action itself from the `src/app/server/actions.ts` file to clean up unused code
- * ! because we've used the server action for getting our static data.
- */
-/* const getUserData = async () => {
-  // Vars
-  const res = await fetch(`${process.env.API_URL}/apps/user-list`)
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch userData')
-  }
+import { authOptions } from "@/libs/auth";
 
-  return res.json()
-} */
+
+import pageApiHelper from '@/utils/pageApiHelper';
+
+
 export const metadata = {
   title: "Admins - AskValor",
 };
 
-const UserListApp = async () => {
-  // Vars
-  const data = await getUserData();
 
-  return <UserList userData={data} />;
+const getAdminData = async () => {
+
+  const session = await getServerSession(authOptions)
+
+  if (session.accessToken) {
+    try {
+      const result = await pageApiHelper.get('admins', { pageSize: 200 }, session.accessToken);
+
+      if (result.success) {
+        return result.data;
+      }
+
+      return null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  return null;
+}
+
+
+
+
+
+
+
+
+
+
+const ListApp = async () => {
+  // Vars
+  const result = await getAdminData();
+
+  const adminData = result?.data || [];
+
+  
+return <AdminList userData={adminData} />;
 };
 
-export default UserListApp;
+export default ListApp;

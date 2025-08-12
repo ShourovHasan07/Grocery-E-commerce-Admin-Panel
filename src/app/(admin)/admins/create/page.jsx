@@ -1,62 +1,48 @@
 // Component Imports
-import UserCreate from "@/views/apps/admins/create";
+import { getServerSession } from 'next-auth';
 
-// Data Imports
-import { getUserData } from "@/app/server/actions";
+import AdminCreate from "@/views/apps/admins/create";
 
-/**
- * ! If you need data using an API call, uncomment the below API code, update the `process.env.API_URL` variable in the
- * ! `.env` file found at root of your project and also update the API endpoints like `/apps/user-list` in below example.
- * ! Also, remove the above server action import and the action itself from the `src/app/server/actions.ts` file to clean up unused code
- * ! because we've used the server action for getting our static data.
- */
-/* const getUserData = async () => {
-  // Vars
-  const res = await fetch(`${process.env.API_URL}/apps/user-list`)
+// Component Imports
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch userData')
-  }
+import ExpertList from "@/views/apps/experts/list";
 
-  return res.json()
-} */
+import { authOptions } from "@/libs/auth";
+import pageApiHelper from '@/utils/pageApiHelper';
+
+
 export const metadata = {
   title: "Admins - AskValor",
 };
 
-const UserListApp = async () => {
-  // Vars
-  // const data = await getUserData();
-  const data = {
-    'roles': [{
-      id: 1,
-      name: "Admin",
-      description: "Administrator role with full access"
-    }, {
-      id: 2,
-      name: "Editor",
-      description: "Editor role with limited access"
-    }, {
-      id: 3,
-      name: "Viewer",
-      description: "Viewer role with read-only access"
-    }],
-    'statuses': [{
-      id: 1,
-      name: "Active",
-      description: "User is active and has access"
-    }, {
-      id: 2,
-      name: "Inactive",
-      description: "User is inactive and does not have access"
-    }, {
-      id: 3,
-      name: "Pending",
-      description: "User is pending approval"
-    }],
-  };
 
-  return <UserCreate userData={data} />;
+const getAdminOptions = async () => {
+
+  const session = await getServerSession(authOptions)
+
+  if (session?.accessToken) {
+    try {
+      const result = await pageApiHelper.get('admins/create-edit-options', { status: 'active' }, session.accessToken);
+
+      if (result.success) {
+        return result.data;
+      }
+
+      return null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  return null;
+}
+
+
+const AdminApp = async () => {
+  const result = await getAdminOptions();
+  const createOptionData = result?.data?.roles || [];
+
+  return <AdminCreate createOptionData={createOptionData} />;
 };
 
-export default UserListApp;
+export default AdminApp;

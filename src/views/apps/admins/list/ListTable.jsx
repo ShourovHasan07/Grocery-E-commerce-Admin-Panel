@@ -34,6 +34,10 @@ import {
 } from "@tanstack/react-table";
 
 // Util Imports
+import { useSession } from "next-auth/react";
+
+import { toast } from "react-toastify";
+
 import { formattedDate } from "@/utils/formatters";
 
 // Component Imports
@@ -47,9 +51,11 @@ import { getInitials } from "@/utils/getInitials";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
+import { activeStatusColor, activeStatusLabel } from "@/utils/helpers";
+import ConfirmDialog from "@/components/dialogs/ConfirmDialog";
 
-// Styled Components
-const Icon = styled("i")({});
+
+import pageApiHelper from "@/utils/pageApiHelper";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -65,21 +71,21 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 };
 
 
-const userStatusObj = {
-  active: "success",
-  pending: "warning",
-  inactive: "secondary",
-};
-
 // Column Definitions
 const columnHelper = createColumnHelper();
 
-const UserListTable = ({ tableData }) => {
+const ListTable = ({ tableData }) => {
   // States
+  const dataObj = tableData?.admins || [];
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState(...[tableData]);
+  const [data, setData] = useState(...[dataObj]);
   const [filteredData, setFilteredData] = useState(data);
   const [globalFilter, setGlobalFilter] = useState("");
+
+  const [dialogOpen, setDialogOpen] = useState({
+    open: false,
+    id: null,
+  });
 
   // Hooks
 
@@ -89,28 +95,34 @@ const UserListTable = ({ tableData }) => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-            <IconButton>
-              <Link href={"/apps/user/view"} className="flex">
+            {/* <IconButton>
+              <Link href={`/admins/${row.original.id}`} className="flex">
                 <i className="tabler-eye text-textSecondary" />
               </Link>
-            </IconButton>
+            </IconButton> */}
 
             <IconButton>
-              <Link href={"/admins/edit"} className="flex">
+              <Link href={`/admins/${row.original.id}/edit`} className="flex">
                 <i className="tabler-edit text-textPrimary" />
               </Link>
             </IconButton>
 
-            <IconButton
-              onClick={() =>
-                setData(
-                  data?.filter((product) => product.id !== row.original.id),
-                )
-              }
-            >
-              <i className="tabler-trash text-textSecondary" />
+            <IconButton>
+              <Link href={`/admins/${row.original.id}/reset-password`} className="flex">
+                <i className="tabler-lock-password" />
+              </Link>
             </IconButton>
-          </div>
+
+            <IconButton onClick={() => setDialogOpen((prevState) => ({
+              ...prevState,
+              open: !prevState.open,
+              id: row.original.id,
+            }))}
+            >
+              <i className="tabler-trash text-error" />
+            </IconButton>
+
+          </div >
         ),
         enableSorting: false,
       }),
@@ -118,9 +130,9 @@ const UserListTable = ({ tableData }) => {
         header: "ID",
         cell: ({ row }) => <Typography>{row.original.id}</Typography>,
       },
-      columnHelper.accessor("fullName", {
+      columnHelper.accessor("name", {
         header: "Name",
-        cell: ({ row }) => <Typography>{row.original.fullName}</Typography>,
+        cell: ({ row }) => <Typography>{row.original.name}</Typography>,
       }),
       {
         header: "Email",
@@ -128,21 +140,23 @@ const UserListTable = ({ tableData }) => {
       },
       {
         header: "Phone",
-        cell: ({ row }) => <Typography>{row.original.contact}</Typography>,
+        cell: ({ row }) => <Typography>{row.original.phone}</Typography>,
       },
       {
         header: "Role",
-        cell: ({ row }) => <Typography>{row.original.role}</Typography>,
+        cell: ({ row }) => <Typography>{row.original?.role?.displayName}</Typography>,
       },
+
+
       columnHelper.accessor("status", {
         header: "Status",
         cell: ({ row }) => (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 text-center">
             <Chip
               variant="tonal"
-              label={row.original.status}
+              label={activeStatusLabel(row.original.status)}
               size="small"
-              color={userStatusObj[row.original.status]}
+              color={activeStatusColor(row.original.status)}
               className="capitalize"
             />
           </div>
@@ -204,6 +218,44 @@ const UserListTable = ({ tableData }) => {
     }
   };
 
+
+  // Session
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+
+  const handleDelete = async (itemId) => {
+    try {
+      const deleteEndpoint = `admins/${itemId}`;
+
+      // call the delete API
+      const res = await pageApiHelper.delete(deleteEndpoint, token);
+
+
+      // Update the data state after successful deletion
+      if (res?.success && res?.data?.success) {
+        setData(prevData => prevData.filter((item) => item.id !== itemId));
+        setFilteredData(prevData => prevData.filter((item) => item.id !== itemId));
+
+        setDialogOpen((prevState) => ({
+          ...prevState,
+          open: !prevState.open,
+        }));
+
+        toast.success("Deleted  successfully");
+      }
+
+    } catch (error) {
+      // console.error('Delete failed:', error);
+      // Show error in toast
+      toast.error(error.message)
+    }
+  };
+
+
+
+
+
+
   return (
     <>
       <Card>
@@ -228,7 +280,7 @@ const UserListTable = ({ tableData }) => {
               href={"admins/create"}
               className="max-sm:is-full"
             >
-              Add New User
+              Add New Admin
             </Button>
           </div>
         </div>
@@ -316,8 +368,21 @@ const UserListTable = ({ tableData }) => {
           }}
         />
       </Card>
+
+      <ConfirmDialog
+        dialogData={dialogOpen}
+        handleCloseDialog={() => setDialogOpen((prevState) => ({
+          ...prevState,
+          open: !prevState.open,
+          id: null,
+        }))}
+        handleDelete={() => { handleDelete(dialogOpen.id); }}
+      />
+
+
+
     </>
   );
 };
 
-export default UserListTable;
+export default ListTable;
