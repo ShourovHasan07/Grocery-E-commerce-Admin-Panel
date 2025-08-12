@@ -69,9 +69,25 @@ const VerticalMenu = ({ scrollMenu }) => {
         menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
       >
 
+
+
+
+
+
+
         <MenuItem href="/dashboard" icon={<i className="tabler-smart-home" />}>
           Dashboard
         </MenuItem>
+
+
+        <SubMenu label="Roles" icon={<i className="tabler-man" />}>
+          <MenuItem href="/roles/create">New Roles</MenuItem>
+          <MenuItem href="/roles/show-list">Roles List</MenuItem>
+        </SubMenu>
+
+
+
+
 
         <SubMenu label="Admins" icon={<i className="tabler-users" />}>
           <MenuItem href="/admins/create">New Admin</MenuItem>
