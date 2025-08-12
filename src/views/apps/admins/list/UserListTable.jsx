@@ -115,6 +115,12 @@ const UserListTable = ({ tableData }) => {
               </Link>
             </IconButton>
 
+            <IconButton>
+              <Link href={`/admins/${row.original.id}/reset-password`} className="flex">
+                <i className="tabler-lock-password" />  
+              </Link>
+            </IconButton>
+
             <IconButton onClick={() => setDialogOpen((prevState) => ({
               ...prevState,
               open: !prevState.open,

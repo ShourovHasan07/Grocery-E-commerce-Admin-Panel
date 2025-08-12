@@ -54,8 +54,8 @@ export const metadata = {
     if (session?.accessToken) {
       try {
         // Fetching the experts data
-        const result = await pageApiHelper.post('admins', { pageSize: 200 }, session.accessToken);
-        console.log("admins data page.jsx:",result)
+        const result = await pageApiHelper.get('admins/create-edit-options', { pageSize: 200 }, session.accessToken);
+       // console.log("admins data page.jsx:",result)
   
         if (result.success) {
           return result.data;
@@ -86,36 +86,43 @@ export const metadata = {
 const UserListApp = async () => {
   // Vars
   // const data = await getUserData();
-  const data = {
-    'roles': [{
-      id: 1,
-      name: "Admin",
-      description: "Administrator role with full access"
-    }, {
-      id: 2,
-      name: "Editor",
-      description: "Editor role with limited access"
-    }, {
-      id: 3,
-      name: "Viewer",
-      description: "Viewer role with read-only access"
-    }],
-    'statuses': [{
-      id: 1,
-      name: "Active",
-      description: "User is active and has access"
-    }, {
-      id: 2,
-      name: "Inactive",
-      description: "User is inactive and does not have access"
-    }, {
-      id: 3,
-      name: "Pending",
-      description: "User is pending approval"
-    }],
-  };
+  // const data = {
+  //   'roles': [{
+  //     id: 1,
+  //     name: "Admin",
+  //     description: "Administrator role with full access"
+  //   }, {
+  //     id: 2,
+  //     name: "Editor",
+  //     description: "Editor role with limited access"
+  //   }, {
+  //     id: 3,
+  //     name: "Viewer",
+  //     description: "Viewer role with read-only access"
+  //   }],
+  //   'statuses': [{
+  //     id: 1,
+  //     name: "Active",
+  //     description: "User is active and has access"
+  //   }, {
+  //     id: 2,
+  //     name: "Inactive",
+  //     description: "User is inactive and does not have access"
+  //   }, {
+  //     id: 3,
+  //     name: "Pending",
+  //     description: "User is pending approval"
+  //   }],
+  // };
 
-  return <UserCreate userData={data} />;
+  
+
+   const result = await getAdminData();
+  const createOptionData = result?.data?.roles || [];
+
+
+  
+  return <UserCreate createOptionData={createOptionData} />;
 };
 
 export default UserListApp;

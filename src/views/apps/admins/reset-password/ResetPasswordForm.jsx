@@ -31,10 +31,14 @@ import CustomTextField from "@core/components/mui/TextField";
 import CustomAutocomplete from '@core/components/mui/Autocomplete'
 
 import pageApiHelper from "@/utils/pageApiHelper";
+import { IconButton, InputAdornment } from "@mui/material";
 
 // Zod Imports
 
-const schema = z.object({
+const schema = z
+
+
+.object({
   name: z
     .string()
     .min(1, "This field is required")
@@ -43,14 +47,28 @@ const schema = z.object({
     .string()
     .min(1, "This field is required")
     .email("Please enter a valid email address"),
+     password: z.string().min(6, "Password must be at least 6 characters"),
+    confirm_password: z.string().min(6, "Confirm Password must be at least 6 characters"),
   status: z.boolean().default(true),
 
-});
+
+})
+
+.refine((data) => data.password === data.confirm_password, {
+    message: "Passwords do not match",
+    path: ["confirm_password"],
+  });
+
+
+
+
 
 const EditForm = ({ adminData }) => {
-
   const router = useRouter();
 
+  // States
+ const [isPasswordShown, setIsPasswordShown] = useState(true);
+  const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data: session } = useSession();
@@ -64,7 +82,9 @@ const EditForm = ({ adminData }) => {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      ...adminData
+      ...adminData,
+      password: '',
+      confirm_password: '',
     }
 
   });
@@ -76,13 +96,16 @@ const EditForm = ({ adminData }) => {
     try {
       const form = new FormData();
 
-      form.append("name", formData.name.trim());
-      form.append("email", formData.email.trim());
-      form.append("status", formData.status.toString());
+     
+       form.append("password", formData.password);
+      form.append("confirmPassword", formData.confirm_password); 
+     
 
       let res;
 
-      res = await pageApiHelper.put(`admins/${adminData.id}`, form, token);
+      res = await pageApiHelper.put(`admins/${adminData.id}/reset-password`, form, token);
+
+      //console.log ("admin reset passward:",res)
 
       if (!res?.success && res?.status === 400) {
 
@@ -102,7 +125,7 @@ const EditForm = ({ adminData }) => {
       }
 
       if (res?.success && res?.data?.data?.success) {
-        toast.success("admin updated successfully");
+        toast.success("admin password updated successfully");
 
         // Optionally, redirect or perform other actions after successful creation
         router.push("/admins");
@@ -117,32 +140,11 @@ const EditForm = ({ adminData }) => {
 
   return (
     <Card>
-      <CardHeader title="Admin Info" />
+      <CardHeader title="Admin Reset Password Info" />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={{ md: 6 }}>
             <Grid size={{ md: 6 }}>
-              <Controller
-                name="role"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    value={field.value?.displayName || ""}
-                    fullWidth
-                    className="mb-4"
-                    label="Roles"
-                    placeholder="role"
-                    disabled
-                    {...(errors.role && {
-                      error: true,
-                      helperText: errors.role.message,
-                    })}
-                  />
-                )}
-              />
-
               <Controller
                 name="name"
                 control={control}
@@ -154,6 +156,7 @@ const EditForm = ({ adminData }) => {
                     className="mb-4"
                     label="Name"
                     placeholder="name"
+                     disabled
                     {...(errors.name && {
                       error: true,
                       helperText: errors.name.message,
@@ -174,6 +177,7 @@ const EditForm = ({ adminData }) => {
                     className="mb-4"
                     label="Email"
                     placeholder="email"
+                     disabled
                     {...(errors.email && {
                       error: true,
                       helperText: errors.email.message,
@@ -182,23 +186,62 @@ const EditForm = ({ adminData }) => {
                 )}
               />
 
-              <Controller
-                name="status"
+               <Controller
+                name="password"
                 control={control}
-                render={({ field }) => {
-                  return (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={Boolean(field.value)}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                        />
-                      }
-                      label="Active"
-                    />
-                  );
-                }}
+                render={({ field }) => (
+                  <CustomTextField
+                    {...field}
+                    fullWidth
+                    type={isPasswordShown ? "text" : "password"}
+                    label="Password"
+                    placeholder="Password"
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                    className="mb-4"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={() => setIsPasswordShown((prev) => !prev)}>
+                            <i className={isPasswordShown ? "tabler-eye-off" : "tabler-eye"} />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                )}
               />
+
+              <Controller
+                name="confirm_password"
+                control={control}
+                render={({ field }) => (
+                  <CustomTextField
+                    {...field}
+                    fullWidth
+                    type={isConfirmPasswordShown ? "text" : "password"}
+                    label="Confirm Password"
+                    placeholder="Confirm Password"
+                    error={!!errors.confirm_password}
+                    helperText={errors.confirm_password?.message}
+                    className="mb-4"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={() => setIsConfirmPasswordShown((prev) => !prev)}>
+                            <i className={isConfirmPasswordShown ? "tabler-eye-off" : "tabler-eye"} />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                )}
+              />
+
+
+
+
+             
 
             </Grid>
 

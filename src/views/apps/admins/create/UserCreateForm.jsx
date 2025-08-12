@@ -31,7 +31,7 @@ import { useSession } from "next-auth/react";
 
 
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod"; // 
+import { zodResolver } from "@hookform/resolvers/zod";
 import pageApiHelper from "@/utils/pageApiHelper";
 
 
@@ -39,10 +39,12 @@ import pageApiHelper from "@/utils/pageApiHelper";
 // Validation Schema
 const schema = z
   .object({
+    roleId: z.string().min(1, "Role is required"),
     name: z.string().min(3, "Name must be at least 3 characters"),
     email: z.string().email("Please enter a valid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirm_password: z.string().min(6, "Confirm Password must be at least 6 characters"),
+
     status: z.boolean().default(true),
   })
   .refine((data) => data.password === data.confirm_password, {
@@ -54,10 +56,13 @@ const schema = z
 
 
 
-const CreateForm = () => {
+const CreateForm = ({ tableData }) => {
+
+  console.log("cerate-option  Data", tableData)
+
   // States
-  const [isPasswordShown, setIsPasswordShown] = useState(false);
-  const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false);
+  const [isPasswordShown, setIsPasswordShown] = useState(true);
+  const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
 
@@ -77,6 +82,7 @@ const CreateForm = () => {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
+      roleId: "",
       name: "",
       email: "",
       password: "",
@@ -96,12 +102,14 @@ const CreateForm = () => {
 
   const onSubmit = async (formData) => {
 
-    // console.log (formData)
+
 
 
     setIsSubmitting(true);
     try {
       const form = new FormData();
+
+      form.append("roleId", formData.roleId);
       form.append("name", formData.name.trim());
       form.append("email", formData.email.trim());
       form.append("password", formData.password);
@@ -116,7 +124,9 @@ const CreateForm = () => {
       const res = await pageApiHelper.post(`admins`, form, token, headerConfig);
 
 
-      //console.log(res)
+
+
+
 
       if (!res?.success && res?.status === 400) {
         const errors = res?.data?.data?.errors || {};
@@ -151,6 +161,32 @@ const CreateForm = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={{ md: 6 }}>
             <Grid size={{ md: 6 }}>
+              <Controller
+                name="roleId"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <CustomTextField
+                    {...field}
+                    select
+                    fullWidth
+                    className="mb-4"
+                    label="roles"
+                    {...(errors.roleId && {
+                      error: true,
+                      helperText: errors.roleId.message,
+                    })}
+                  >
+                    <MenuItem value="">Select Roles</MenuItem>
+                    {tableData?.map((createOption) => (
+                      <MenuItem key={createOption.id} value={String(createOption.id)}>
+                        {createOption.displayName}
+                      </MenuItem>
+                    ))}
+
+                  </CustomTextField>
+                )}
+              />
               <Controller
                 name="name"
                 control={control}

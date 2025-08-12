@@ -35,7 +35,7 @@ export async function GET(request) {
 }
 
 
-//Add Achievement
+//Add Or Create Admin 
 export async function POST(request) {
   const token = request.headers.get("authorization");
 
@@ -75,7 +75,7 @@ export async function POST(request) {
     }
 
     return NextResponse.json(
-      { success: false, data: result.data, message: result.message || "admins creation failed" },
+      { success: false, data: result.data, message: result.message || "admins creation failed...." },
       { status: result.status || 400 }
     );
 
