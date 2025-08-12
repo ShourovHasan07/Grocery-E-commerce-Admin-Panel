@@ -32,24 +32,14 @@ export async function PUT(request, { params }) {
       outgoingFormData.append(key, value);
     }
 
-    let headerConfig = {};
-
-    if (incomingFormData.has('image')) {
-      headerConfig = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      };
-    }
-
     // Call backend API
-    const response = await routeApiHelper.put(`admins/${id}/reset-password`, outgoingFormData, token, headerConfig);
+    const response = await routeApiHelper.put(`admins/${id}/reset-password`, outgoingFormData, token);
 
     if (!response.success) {
       return NextResponse.json(
         {
           success: false,
-          message: "Backend update failed",
+          message: "Password update failed",
           data: response.data,
         },
         { status: response.status || 500 }
@@ -60,7 +50,7 @@ export async function PUT(request, { params }) {
       {
         success: true,
         data: response.data,
-        message: "admins updated successfully",
+        message: "Password updated successfully",
       },
       { status: 200 }
     );

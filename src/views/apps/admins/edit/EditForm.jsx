@@ -14,7 +14,7 @@ import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Chip from '@mui/material/Chip'
+import MenuItem from "@mui/material/MenuItem";
 
 // Third-party Imports
 import { toast } from "react-toastify";
@@ -28,13 +28,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
 
 import CustomTextField from "@core/components/mui/TextField";
-import CustomAutocomplete from '@core/components/mui/Autocomplete'
 
 import pageApiHelper from "@/utils/pageApiHelper";
 
 // Zod Imports
 
 const schema = z.object({
+  roleId: z.number().min(1, "Role field is required"),
   name: z
     .string()
     .min(1, "This field is required")
@@ -43,11 +43,11 @@ const schema = z.object({
     .string()
     .min(1, "This field is required")
     .email("Please enter a valid email address"),
+  phone: z.string().default(""),
   status: z.boolean().default(true),
-
 });
 
-const EditForm = ({ adminData }) => {
+const EditForm = ({ adminData, roles }) => {
 
   const router = useRouter();
 
@@ -64,7 +64,8 @@ const EditForm = ({ adminData }) => {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      ...adminData
+      ...adminData,
+      phone: adminData?.phone || '',
     }
 
   });
@@ -76,13 +77,13 @@ const EditForm = ({ adminData }) => {
     try {
       const form = new FormData();
 
+      form.append("roleId", formData.roleId);
       form.append("name", formData.name.trim());
       form.append("email", formData.email.trim());
+      form.append("phone", formData.phone?.trim());
       form.append("status", formData.status.toString());
 
-      let res;
-
-      res = await pageApiHelper.put(`admins/${adminData.id}`, form, token);
+      const res = await pageApiHelper.put(`admins/${adminData.id}`, form, token);
 
       if (!res?.success && res?.status === 400) {
 
@@ -102,7 +103,7 @@ const EditForm = ({ adminData }) => {
       }
 
       if (res?.success && res?.data?.data?.success) {
-        toast.success("admin updated successfully");
+        toast.success("Admin updated successfully");
 
         // Optionally, redirect or perform other actions after successful creation
         router.push("/admins");
@@ -123,23 +124,29 @@ const EditForm = ({ adminData }) => {
           <Grid container spacing={{ md: 6 }}>
             <Grid size={{ md: 6 }}>
               <Controller
-                name="role"
+                name="roleId"
                 control={control}
                 rules={{ required: true }}
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
-                    value={field.value?.displayName || ""}
+                    select
                     fullWidth
                     className="mb-4"
-                    label="Roles"
-                    placeholder="role"
-                    disabled
-                    {...(errors.role && {
+                    label="Role"
+                    placeholder="Select Role"
+                    {...(errors.roleId && {
                       error: true,
-                      helperText: errors.role.message,
+                      helperText: errors.roleId.message,
                     })}
-                  />
+                  >
+                    {roles?.map((role) => (
+                      <MenuItem key={role.id} value={role.id}>
+                        {role.displayName}
+                      </MenuItem>
+                    ))}
+
+                  </CustomTextField>
                 )}
               />
 
@@ -153,7 +160,7 @@ const EditForm = ({ adminData }) => {
                     fullWidth
                     className="mb-4"
                     label="Name"
-                    placeholder="name"
+                    placeholder="Name"
                     {...(errors.name && {
                       error: true,
                       helperText: errors.name.message,
@@ -173,10 +180,29 @@ const EditForm = ({ adminData }) => {
                     type="email"
                     className="mb-4"
                     label="Email"
-                    placeholder="email"
+                    placeholder="Email"
                     {...(errors.email && {
                       error: true,
                       helperText: errors.email.message,
+                    })}
+                  />
+                )}
+              />
+
+              <Controller
+                name="phone"
+                control={control}
+                rules={{ required: false }}
+                render={({ field }) => (
+                  <CustomTextField
+                    {...field}
+                    fullWidth
+                    className="mb-4"
+                    label="Phone"
+                    placeholder="Phone"
+                    {...(errors.phone && {
+                      error: true,
+                      helperText: errors.phone.message,
                     })}
                   />
                 )}

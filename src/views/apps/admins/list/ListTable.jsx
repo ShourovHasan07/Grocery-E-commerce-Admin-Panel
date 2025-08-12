@@ -34,6 +34,10 @@ import {
 } from "@tanstack/react-table";
 
 // Util Imports
+import { useSession } from "next-auth/react";
+
+import { toast } from "react-toastify";
+
 import { formattedDate } from "@/utils/formatters";
 
 // Component Imports
@@ -48,13 +52,10 @@ import { getInitials } from "@/utils/getInitials";
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
 import { activeStatusColor, activeStatusLabel } from "@/utils/helpers";
-import { useSession } from "next-auth/react";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog";
-import { toast } from "react-toastify";
-import pageApiHelper from "@/utils/pageApiHelper";
 
-// Styled Components
-const Icon = styled("i")({});
+
+import pageApiHelper from "@/utils/pageApiHelper";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -70,20 +71,11 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 };
 
 
-
-
 // Column Definitions
 const columnHelper = createColumnHelper();
 
-const UserListTable = ({ tableData }) => {
-
-
-
-  //console.log("  admin  UserListTable tableData:", tableData);
-
-
+const ListTable = ({ tableData }) => {
   // States
-
   const dataObj = tableData?.admins || [];
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState(...[dataObj]);
@@ -117,7 +109,7 @@ const UserListTable = ({ tableData }) => {
 
             <IconButton>
               <Link href={`/admins/${row.original.id}/reset-password`} className="flex">
-                <i className="tabler-lock-password" />  
+                <i className="tabler-lock-password" />
               </Link>
             </IconButton>
 
@@ -146,14 +138,14 @@ const UserListTable = ({ tableData }) => {
         header: "Email",
         cell: ({ row }) => <Typography>{row.original.email}</Typography>,
       },
-      // {
-      //   header: "Phone",
-      //   cell: ({ row }) => <Typography>{row.original.contact}</Typography>,
-      // },
-      // {
-      //   header: "Role",
-      //   cell: ({ row }) => <Typography>{row.original.role}</Typography>,
-      // },
+      {
+        header: "Phone",
+        cell: ({ row }) => <Typography>{row.original.phone}</Typography>,
+      },
+      {
+        header: "Role",
+        cell: ({ row }) => <Typography>{row.original?.role?.displayName}</Typography>,
+      },
 
 
       columnHelper.accessor("status", {
@@ -227,9 +219,6 @@ const UserListTable = ({ tableData }) => {
   };
 
 
-
-
-
   // Session
   const { data: session } = useSession();
   const token = session?.accessToken;
@@ -240,6 +229,8 @@ const UserListTable = ({ tableData }) => {
 
       // call the delete API
       const res = await pageApiHelper.delete(deleteEndpoint, token);
+
+
       // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {
         setData(prevData => prevData.filter((item) => item.id !== itemId));
@@ -255,7 +246,6 @@ const UserListTable = ({ tableData }) => {
 
     } catch (error) {
       // console.error('Delete failed:', error);
-
       // Show error in toast
       toast.error(error.message)
     }
@@ -395,4 +385,4 @@ const UserListTable = ({ tableData }) => {
   );
 };
 
-export default UserListTable;
+export default ListTable;

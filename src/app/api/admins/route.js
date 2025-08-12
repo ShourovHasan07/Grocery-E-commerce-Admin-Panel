@@ -35,7 +35,7 @@ export async function GET(request) {
 }
 
 
-//Add Or Create Admin 
+//Add Or Create Admin
 export async function POST(request) {
   const token = request.headers.get("authorization");
 

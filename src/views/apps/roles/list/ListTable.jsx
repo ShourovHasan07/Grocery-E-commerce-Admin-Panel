@@ -73,15 +73,8 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
-
-  // console.log("tableData data:", tableData);
-
-
-
   // States
   const dataObj = tableData?.data?.roles || [];
-
-  // console.log("ListTable dataObj:", dataObj);
 
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState(...[dataObj]);
@@ -127,19 +120,12 @@ const ListTable = ({ tableData }) => {
       }),
       {
         header: "ID",
-        cell: ({ row }) => <Typography  >{row.original.id}</Typography>,//  if space more needed className="text-wrap w-[200px]"
+        cell: ({ row }) => <Typography  >{row.original.id}</Typography>
       },
-
       {
         header: "Name",
         cell: ({ row }) => <Typography >{row.original.displayName}</Typography>,
       },
-
-
-
-
-
-
       columnHelper.accessor("status", {
         header: "Status",
         cell: ({ row }) => (
@@ -201,16 +187,6 @@ const ListTable = ({ tableData }) => {
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
   });
 
-  const getAvatar = (params) => {
-    const { avatar, name } = params;
-
-    if (avatar) {
-      return <CustomAvatar src={avatar} size={50} />;
-    } else {
-      return <CustomAvatar size={50}>{getInitials(name)}</CustomAvatar>;
-    }
-  };
-
   // Session
   const { data: session } = useSession();
   const token = session?.accessToken;
@@ -222,8 +198,6 @@ const ListTable = ({ tableData }) => {
       // call the delete API
       const res = await pageApiHelper.delete(deleteEndpoint, token);
 
-      // console.log('Delete result:', res);
-
       // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {
         setData(prevData => prevData.filter((item) => item.id !== itemId));
@@ -234,7 +208,7 @@ const ListTable = ({ tableData }) => {
           open: !prevState.open,
         }));
 
-        toast.success("Deleted successfully");
+        toast.success("Role deleted successfully");
       }
 
     } catch (error) {
@@ -248,7 +222,7 @@ const ListTable = ({ tableData }) => {
   return (
     <>
       <Card>
-        <CardHeader title="Roles List" className="pbe-4" />
+        <CardHeader title="Role List" className="pbe-4" />
         <TableFilters setData={setFilteredData} tableData={data} />
         <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
           <CustomTextField
@@ -269,7 +243,7 @@ const ListTable = ({ tableData }) => {
               href={"/roles/create"}
               className="max-sm:is-full"
             >
-              Add New Roles
+              Add New Role
             </Button>
           </div>
         </div>

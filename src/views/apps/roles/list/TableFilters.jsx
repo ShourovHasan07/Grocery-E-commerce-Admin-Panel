@@ -39,7 +39,7 @@ const TableFilters = ({ setData, tableData }) => {
             id="text-input-search-user"
             value={search}
             onChange={(e) => setInputSearch(e.target.value)}
-            placeholder="Search by name, display..."
+            placeholder="Search by name"
             className="max-sm:is-full"
           />
         </Grid>

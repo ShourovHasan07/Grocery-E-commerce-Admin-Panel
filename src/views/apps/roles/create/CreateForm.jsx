@@ -14,11 +14,8 @@ import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Chip from '@mui/material/Chip'
 
 // Third-party Imports
 import { toast } from "react-toastify";
@@ -30,7 +27,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import CustomTextField from "@core/components/mui/TextField";
-import CustomAutocomplete from '@core/components/mui/Autocomplete'
 
 import pageApiHelper from "@/utils/pageApiHelper";
 
@@ -41,18 +37,15 @@ const schema = z.object({
     .min(1, "This field is required")
     .min(3, "Name must be at least 3 characters long"),
 
-     status: z.boolean().default(true),
+  status: z.boolean().default(true),
 
 });
 
 const CreateForm = () => {
   // States
-  const [isPasswordShown, setIsPasswordShown] = useState(false);
-  const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Hooks
-
   const router = useRouter();
 
   const {
@@ -64,34 +57,11 @@ const CreateForm = () => {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: "",
       displayName: "",
       status: true,
-     
     },
   });
 
-  const handleClickShowPassword = () => setIsPasswordShown((show) => !show);
-  const handleClickShowConfirmPassword = () => setIsConfirmPasswordShown((show) => !show);
-
-  const handleImageChange = (files, onChange) => {
-    if (files?.[0]) {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        setImagePreview(e.target.result);
-      };
-
-      reader.readAsDataURL(files[0]);
-    } else {
-      setImagePreview(null);
-    }
-
-    onChange(files);
-  };
-
-  const fileInputRef = useRef(null);
-  const [imagePreview, setImagePreview] = useState(null);
 
   //form submission
   const { data: session } = useSession();
@@ -103,27 +73,12 @@ const CreateForm = () => {
     try {
       const form = new FormData();
 
-     
       form.append("displayName", formData.displayName.trim());
-    
       form.append("status", formData.status.toString());
 
+      const res = await pageApiHelper.post(`roles/create`, form, token);
 
-
-      
-     
-
-      //let res;
-
-      const headerConfig = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      };
-
-      const res = await pageApiHelper.post(`roles/create`, form, token, headerConfig);
-
-     // console.log("create roles from res:", res);
+      // console.log("create roles from res:", res);
 
       if (!res?.success && res?.status === 400) {
 
@@ -142,11 +97,11 @@ const CreateForm = () => {
       }
 
       if (res?.success && res?.data?.success) {
-        handleReset();
-        toast.success("roles created successfully");
+        reset();
+        toast.success("Role created successfully");
 
         // Optionally, redirect or perform other actions after successful creation
-        router.push("/roles/show-list");
+        router.push("/roles");
       }
 
     } catch (error) {
@@ -156,20 +111,9 @@ const CreateForm = () => {
     }
   };
 
-  const handleReset = () => {
-    setImagePreview(null);
-    reset();
-
-
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
   return (
     <Card>
-      <CardHeader title="New roles Info" />
+      <CardHeader title="New Role Info" />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={{ md: 6 }}>
@@ -183,8 +127,8 @@ const CreateForm = () => {
                     {...field}
                     fullWidth
                     className="mb-4"
-                    label="displayName"
-                    placeholder="name"
+                    label="Name"
+                    placeholder="Role name"
                     {...(errors.name && {
                       error: true,
                       helperText: errors.name.message,
@@ -193,24 +137,17 @@ const CreateForm = () => {
                 )}
               />
 
-              
-
-
               <Controller
-                              name="status"
-                              control={control}
-                              render={({ field }) => (
-                                <FormControlLabel
-                                  control={<Checkbox {...field} />}
-                                  label="Active"
-                                />
-                              )}
-                            />
-
-              
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <FormControlLabel
+                    control={<Checkbox {...field} />}
+                    label="Active"
+                  />
+                )}
+              />
             </Grid>
-
-           
 
             <Grid size={{ xs: 12 }} className="flex gap-4">
               <Button
@@ -230,7 +167,7 @@ const CreateForm = () => {
                 variant="tonal"
                 color="secondary"
                 type="reset"
-                onClick={handleReset}
+                onClick={reset}
                 disabled={isSubmitting}
               >
                 Reset

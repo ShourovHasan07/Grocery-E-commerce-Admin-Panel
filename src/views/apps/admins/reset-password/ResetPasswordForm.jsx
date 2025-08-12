@@ -12,9 +12,6 @@ import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Chip from '@mui/material/Chip'
 
 // Third-party Imports
 import { toast } from "react-toastify";
@@ -27,34 +24,30 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useSession } from "next-auth/react";
 
-import CustomTextField from "@core/components/mui/TextField";
-import CustomAutocomplete from '@core/components/mui/Autocomplete'
-
-import pageApiHelper from "@/utils/pageApiHelper";
 import { IconButton, InputAdornment } from "@mui/material";
 
-// Zod Imports
+import CustomTextField from "@core/components/mui/TextField";
 
+import pageApiHelper from "@/utils/pageApiHelper";
+
+// Zod Imports
 const schema = z
 
-
-.object({
-  name: z
-    .string()
-    .min(1, "This field is required")
-    .min(3, "Name must be at least 3 characters long"),
-  email: z
-    .string()
-    .min(1, "This field is required")
-    .email("Please enter a valid email address"),
-     password: z.string().min(6, "Password must be at least 6 characters"),
+  .object({
+    name: z
+      .string()
+      .min(1, "This field is required")
+      .min(3, "Name must be at least 3 characters long"),
+    email: z
+      .string()
+      .min(1, "This field is required")
+      .email("Please enter a valid email address"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
     confirm_password: z.string().min(6, "Confirm Password must be at least 6 characters"),
-  status: z.boolean().default(true),
+    status: z.boolean().default(true),
+  })
 
-
-})
-
-.refine((data) => data.password === data.confirm_password, {
+  .refine((data) => data.password === data.confirm_password, {
     message: "Passwords do not match",
     path: ["confirm_password"],
   });
@@ -67,8 +60,8 @@ const EditForm = ({ adminData }) => {
   const router = useRouter();
 
   // States
- const [isPasswordShown, setIsPasswordShown] = useState(true);
-  const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(true);
+  const [isPasswordShown, setIsPasswordShown] = useState(false);
+  const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data: session } = useSession();
@@ -96,16 +89,10 @@ const EditForm = ({ adminData }) => {
     try {
       const form = new FormData();
 
-     
-       form.append("password", formData.password);
-      form.append("confirmPassword", formData.confirm_password); 
-     
+      form.append("password", formData.password);
+      form.append("confirmPassword", formData.confirm_password);
 
-      let res;
-
-      res = await pageApiHelper.put(`admins/${adminData.id}/reset-password`, form, token);
-
-      //console.log ("admin reset passward:",res)
+      const res = await pageApiHelper.put(`admins/${adminData.id}/reset-password`, form, token);
 
       if (!res?.success && res?.status === 400) {
 
@@ -127,7 +114,6 @@ const EditForm = ({ adminData }) => {
       if (res?.success && res?.data?.data?.success) {
         toast.success("admin password updated successfully");
 
-        // Optionally, redirect or perform other actions after successful creation
         router.push("/admins");
       }
 
@@ -156,7 +142,7 @@ const EditForm = ({ adminData }) => {
                     className="mb-4"
                     label="Name"
                     placeholder="name"
-                     disabled
+                    disabled
                     {...(errors.name && {
                       error: true,
                       helperText: errors.name.message,
@@ -177,7 +163,7 @@ const EditForm = ({ adminData }) => {
                     className="mb-4"
                     label="Email"
                     placeholder="email"
-                     disabled
+                    disabled
                     {...(errors.email && {
                       error: true,
                       helperText: errors.email.message,
@@ -186,7 +172,7 @@ const EditForm = ({ adminData }) => {
                 )}
               />
 
-               <Controller
+              <Controller
                 name="password"
                 control={control}
                 render={({ field }) => (
@@ -203,7 +189,7 @@ const EditForm = ({ adminData }) => {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton onClick={() => setIsPasswordShown((prev) => !prev)}>
-                            <i className={isPasswordShown ? "tabler-eye-off" : "tabler-eye"} />
+                            <i className={isPasswordShown ? "tabler-eye" : "tabler-eye-off"} />
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -229,7 +215,7 @@ const EditForm = ({ adminData }) => {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton onClick={() => setIsConfirmPasswordShown((prev) => !prev)}>
-                            <i className={isConfirmPasswordShown ? "tabler-eye-off" : "tabler-eye"} />
+                            <i className={isConfirmPasswordShown ? "tabler-eye" : "tabler-eye-off"} />
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -237,11 +223,6 @@ const EditForm = ({ adminData }) => {
                   />
                 )}
               />
-
-
-
-
-             
 
             </Grid>
 

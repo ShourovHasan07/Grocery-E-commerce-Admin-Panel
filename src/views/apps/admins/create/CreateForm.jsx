@@ -6,6 +6,8 @@ import { useState } from "react";
 import Link from "next/link";
 
 // MUI Imports
+import { useRouter } from 'next/navigation';
+
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
@@ -22,29 +24,28 @@ import { toast } from "react-toastify";
 import { Controller, useForm } from "react-hook-form";
 
 
-
 // Components Imports
-import CustomTextField from "@core/components/mui/TextField";
-import { useRouter } from 'next/navigation';
 
 import { useSession } from "next-auth/react";
 
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import pageApiHelper from "@/utils/pageApiHelper";
 
+import CustomTextField from "@core/components/mui/TextField";
+
+import pageApiHelper from "@/utils/pageApiHelper";
 
 
 // Validation Schema
 const schema = z
   .object({
-    roleId: z.string().min(1, "Role is required"),
+    roleId: z.number().min(1, "Role field is required"),
     name: z.string().min(3, "Name must be at least 3 characters"),
     email: z.string().email("Please enter a valid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirm_password: z.string().min(6, "Confirm Password must be at least 6 characters"),
-
+    phone: z.string().default(""),
     status: z.boolean().default(true),
   })
   .refine((data) => data.password === data.confirm_password, {
@@ -54,24 +55,14 @@ const schema = z
 
 
 
-
-
 const CreateForm = ({ tableData }) => {
-
-  console.log("cerate-option  Data", tableData)
-
   // States
-  const [isPasswordShown, setIsPasswordShown] = useState(true);
-  const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(true);
+  const [isPasswordShown, setIsPasswordShown] = useState(false);
+  const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-
-
   // Hooks
-
-
   const router = useRouter();
-
 
   const {
     control,
@@ -85,15 +76,12 @@ const CreateForm = ({ tableData }) => {
       roleId: "",
       name: "",
       email: "",
+      phone: "",
       password: "",
       confirm_password: "",
       status: true,
     },
   });
-
-
-
-
 
 
   //form submission
@@ -102,19 +90,17 @@ const CreateForm = ({ tableData }) => {
 
   const onSubmit = async (formData) => {
 
-
-
-
     setIsSubmitting(true);
+
     try {
       const form = new FormData();
 
       form.append("roleId", formData.roleId);
       form.append("name", formData.name.trim());
       form.append("email", formData.email.trim());
+      form.append("phone", formData.phone);
       form.append("password", formData.password);
       form.append("status", formData.status.toString());
-
 
 
       const headerConfig = {
@@ -123,17 +109,14 @@ const CreateForm = ({ tableData }) => {
 
       const res = await pageApiHelper.post(`admins`, form, token, headerConfig);
 
-
-
-
-
-
       if (!res?.success && res?.status === 400) {
         const errors = res?.data?.data?.errors || {};
+
         Object.keys(errors).forEach((key) => {
           setError(key, { type: "server", message: errors[key] });
         });
-        return;
+        
+return;
       }
 
       if (res?.success && res?.data?.success) {
@@ -147,10 +130,6 @@ const CreateForm = ({ tableData }) => {
       setIsSubmitting(false);
     }
   };
-
-
-
-
 
 
 
@@ -171,15 +150,15 @@ const CreateForm = ({ tableData }) => {
                     select
                     fullWidth
                     className="mb-4"
-                    label="roles"
+                    label="Role"
+                    placeholder="Select Role"
                     {...(errors.roleId && {
                       error: true,
                       helperText: errors.roleId.message,
                     })}
                   >
-                    <MenuItem value="">Select Roles</MenuItem>
                     {tableData?.map((createOption) => (
-                      <MenuItem key={createOption.id} value={String(createOption.id)}>
+                      <MenuItem key={createOption.id} value={createOption.id}>
                         {createOption.displayName}
                       </MenuItem>
                     ))}
@@ -197,7 +176,7 @@ const CreateForm = ({ tableData }) => {
                     fullWidth
                     className="mb-4"
                     label="Name"
-                    placeholder="name"
+                    placeholder="Name"
                     {...(errors.name && {
                       error: true,
                       helperText: errors.name.message,
@@ -217,7 +196,7 @@ const CreateForm = ({ tableData }) => {
                     type="email"
                     className="mb-4"
                     label="Email"
-                    placeholder="email"
+                    placeholder="Email"
                     {...(errors.email && {
                       error: true,
                       helperText: errors.email.message,
@@ -229,7 +208,7 @@ const CreateForm = ({ tableData }) => {
             </Grid>
 
             <Grid size={{ md: 6 }}>
-              {/* <Controller
+              <Controller
                 name="phone"
                 control={control}
                 rules={{ required: false }}
@@ -246,7 +225,7 @@ const CreateForm = ({ tableData }) => {
                     })}
                   />
                 )}
-              /> */}
+              />
 
               <Controller
                 name="password"
@@ -265,7 +244,7 @@ const CreateForm = ({ tableData }) => {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton onClick={() => setIsPasswordShown((prev) => !prev)}>
-                            <i className={isPasswordShown ? "tabler-eye-off" : "tabler-eye"} />
+                            <i className={isPasswordShown ? "tabler-eye" : "tabler-eye-off"} />
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -291,7 +270,7 @@ const CreateForm = ({ tableData }) => {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton onClick={() => setIsConfirmPasswordShown((prev) => !prev)}>
-                            <i className={isConfirmPasswordShown ? "tabler-eye-off" : "tabler-eye"} />
+                            <i className={isConfirmPasswordShown ? "tabler-eye" : "tabler-eye-off"} />
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -300,27 +279,43 @@ const CreateForm = ({ tableData }) => {
                 )}
               />
 
-
               <Controller
                 name="status"
                 control={control}
-                render={({ field }) => (
-                  <FormControlLabel
-                    control={<Checkbox {...field} />}
-                    label="Active"
-                  />
-                )}
+                render={({ field }) => {
+                  return (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={Boolean(field.value)}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                        />
+                      }
+                      label="Active"
+                    />
+                  );
+                }}
               />
             </Grid>
 
             <Grid size={{ xs: 12 }} className="flex gap-4">
-              <Button variant="contained" type="submit">
+              <Button
+                variant="contained"
+                type="submit"
+                disabled={isSubmitting}
+                endIcon={
+                  isSubmitting ? (
+                    <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' />
+                  ) : null
+                }
+              >
                 Submit
               </Button>
               <Button
                 variant="tonal"
                 color="secondary"
                 type="button"
+                disabled={isSubmitting}
                 onClick={() => reset()}
               >
                 Reset
@@ -338,7 +333,7 @@ const CreateForm = ({ tableData }) => {
           </Grid>
         </form>
       </CardContent>
-    </Card >
+    </Card>
   );
 };
 

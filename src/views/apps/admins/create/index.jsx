@@ -1,16 +1,16 @@
 // MUI Imports
 import Grid from "@mui/material/Grid2";
 
-import UserCreateForm from "./UserCreateForm";
+import CreateForm from "./CreateForm";
 
-const UserCreate = ({ createOptionData }) => {
+const AdminCreate = ({ createOptionData }) => {
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>
-        <UserCreateForm tableData={createOptionData} />
+        <CreateForm tableData={createOptionData} />
       </Grid>
     </Grid>
   );
 };
 
-export default UserCreate;
+export default AdminCreate;

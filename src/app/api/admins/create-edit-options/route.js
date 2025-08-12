@@ -12,18 +12,21 @@ export async function GET(request) {
     );
   }
 
+  const { searchParams } = new URL(request.url);
+  const allParamAsObj = Object.fromEntries(searchParams.entries());
+
   try {
-    const result = await routeApiHelper.get('admins/create-edit-options', {}, token);
+    const result = await routeApiHelper.get('admins/create-edit-options', allParamAsObj, token);
 
     if (result.success) {
       return NextResponse.json(
-        { success: true, data: result.data, message: "experts create-options fetched successfully" },
+        { success: true, data: result.data, message: "Options fetched successfully" },
         { status: 200 }
       );
     }
 
     return NextResponse.json(
-      { success: false, data: [], message: "experts create-options not found" },
+      { success: false, data: [], message: "Options not found" },
       { status: 404 }
     );
   } catch (error) {

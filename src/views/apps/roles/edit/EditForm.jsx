@@ -14,7 +14,6 @@ import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Chip from '@mui/material/Chip'
 
 // Third-party Imports
 import { toast } from "react-toastify";
@@ -28,7 +27,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
 
 import CustomTextField from "@core/components/mui/TextField";
-import CustomAutocomplete from '@core/components/mui/Autocomplete'
 
 import pageApiHelper from "@/utils/pageApiHelper";
 
@@ -39,16 +37,13 @@ const schema = z.object({
     .string()
     .min(1, "This field is required")
     .min(3, "Name must be at least 3 characters long"),
-  
+
   status: z.boolean().default(true),
 
 });
 
-const EditForm = ({ RolesData }) => {
-
- 
-
-  //console.log("edit roles",RolesData)
+const EditForm = ({ role }) => {
+  //console.log("edit roles",role)
 
   const router = useRouter();
 
@@ -65,9 +60,8 @@ const EditForm = ({ RolesData }) => {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      ...RolesData
+      ...role
     }
-
   });
 
   // form submission
@@ -77,13 +71,10 @@ const EditForm = ({ RolesData }) => {
     try {
       const form = new FormData();
 
-      
       form.append("displayName", formData.displayName.trim());
       form.append("status", formData.status.toString());
 
-      let res;
-
-      res = await pageApiHelper.put(`roles/${RoleData.id}`, form, token);
+      const res = await pageApiHelper.put(`roles/${role.id}`, form, token);
 
       if (!res?.success && res?.status === 400) {
 
@@ -103,7 +94,7 @@ const EditForm = ({ RolesData }) => {
       }
 
       if (res?.success && res?.data?.data?.success) {
-        toast.success("Roles updated successfully");
+        toast.success("Role updated successfully");
 
         // Optionally, redirect or perform other actions after successful creation
         router.push("/roles");
@@ -118,30 +109,26 @@ const EditForm = ({ RolesData }) => {
 
   return (
     <Card>
-      <CardHeader title="Roles Edit  Info" />
+      <CardHeader title="Edit Role Info" />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={{ md: 6 }}>
             <Grid size={{ md: 6 }}>
               <Controller
-  name="displayName"
-  control={control}
-  render={({ field }) => (
-    <CustomTextField
-      {...field}
-      fullWidth
-      className="mb-4"
-      label="Role Name"
-      placeholder=""
-      error={!!errors.displayName}
-      helperText={errors.displayName?.message}
-    />
-  )}
-/>
-
-             
-
-            
+                name="displayName"
+                control={control}
+                render={({ field }) => (
+                  <CustomTextField
+                    {...field}
+                    fullWidth
+                    className="mb-4"
+                    label="Name"
+                    placeholder="Role name"
+                    error={!!errors.displayName}
+                    helperText={errors.displayName?.message}
+                  />
+                )}
+              />
 
               <Controller
                 name="status"

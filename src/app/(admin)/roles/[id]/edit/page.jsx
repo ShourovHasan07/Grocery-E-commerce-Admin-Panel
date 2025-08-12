@@ -1,7 +1,7 @@
 // Component Imports
 import { getServerSession } from 'next-auth';
 
-import RoleEditList from "@/views/apps/roles/edit";
+import RoleEdit from "@/views/apps/roles/edit";
 
 import { authOptions } from "@/libs/auth";
 import pageApiHelper from '@/utils/pageApiHelper';
@@ -38,15 +38,14 @@ export const metadata = {
 };
 
 const RoleEditListApp = async ({ params }) => {
-  //expert data
- 
-
   const { id } = await params;
   const res = await getRoleData(id);
 
-  
+
   const roleData = res?.data?.role || {}
-  return <RoleEditList listData={roleData} />;
+
+  
+return <RoleEdit role={roleData} />;
 };
 
 export default RoleEditListApp;

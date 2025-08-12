@@ -1,13 +1,5 @@
-import { getServerSession } from "next-auth/next";
-
-import { authOptions } from "@/libs/auth";
-import pageApiHelper from "@/utils/pageApiHelper";
-
 // Component Imports
-import RolesCreate from "@/views/apps/roles/create";
-
-
-// expert category options data
+import RoleCreate from "@/views/apps/roles/create";
 
 
 export const metadata = {
@@ -15,9 +7,9 @@ export const metadata = {
 };
 
 const RoleCreateApp = async () => {
-  
 
-  return <RolesCreate  />;
+
+  return <RoleCreate />;
 };
 
 export default RoleCreateApp;

@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid2";
 // Component Imports
 import ListTable from "./ListTable";
 
-const RoletList = ({ listData }) => {
+const RoleList = ({ listData }) => {
   //console.log("UserList data:", listData);
   return (
     <Grid container>
@@ -15,4 +15,4 @@ const RoletList = ({ listData }) => {
   );
 };
 
-export default RoletList;
+export default RoleList;

@@ -1,30 +1,44 @@
 // Component Imports
-import Roles from "@views/apps/roles";
+import { getServerSession } from 'next-auth';
 
-// Data Imports
-import { getUserData } from "@/app/server/actions";
+import RoleList from "@/views/apps/roles/list";
 
-/**
- * ! If you need data using an API call, uncomment the below API code, update the `process.env.API_URL` variable in the
- * ! `.env` file found at root of your project and also update the API endpoints like `/apps/user-list` in below example.
- * ! Also, remove the above server action import and the action itself from the `src/app/server/actions.ts` file to clean up unused code
- * ! because we've used the server action for getting our static data.
- */
-/* const getUserData = async () => {
-  // Vars
-  const res = await fetch(`${process.env.API_URL}/apps/user-list`)
+import { authOptions } from "@/libs/auth";
+import pageApiHelper from '@/utils/pageApiHelper';
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch userData')
+const getExpertData = async () => {
+
+  const session = await getServerSession(authOptions)
+
+  if (session?.accessToken) {
+    try {
+      // Fetching the experts data
+      const result = await pageApiHelper.get('roles', { pageSize: 200 }, session.accessToken);
+
+      if (result.success) {
+        return result.data;
+      }
+
+      return null;
+    } catch (error) {
+      // console.error('Error fetching experts:', error);
+
+      return null;
+    }
   }
 
-  return res.json()
-} */
-const RolesApp = async () => {
-  // Vars
-  const data = await getUserData();
+  return null;
+}
 
-  return <Roles userData={data} />;
+export const metadata = {
+  title: "Roles - AskValor",
 };
 
-export default RolesApp;
+const ExpertListApp = async () => {
+  //expert data
+  const { data } = await getExpertData();
+
+  return <RoleList listData={data} />;
+};
+
+export default ExpertListApp;
