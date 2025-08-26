@@ -2,12 +2,10 @@
 
 import { useState } from "react";
 
-
-import { useParams } from 'next/navigation';
+import { useParams } from "next/navigation";
 import Link from "next/link";
 
 import { useSession } from "next-auth/react";
-
 
 // MUI
 import Card from "@mui/material/Card";
@@ -17,7 +15,6 @@ import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
-
 
 // Components
 
@@ -39,13 +36,11 @@ import { formattedDate } from "@/utils/formatters";
 const schema = z.object({
   language: z
     .number({
-      required_error: "Language is required"
+      required_error: "Language is required",
     })
     .int("Must be an integer")
     .positive("Must be positive"),
-  level: z
-    .string()
-    .min(1, "This field is required")
+  level: z.string().min(1, "This field is required"),
 });
 
 const FormList = ({ languageDropdown, languageList }) => {
@@ -70,7 +65,7 @@ const FormList = ({ languageDropdown, languageList }) => {
       language: "",
       lagName: "",
       level: "",
-    }
+    },
   });
 
   //from submission
@@ -86,7 +81,11 @@ const FormList = ({ languageDropdown, languageList }) => {
       form.append("languageId", formData.language);
       form.append("level", formData.level);
 
-      const res = await pageApiHelper.post(`experts/${id}/attach/language`, form, token);
+      const res = await pageApiHelper.post(
+        `experts/${id}/attach/language`,
+        form,
+        token,
+      );
 
       const response = res?.data;
       const innerData = response?.data;
@@ -96,10 +95,10 @@ const FormList = ({ languageDropdown, languageList }) => {
           let errors = innerData?.errors || [];
 
           if (errors) {
-            Object.keys(errors).forEach(key => {
+            Object.keys(errors).forEach((key) => {
               setError(key, {
                 type: "server",
-                message: errors[key]
+                message: errors[key],
               });
             });
 
@@ -119,16 +118,19 @@ const FormList = ({ languageDropdown, languageList }) => {
         resetForm({ language: "", level: "" });
         toast.success("Language updated successfully");
       }
-
     } catch (error) {
-      toast.error(error.message || 'Something went wrong');
+      toast.error(error.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleEditLang = (lang) => {
-    resetForm({ language: lang.id, lagName: lang.name, level: lang?.pivot?.level });
+    resetForm({
+      language: lang.id,
+      lagName: lang.name,
+      level: lang?.pivot?.level,
+    });
 
     setEditingLag(lang);
     setEditDrawer(true);
@@ -136,7 +138,7 @@ const FormList = ({ languageDropdown, languageList }) => {
 
   const handleEditSubmit = async (formData) => {
     if (!editingLag) {
-      return
+      return;
     }
 
     setIsSubmitting(true);
@@ -147,7 +149,11 @@ const FormList = ({ languageDropdown, languageList }) => {
       form.append("languageId", formData.language);
       form.append("level", formData.level);
 
-      const res = await pageApiHelper.put(`experts/${id}/lang-update`, form, token);
+      const res = await pageApiHelper.put(
+        `experts/${id}/lang-update`,
+        form,
+        token,
+      );
 
       const response = res?.data;
       const innerData = response?.data;
@@ -157,10 +163,10 @@ const FormList = ({ languageDropdown, languageList }) => {
           let errors = innerData?.errors || [];
 
           if (errors) {
-            Object.keys(errors).forEach(key => {
+            Object.keys(errors).forEach((key) => {
               setError(key, {
                 type: "server",
-                message: errors[key]
+                message: errors[key],
               });
             });
 
@@ -181,9 +187,8 @@ const FormList = ({ languageDropdown, languageList }) => {
 
         toast.success("Language added successfully");
       }
-
     } catch (error) {
-      toast.error(error.message || 'Something went wrong');
+      toast.error(error.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
@@ -200,10 +205,16 @@ const FormList = ({ languageDropdown, languageList }) => {
 
       form.append("languageId", itemId);
 
-      const res = await pageApiHelper.post(`experts/${id}/detach/language`, form, token);
+      const res = await pageApiHelper.post(
+        `experts/${id}/detach/language`,
+        form,
+        token,
+      );
 
       if (res?.success && res?.data?.success) {
-        setLanguages(prevData => languages.filter((item) => item.id !== itemId));
+        setLanguages((prevData) =>
+          languages.filter((item) => item.id !== itemId),
+        );
         setDialogOpen({ open: false, id: null });
         toast.success("Deleted successfully");
 
@@ -241,9 +252,13 @@ const FormList = ({ languageDropdown, languageList }) => {
                         helperText: errors.language.message,
                       })}
                     >
-                      <MenuItem value="" selected>Select Language</MenuItem>
+                      <MenuItem value="" selected>
+                        Select Language
+                      </MenuItem>
                       {languageDropdown?.map((lang) => (
-                        <MenuItem key={lang.id} value={lang.id}>{lang.name}</MenuItem>
+                        <MenuItem key={lang.id} value={lang.id}>
+                          {lang.name}
+                        </MenuItem>
                       ))}
                     </CustomTextField>
                   )}
@@ -277,7 +292,11 @@ const FormList = ({ languageDropdown, languageList }) => {
                   variant="contained"
                   type="submit"
                   disabled={isSubmitting}
-                  endIcon={isSubmitting ? <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' /> : null}
+                  endIcon={
+                    isSubmitting ? (
+                      <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
+                    ) : null
+                  }
                 >
                   Submit
                 </Button>
@@ -320,15 +339,23 @@ const FormList = ({ languageDropdown, languageList }) => {
                         <IconButton onClick={() => handleEditLang(lang)}>
                           <i className="tabler-edit text-primary" />
                         </IconButton>
-                        <IconButton onClick={() => setDialogOpen({ open: true, id: lang.id })}>
+                        <IconButton
+                          onClick={() =>
+                            setDialogOpen({ open: true, id: lang.id })
+                          }
+                        >
                           <i className="tabler-trash text-error" />
                         </IconButton>
                       </td>
                       <td className="border px-4 py-2">{index + 1}</td>
                       <td className="border px-4 py-2">{lang.name}</td>
                       <td className="border px-4 py-2">{lang?.pivot?.level}</td>
-                      <td className="border px-4 py-2">{formattedDate(lang?.pivot?.createdAt)}</td>
-                      <td className="border px-4 py-2">{formattedDate(lang?.pivot?.updatedAt)}</td>
+                      <td className="border px-4 py-2">
+                        {formattedDate(lang?.pivot?.createdAt)}
+                      </td>
+                      <td className="border px-4 py-2">
+                        {formattedDate(lang?.pivot?.updatedAt)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

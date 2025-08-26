@@ -1,30 +1,33 @@
 // Third-party Imports
-import CredentialsProvider from 'next-auth/providers/credentials'
+import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions = {
   // ** Configure one or more authentication providers
   // ** Please refer to https://next-auth.js.org/configuration/options#providers for more `providers` options
   providers: [
     CredentialsProvider({
-      name: 'credentials',
+      name: "credentials",
       credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' }
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {  
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: credentials.email,
+                password: credentials.password,
+              }),
             },
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password,
-            }),
-          })
+          );
 
-          const data = await response.json()
+          const data = await response.json();
 
           if (response.ok && data.token) {
             return {
@@ -35,17 +38,17 @@ export const authOptions = {
               accessToken: data.token,
 
               // refreshToken: data.refreshToken,
-            }
+            };
           }
 
-          return null
+          return null;
         } catch (error) {
           // console.error('Authentication error:', error)
 
-          return null
+          return null;
         }
-      }
-    })
+      },
+    }),
   ],
 
   // ** Please refer to https://next-auth.js.org/configuration/options#session for more `session` options
@@ -61,19 +64,18 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.accessToken = user.accessToken
-        token.userId = user.id
+        token.accessToken = user.accessToken;
+        token.userId = user.id;
       }
 
-
-      return token
+      return token;
     },
 
     async session({ session, token }) {
-      session.accessToken = token.accessToken
-      session.userId = token.userId
+      session.accessToken = token.accessToken;
+      session.userId = token.userId;
 
-      return session
-    }
-  }
+      return session;
+    },
+  },
 };

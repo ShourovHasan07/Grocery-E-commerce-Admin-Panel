@@ -8,7 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
-import { BOOKING_STATUS } from "@configs/constants"
+import { BOOKING_STATUS } from "@configs/constants";
 
 const TableFilters = ({ setData, tableData }) => {
   // States
@@ -17,8 +17,12 @@ const TableFilters = ({ setData, tableData }) => {
 
   useEffect(() => {
     const filteredData = tableData?.filter((item) => {
-      if (search && !item.user.name.toLowerCase().includes(search.toLowerCase())) return false;
-      if (status && status != '' && item.status !== status) return false;
+      if (
+        search &&
+        !item.user.name.toLowerCase().includes(search.toLowerCase())
+      )
+        return false;
+      if (status && status != "" && item.status !== status) return false;
 
       return true;
     });
@@ -54,9 +58,12 @@ const TableFilters = ({ setData, tableData }) => {
             }}
           >
             <MenuItem value="">All</MenuItem>
-            {BOOKING_STATUS.length > 0 && BOOKING_STATUS.map((status) => (
-              <MenuItem key={status.key} value={status.key}>{status.value}</MenuItem>
-            ))}
+            {BOOKING_STATUS.length > 0 &&
+              BOOKING_STATUS.map((status) => (
+                <MenuItem key={status.key} value={status.key}>
+                  {status.value}
+                </MenuItem>
+              ))}
           </CustomTextField>
         </Grid>
       </Grid>

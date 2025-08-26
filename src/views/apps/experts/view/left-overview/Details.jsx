@@ -10,11 +10,15 @@ import Button from "@mui/material/Button";
 
 import CustomAvatar from "@core/components/mui/Avatar";
 
-import { activeStatusLabel, activeStatusColor, popularStatusLabel, popularStatusColor } from "@/utils/helpers";
+import {
+  activeStatusLabel,
+  activeStatusColor,
+  popularStatusLabel,
+  popularStatusColor,
+} from "@/utils/helpers";
 
 const Details = ({ expertData }) => {
-
-  // console.log("Expert Data in Details about:", expertData); 
+  // console.log("Expert Data in Details about:", expertData);
 
   return (
     <>
@@ -80,13 +84,17 @@ const Details = ({ expertData }) => {
                 <Typography className="font-medium" color="text.primary">
                   Address:
                 </Typography>
-                <Typography color="text.primary">{expertData.address}</Typography>
+                <Typography color="text.primary">
+                  {expertData.address}
+                </Typography>
               </div>
               <div className="flex items-center flex-wrap gap-x-1.5">
                 <Typography className="font-medium" color="text.primary">
                   Hourly Rate:
                 </Typography>
-                <Typography color="text.primary">{expertData.hourlyRate}</Typography>
+                <Typography color="text.primary">
+                  {expertData.hourlyRate}
+                </Typography>
               </div>
               <div className="flex items-center flex-wrap gap-x-1.5">
                 <Typography className="font-medium" color="text.primary">
@@ -123,7 +131,6 @@ const Details = ({ expertData }) => {
                   Back to List
                 </Button>
               </div>
-
             </div>
           </div>
         </CardContent>

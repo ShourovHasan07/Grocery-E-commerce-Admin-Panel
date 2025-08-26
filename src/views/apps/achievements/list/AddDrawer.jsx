@@ -20,12 +20,10 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-
 // Third-party Imports
 import { toast } from "react-toastify";
 
 import pageApiHelper from "@/utils/pageApiHelper";
-
 
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
@@ -57,7 +55,7 @@ const schema = z.object({
           ["image/jpeg", "image/png", "image/svg+xml"].includes(file[0]?.type)),
       {
         message: "Only .jpg, .jpeg, .png, and .svg formats are supported",
-      }
+      },
     ),
 });
 
@@ -154,21 +152,34 @@ const AddDrawer = (props) => {
 
       const headerConfig = {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          "Content-Type": "multipart/form-data",
+        },
       };
 
-      if (setType === 'edit') {
-        response = await pageApiHelper.put(`achievements/${data.id}`, form, token, headerConfig);
+      if (setType === "edit") {
+        response = await pageApiHelper.put(
+          `achievements/${data.id}`,
+          form,
+          token,
+          headerConfig,
+        );
         toastMessage = "Achievement updated successfully";
       } else {
-        response = await pageApiHelper.post('achievements', form, token, headerConfig);
+        response = await pageApiHelper.post(
+          "achievements",
+          form,
+          token,
+          headerConfig,
+        );
         toastMessage = "Achievement created successfully";
       }
 
       const res = response?.data;
 
-      if (!response?.success && (response?.status === 400 || response?.status === 404)) {
+      if (
+        !response?.success &&
+        (response?.status === 400 || response?.status === 404)
+      ) {
         if (res?.status === 404) {
           toast.error("Achievement not found");
 
@@ -178,10 +189,10 @@ const AddDrawer = (props) => {
         let errors = res?.data?.errors || [];
 
         if (errors) {
-          Object.keys(errors).forEach(key => {
+          Object.keys(errors).forEach((key) => {
             setError(key, {
               type: "server",
-              message: errors[key]
+              message: errors[key],
             });
           });
         }
@@ -190,11 +201,11 @@ const AddDrawer = (props) => {
       }
 
       if (res?.success && res?.data?.success) {
-        if (setType === 'edit') {
-          const updatedData = userData.map(item =>
+        if (setType === "edit") {
+          const updatedData = userData.map((item) =>
             item.id === res?.data?.achievement?.id
               ? { ...item, ...res?.data?.achievement }
-              : item
+              : item,
           );
 
           setData(updatedData);
@@ -207,17 +218,15 @@ const AddDrawer = (props) => {
         setImagePreview(null);
         resetForm(initialData);
 
-
         // Reset file input
         if (fileInputRef.current) {
-          fileInputRef.current.value = '';
+          fileInputRef.current.value = "";
         }
 
         toast.success(toastMessage);
       }
-
     } catch (error) {
-      toast.error(error.message || 'Something went wrong');
+      toast.error(error.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
@@ -229,10 +238,9 @@ const AddDrawer = (props) => {
     setImagePreview(null);
     resetForm(initialData);
 
-
     // Reset file input
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
@@ -246,7 +254,9 @@ const AddDrawer = (props) => {
       sx={{ "& .MuiDrawer-paper": { width: { xs: 300, sm: 400 } } }}
     >
       <div className="flex items-center justify-between plb-5 pli-6">
-        <Typography variant="h5">{setType == 'edit' ? 'Edit Achievement' : 'Add New Achievement'}</Typography>
+        <Typography variant="h5">
+          {setType == "edit" ? "Edit Achievement" : "Add New Achievement"}
+        </Typography>
         <IconButton size="small" onClick={handleReset}>
           <i className="tabler-x text-2xl text-textPrimary" />
         </IconButton>
@@ -269,7 +279,8 @@ const AddDrawer = (props) => {
                 placeholder="Achievement title"
                 {...(errors.title && {
                   error: true,
-                  helperText: errors.title?.message || "This field is required.",
+                  helperText:
+                    errors.title?.message || "This field is required.",
                 })}
               />
             )}
@@ -289,7 +300,8 @@ const AddDrawer = (props) => {
                 placeholder="Achievement sub title"
                 {...(errors.subTitle && {
                   error: true,
-                  helperText: errors.subTitle?.message || "This field is required.",
+                  helperText:
+                    errors.subTitle?.message || "This field is required.",
                 })}
               />
             )}
@@ -310,7 +322,8 @@ const AddDrawer = (props) => {
                   inputRef={fileInputRef}
                   inputProps={{
                     accept: "image/*",
-                    onChange: (e) => handleImageChange(e.target.files, onChange),
+                    onChange: (e) =>
+                      handleImageChange(e.target.files, onChange),
                   }}
                   error={!!errors.image}
                   helperText={errors.image?.message}
@@ -346,10 +359,15 @@ const AddDrawer = (props) => {
                   }}
                   {...(errors.color && {
                     error: true,
-                    helperText: errors.color?.message || "This field is required.",
+                    helperText:
+                      errors.color?.message || "This field is required.",
                   })}
                 />
-                <HexColorPicker color={colorCode} className="w-full" onChange={setColorCode} />
+                <HexColorPicker
+                  color={colorCode}
+                  className="w-full"
+                  onChange={setColorCode}
+                />
               </>
             )}
           />
@@ -383,7 +401,7 @@ const AddDrawer = (props) => {
               disabled={isSubmitting}
               endIcon={
                 isSubmitting ? (
-                  <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' />
+                  <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
                 ) : null
               }
             >

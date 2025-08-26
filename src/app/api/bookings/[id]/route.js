@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 import routeApiHelper from "@/utils/routeApiHelper";
 
@@ -9,34 +9,46 @@ export async function GET(request, { params }) {
 
   if (!token) {
     return NextResponse.json(
-      { success: false, data: null, message: "Authorization header is missing" },
-      { status: 401 }
+      {
+        success: false,
+        data: null,
+        message: "Authorization header is missing",
+      },
+      { status: 401 },
     );
   }
 
   try {
-    const result = await routeApiHelper.get(`bookings/${id}`, { pageSize: 200 }, token);
+    const result = await routeApiHelper.get(
+      `bookings/${id}`,
+      { pageSize: 200 },
+      token,
+    );
 
     if (result.success) {
       return NextResponse.json(
-        { success: true, data: result.data, message: "bookings fetched successfully" },
-        { status: 200 }
+        {
+          success: true,
+          data: result.data,
+          message: "bookings fetched successfully",
+        },
+        { status: 200 },
       );
     }
 
     return NextResponse.json(
       { success: false, data: [], message: "bookings not found" },
-      { status: 404 }
+      { status: 404 },
     );
   } catch (error) {
     return NextResponse.json(
-      { success: false, data: [], message: "Internal server error", error: error.message },
-      { status: 500 }
+      {
+        success: false,
+        data: [],
+        message: "Internal server error",
+        error: error.message,
+      },
+      { status: 500 },
     );
   }
 }
-
-
-
-
-

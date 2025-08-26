@@ -4,8 +4,7 @@ import Grid from "@mui/material/Grid2";
 // Component Imports
 import ListTable from "./ListTable";
 
-
-const PagesList  = ({ tData, }) => {
+const PagesList = ({ tData }) => {
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>
@@ -15,4 +14,4 @@ const PagesList  = ({ tData, }) => {
   );
 };
 
-export default PagesList ;
+export default PagesList;

@@ -8,7 +8,7 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  Typography
+  Typography,
 } from "@mui/material";
 
 const DialogDelete = ({ open, onClose, onConfirm }) => {

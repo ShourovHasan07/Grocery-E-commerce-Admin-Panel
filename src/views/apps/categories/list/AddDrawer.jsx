@@ -12,14 +12,13 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Switch from '@mui/material/Switch'
+import Switch from "@mui/material/Switch";
 
 import { useForm, Controller } from "react-hook-form";
 
 // Zod Imports
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 
 // Third-party Imports
 import { toast } from "react-toastify";
@@ -54,7 +53,7 @@ const schema = z.object({
           ["image/jpeg", "image/png", "image/svg+xml"].includes(file[0]?.type)),
       {
         message: "Only .jpg, .jpeg, .png, and .svg formats are supported",
-      }
+      },
     ),
 });
 
@@ -124,8 +123,8 @@ const AddDrawer = (props) => {
   };
 
   // form submission
-    const { data: session } = useSession();
-    const token = session?.accessToken;
+  const { data: session } = useSession();
+  const token = session?.accessToken;
 
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
@@ -146,22 +145,35 @@ const AddDrawer = (props) => {
 
       const headerConfig = {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          "Content-Type": "multipart/form-data",
+        },
       };
 
-      if (setType === 'edit') {
-        response = await pageApiHelper.put(`categories/${data.id}`, form, token, headerConfig);
+      if (setType === "edit") {
+        response = await pageApiHelper.put(
+          `categories/${data.id}`,
+          form,
+          token,
+          headerConfig,
+        );
 
         toastMessage = "Category updated successfully";
       } else {
-        response = await pageApiHelper.post('categories', form, token, headerConfig);
+        response = await pageApiHelper.post(
+          "categories",
+          form,
+          token,
+          headerConfig,
+        );
         toastMessage = "Category created successfully";
       }
 
       const res = response?.data;
 
-      if (!response?.success && (response?.status === 400 || response?.status === 404)) {
+      if (
+        !response?.success &&
+        (response?.status === 400 || response?.status === 404)
+      ) {
         if (res?.status === 404) {
           toast.error("Category not found");
 
@@ -171,24 +183,23 @@ const AddDrawer = (props) => {
         let errors = res?.data?.errors || [];
 
         if (errors) {
-          Object.keys(errors).forEach(key => {
+          Object.keys(errors).forEach((key) => {
             setError(key, {
               type: "server",
-              message: errors[key]
+              message: errors[key],
             });
           });
         }
-
 
         return;
       }
 
       if (res?.success && res?.data?.success) {
-        if (setType === 'edit') {
-          const updatedData = userData.map(item =>
+        if (setType === "edit") {
+          const updatedData = userData.map((item) =>
             item.id === res?.data?.category?.id
               ? { ...item, ...res?.data?.category }
-              : item
+              : item,
           );
 
           setData(updatedData);
@@ -201,17 +212,15 @@ const AddDrawer = (props) => {
         setImagePreview(null);
         resetForm(initialData);
 
-
         // Reset file input
         if (fileInputRef.current) {
-          fileInputRef.current.value = '';
+          fileInputRef.current.value = "";
         }
 
         toast.success(toastMessage);
       }
-
     } catch (error) {
-      toast.error(error.message || 'Something went wrong');
+      toast.error(error.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
@@ -223,10 +232,9 @@ const AddDrawer = (props) => {
     setImagePreview(null);
     resetForm(initialData);
 
-
     // Reset file input
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
@@ -240,7 +248,9 @@ const AddDrawer = (props) => {
       sx={{ "& .MuiDrawer-paper": { width: { xs: 300, sm: 400 } } }}
     >
       <div className="flex items-center justify-between plb-5 pli-6">
-        <Typography variant="h5">{setType == 'edit' ? 'Edit Category' : 'Add New Category'}</Typography>
+        <Typography variant="h5">
+          {setType == "edit" ? "Edit Category" : "Add New Category"}
+        </Typography>
         <IconButton size="small" onClick={handleReset}>
           <i className="tabler-x text-2xl text-textPrimary" />
         </IconButton>
@@ -284,7 +294,8 @@ const AddDrawer = (props) => {
                   inputRef={fileInputRef}
                   inputProps={{
                     accept: "image/*",
-                    onChange: (e) => handleImageChange(e.target.files, onChange),
+                    onChange: (e) =>
+                      handleImageChange(e.target.files, onChange),
                   }}
                   error={!!errors.image}
                   helperText={errors.image?.message}
@@ -312,7 +323,7 @@ const AddDrawer = (props) => {
                     <FormControlLabel
                       control={
                         <Switch
-                          color='success'
+                          color="success"
                           checked={Boolean(field.value)}
                           onChange={(e) => field.onChange(e.target.checked)}
                         />
@@ -351,7 +362,7 @@ const AddDrawer = (props) => {
               disabled={isSubmitting}
               endIcon={
                 isSubmitting ? (
-                  <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' />
+                  <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
                 ) : null
               }
             >

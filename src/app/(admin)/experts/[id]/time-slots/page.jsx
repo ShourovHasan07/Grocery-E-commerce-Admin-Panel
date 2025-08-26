@@ -6,15 +6,18 @@ import pageApiHelper from "@/utils/pageApiHelper";
 // Component Imports
 import ExpertTimeSlot from "@/views/apps/experts/time-slots";
 
-
 const getExpertWithListData = async (id) => {
   // Vars
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   if (session?.accessToken) {
     try {
       // Fetching the categories data
-      const result = await pageApiHelper.get(`experts/${id}/time-slots`, { pageSize: 200 }, session.accessToken);
+      const result = await pageApiHelper.get(
+        `experts/${id}/time-slots`,
+        { pageSize: 200 },
+        session.accessToken,
+      );
 
       if (result.success) {
         return result.data;
@@ -29,19 +32,21 @@ const getExpertWithListData = async (id) => {
   }
 
   return null;
-}
-
+};
 
 // expert option options data
 const getOptionData = async () => {
   // Vars
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   if (session?.accessToken) {
     try {
       // Fetching the experts data
-      const result = await pageApiHelper.get('experts/menu-options', { model: 'weekDays' }, session.accessToken);
-
+      const result = await pageApiHelper.get(
+        "experts/menu-options",
+        { model: "weekDays" },
+        session.accessToken,
+      );
 
       if (result.success) {
         return result.data;
@@ -49,14 +54,12 @@ const getOptionData = async () => {
 
       return null;
     } catch (error) {
-
       return null;
     }
   }
 
   return null;
-}
-
+};
 
 export const metadata = {
   title: "Expert Time Slot - AskValor",

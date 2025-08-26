@@ -15,8 +15,7 @@ import "@assets/iconify-icons/generated-icons.css";
 
 export const metadata = {
   title: "AskValor - Dashboard",
-  description:
-    "AskValor - Dashboard",
+  description: "AskValor - Dashboard",
 };
 
 const RootLayout = async (props) => {
@@ -29,7 +28,10 @@ const RootLayout = async (props) => {
 
   return (
     <html id="__next" lang="en" dir={direction} suppressHydrationWarning>
-      <body suppressHydrationWarning className="flex is-full min-bs-full flex-auto flex-col">
+      <body
+        suppressHydrationWarning
+        className="flex is-full min-bs-full flex-auto flex-col"
+      >
         <InitColorSchemeScript attribute="data" defaultMode={systemMode} />
         {children}
       </body>

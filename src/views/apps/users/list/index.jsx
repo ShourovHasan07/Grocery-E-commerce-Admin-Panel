@@ -4,8 +4,7 @@ import Grid from "@mui/material/Grid2";
 // Component Imports
 import ListTable from "./ListTable";
 
-
-const UsersList = ({ tData, }) => {
+const UsersList = ({ tData }) => {
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>

@@ -1,15 +1,14 @@
 // components/ClientTokenGuard.jsx
-'use client'
+"use client";
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { signOut } from 'next-auth/react';
+import { signOut } from "next-auth/react";
 
-import { checkTokenExpiration } from '@/utils/checkTokenExpiration';
+import { checkTokenExpiration } from "@/utils/checkTokenExpiration";
 import AuthRedirect from "@/components/AuthRedirect";
 
 export default function ClientTokenGuard({ session, children }) {
-
   const validateToken = async (session) => {
     const tokenCheck = await checkTokenExpiration(session);
 
@@ -18,7 +17,7 @@ export default function ClientTokenGuard({ session, children }) {
 
       return <AuthRedirect />;
     }
-  }
+  };
 
   useEffect(() => {
     validateToken(session);

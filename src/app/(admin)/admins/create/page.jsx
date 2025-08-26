@@ -1,5 +1,5 @@
 // Component Imports
-import { getServerSession } from 'next-auth';
+import { getServerSession } from "next-auth";
 
 import AdminCreate from "@/views/apps/admins/create";
 
@@ -8,21 +8,22 @@ import AdminCreate from "@/views/apps/admins/create";
 import ExpertList from "@/views/apps/experts/list";
 
 import { authOptions } from "@/libs/auth";
-import pageApiHelper from '@/utils/pageApiHelper';
-
+import pageApiHelper from "@/utils/pageApiHelper";
 
 export const metadata = {
   title: "Admins - AskValor",
 };
 
-
 const getAdminOptions = async () => {
-
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   if (session?.accessToken) {
     try {
-      const result = await pageApiHelper.get('admins/create-edit-options', { status: 'active' }, session.accessToken);
+      const result = await pageApiHelper.get(
+        "admins/create-edit-options",
+        { status: "active" },
+        session.accessToken,
+      );
 
       if (result.success) {
         return result.data;
@@ -35,8 +36,7 @@ const getAdminOptions = async () => {
   }
 
   return null;
-}
-
+};
 
 const AdminApp = async () => {
   const result = await getAdminOptions();

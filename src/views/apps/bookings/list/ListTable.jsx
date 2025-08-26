@@ -17,7 +17,6 @@ import IconButton from "@mui/material/IconButton";
 import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
 
-
 import classnames from "classnames";
 
 import { rankItem } from "@tanstack/match-sorter-utils";
@@ -35,11 +34,8 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 
-
-
-
 // Third-party Imports
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from "@mui/material/Tooltip";
 
 // Util Imports
 import { formattedDate } from "@/utils/formatters";
@@ -132,15 +128,27 @@ const ListTable = ({ tableData }) => {
       },
       {
         header: "discount",
-        cell: ({ row }) => <Typography className="text-center w-full block">{row.original.discount}</Typography>,
+        cell: ({ row }) => (
+          <Typography className="text-center w-full block">
+            {row.original.discount}
+          </Typography>
+        ),
       },
       {
         header: "total",
-        cell: ({ row }) => <Typography className="text-center w-full block">{row.original.total}</Typography>,
+        cell: ({ row }) => (
+          <Typography className="text-center w-full block">
+            {row.original.total}
+          </Typography>
+        ),
       },
       {
         header: "Start At",
-        cell: ({ row }) => <Typography className="text-center w-full block">{formattedDate(row.original.startAt)}</Typography>,
+        cell: ({ row }) => (
+          <Typography className="text-center w-full block">
+            {formattedDate(row.original.startAt)}
+          </Typography>
+        ),
       },
       columnHelper.accessor("status", {
         header: "Status",
@@ -217,9 +225,7 @@ const ListTable = ({ tableData }) => {
             <MenuItem value="25">25</MenuItem>
             <MenuItem value="50">50</MenuItem>
           </CustomTextField>
-          <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
-
-          </div>
+          <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4"></div>
         </div>
         <div className="overflow-x-auto">
           <table className={tableStyles.table}>
@@ -295,8 +301,6 @@ const ListTable = ({ tableData }) => {
             )}
           </table>
         </div>
-
-
 
         <TablePagination
           component={() => <TablePaginationComponent table={table} />}

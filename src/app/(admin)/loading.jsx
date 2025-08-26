@@ -1,8 +1,7 @@
-
 import LoadingProgress from "@views/LoadingProgress";
 
 const Loading = () => {
-  return <LoadingProgress />
-}
+  return <LoadingProgress />;
+};
 
-export default Loading
+export default Loading;

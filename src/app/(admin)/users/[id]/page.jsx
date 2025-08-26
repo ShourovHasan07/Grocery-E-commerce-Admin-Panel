@@ -9,15 +9,18 @@ import pageApiHelper from "@/utils/pageApiHelper";
 
 import UsersDetails from "@/views/apps/users/userDetail";
 
-
 const getUserData = async (id) => {
   // Vars
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   if (session.accessToken) {
     try {
       // Fetching the categories data
-      const result = await pageApiHelper.get(`users/${id}`, {}, session.accessToken);
+      const result = await pageApiHelper.get(
+        `users/${id}`,
+        {},
+        session.accessToken,
+      );
 
       if (result.success && result?.data?.data) {
         return result.data.data;
@@ -32,16 +35,16 @@ const getUserData = async (id) => {
   }
 
   return null;
-}
+};
 
 export const metadata = {
   title: "User Detail's - AskValor",
 };
 
 const UserApp = async ({ params }) => {
-  const { id } = await params
+  const { id } = await params;
   const res = await getUserData(id);
-  const user = res?.user || []
+  const user = res?.user || [];
 
   // console.log(user)
 

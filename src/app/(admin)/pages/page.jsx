@@ -1,25 +1,26 @@
 // Component Imports
-import { getServerSession } from 'next-auth';
+import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/libs/auth";
 
-
-import pageApiHelper from '@/utils/pageApiHelper';
-import PagesList from '@/views/apps/pages/list';
+import pageApiHelper from "@/utils/pageApiHelper";
+import PagesList from "@/views/apps/pages/list";
 
 export const metadata = {
   title: "Pages - AskValor",
 };
 
 const getData = async () => {
-
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   if (session?.accessToken) {
     try {
       // Fetching the languages data
-      const result = await pageApiHelper.get('pages', { pageSize: 200 }, session.accessToken);
-
+      const result = await pageApiHelper.get(
+        "pages",
+        { pageSize: 200 },
+        session.accessToken,
+      );
 
       if (result.success) {
         return result.data;
@@ -32,11 +33,11 @@ const getData = async () => {
   }
 
   return null;
-}
+};
 
 const ListApp = async () => {
   const result = await getData();
-  const usersData = result.data
+  const usersData = result.data;
 
   return <PagesList tData={usersData} />;
 };

@@ -9,12 +9,16 @@ import pageApiHelper from "@/utils/pageApiHelper";
 
 const getExpertData = async (id) => {
   // Vars
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   if (session.accessToken) {
     try {
       // Fetching the categories data
-      const result = await pageApiHelper.get(`experts/${id}/edit`, {}, session.accessToken);
+      const result = await pageApiHelper.get(
+        `experts/${id}/edit`,
+        {},
+        session.accessToken,
+      );
 
       if (result.success) {
         return result.data;
@@ -22,23 +26,26 @@ const getExpertData = async (id) => {
 
       return null;
     } catch (error) {
-
       return null;
     }
   }
 
   return null;
-}
+};
 
 // expert category options data
 const getCategoryData = async () => {
   // Vars
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   if (session.accessToken) {
     try {
       // Fetching the categories data
-      const result = await pageApiHelper.get('experts/create-edit-options', {}, session.accessToken);
+      const result = await pageApiHelper.get(
+        "experts/create-edit-options",
+        {},
+        session.accessToken,
+      );
 
       if (result.success) {
         return result.data;
@@ -46,14 +53,12 @@ const getCategoryData = async () => {
 
       return null;
     } catch (error) {
-      ;
-
       return null;
     }
   }
 
   return null;
-}
+};
 
 export const metadata = {
   title: "Experts - AskValor",
@@ -65,7 +70,7 @@ const ExpertEditApp = async ({ params }) => {
   const result = await getCategoryData();
 
   const categories = result?.data?.categories || [];
-  const expertData = editExpert?.data?.expert || {}
+  const expertData = editExpert?.data?.expert || {};
 
   return <ExpertEdit expertData={expertData} categoryData={categories} />;
 };

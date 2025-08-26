@@ -5,11 +5,11 @@ import { authOptions } from "@/libs/auth";
 class ApiHelper {
   constructor() {
     this.defaultHeaders = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
   }
 
-  // Get session and token (works in both server and client) 
+  // Get session and token (works in both server and client)
   async getAuthToken(customSession = null) {
     try {
       let session = customSession;
@@ -17,12 +17,12 @@ class ApiHelper {
       // If no session provided, try to get it
       if (!session) {
         // Check if we're on server side
-        if (typeof window === 'undefined') {
+        if (typeof window === "undefined") {
           session = await getServerSession(authOptions);
         } else {
           // Client side - you'd need to pass session from component
           // or use next-auth/react getSession()
-          const { getSession } = await import('next-auth/react');
+          const { getSession } = await import("next-auth/react");
 
           session = await getSession();
         }
@@ -42,11 +42,11 @@ class ApiHelper {
 
     const headers = {
       ...this.defaultHeaders,
-      ...additionalHeaders
+      ...additionalHeaders,
     };
 
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
     }
 
     return headers;
@@ -60,27 +60,24 @@ class ApiHelper {
       // console.log('Base URL:', baseUrl);
 
       const {
-        method = 'GET',
+        method = "GET",
         body = null,
         headers: customHeaders = {},
         queryParams = {},
         ...otherOptions
       } = options;
 
+      const normalizedBaseURL = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
 
+      const normalizedEndpoint = endpoint.startsWith("/")
+        ? endpoint.slice(1)
+        : endpoint;
 
-
-
-
-      
-
-      const normalizedBaseURL = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
-      const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
       const url = new URL(normalizedEndpoint, normalizedBaseURL);
 
       // console.log(url);
 
-      Object.keys(queryParams).forEach(key => {
+      Object.keys(queryParams).forEach((key) => {
         if (queryParams[key] !== undefined && queryParams[key] !== null) {
           url.searchParams.append(key, queryParams[key]);
         }
@@ -93,16 +90,16 @@ class ApiHelper {
       const fetchOptions = {
         method,
         headers,
-        ...otherOptions
+        ...otherOptions,
       };
 
       // Add body if provided (and not GET request)
-      if (body && method !== 'GET') {
+      if (body && method !== "GET") {
         if (body instanceof FormData) {
           // Remove Content-Type for FormData (browser will set it)
-          delete fetchOptions.headers['Content-Type'];
+          delete fetchOptions.headers["Content-Type"];
           fetchOptions.body = body;
-        } else if (typeof body === 'object') {
+        } else if (typeof body === "object") {
           fetchOptions.body = JSON.stringify(body);
         } else {
           fetchOptions.body = body;
@@ -113,10 +110,10 @@ class ApiHelper {
       const response = await fetch(url.toString(), fetchOptions);
 
       // Handle different response types
-      const contentType = response.headers.get('content-type');
+      const contentType = response.headers.get("content-type");
       let data;
 
-      if (contentType && contentType.includes('application/json')) {
+      if (contentType && contentType.includes("application/json")) {
         data = await response.json();
       } else {
         data = await response.text();
@@ -129,85 +126,114 @@ class ApiHelper {
         statusText: response.statusText,
         data: data,
         headers: response.headers,
-        raw: response
+        raw: response,
       };
-
     } catch (error) {
-      console.error('API call failed:', error);
+      console.error("API call failed:", error);
 
       return {
         success: false,
         status: 0,
-        statusText: 'Network Error',
+        statusText: "Network Error",
         data: null,
-        error: error.message
+        error: error.message,
       };
     }
   }
 
   // Convenience methods for different HTTP verbs
   async get(endpoint, queryParams = {}, session = null, headers = {}) {
-    return this.makeApiCall(endpoint, {
-      method: 'GET',
-      queryParams,
-      headers
-    }, session);
+    return this.makeApiCall(
+      endpoint,
+      {
+        method: "GET",
+        queryParams,
+        headers,
+      },
+      session,
+    );
   }
 
   async post(endpoint, body = null, session = null, headers = {}) {
-    return this.makeApiCall(endpoint, {
-      method: 'POST',
-      body,
-      headers
-    }, session);
+    return this.makeApiCall(
+      endpoint,
+      {
+        method: "POST",
+        body,
+        headers,
+      },
+      session,
+    );
   }
 
   async put(endpoint, body = null, session = null, headers = {}) {
-    return this.makeApiCall(endpoint, {
-      method: 'PUT',
-      body,
-      headers
-    }, session);
+    return this.makeApiCall(
+      endpoint,
+      {
+        method: "PUT",
+        body,
+        headers,
+      },
+      session,
+    );
   }
 
   async patch(endpoint, body = null, session = null, headers = {}) {
-    return this.makeApiCall(endpoint, {
-      method: 'PATCH',
-      body,
-      headers
-    }, session);
+    return this.makeApiCall(
+      endpoint,
+      {
+        method: "PATCH",
+        body,
+        headers,
+      },
+      session,
+    );
   }
 
   async delete(endpoint, session = null, headers = {}) {
-    return this.makeApiCall(endpoint, {
-      method: 'DELETE',
-      headers
-    }, session);
+    return this.makeApiCall(
+      endpoint,
+      {
+        method: "DELETE",
+        headers,
+      },
+      session,
+    );
   }
 
   // File upload helper
   async uploadFile(endpoint, file, additionalData = {}, session = null) {
     const formData = new FormData();
 
-    formData.append('file', file);
+    formData.append("file", file);
 
     // Add additional form data
-    Object.keys(additionalData).forEach(key => {
+    Object.keys(additionalData).forEach((key) => {
       formData.append(key, additionalData[key]);
     });
 
-    return this.makeApiCall(endpoint, {
-      method: 'POST',
-      body: formData
-    }, session);
+    return this.makeApiCall(
+      endpoint,
+      {
+        method: "POST",
+        body: formData,
+      },
+      session,
+    );
   }
 
   // Paginated GET request
-  async getPaginated(endpoint, page = 1, pageSize = 10, filters = {}, session = null) {
+  async getPaginated(
+    endpoint,
+    page = 1,
+    pageSize = 10,
+    filters = {},
+    session = null,
+  ) {
     const queryParams = {
       page,
       pageSize,
-      ...filters
+      ...filters,
     };
 
     return this.get(endpoint, queryParams, session);

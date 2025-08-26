@@ -63,10 +63,7 @@ const MaskImg = styled("img")({
 });
 
 const schema = z.object({
-  email: z
-    .string()
-    .min(1, "Email is required")
-    .email("Email is invalid"),
+  email: z.string().min(1, "Email is required").email("Email is invalid"),
   password: z
     .string()
     .min(1, "Password is required")
@@ -112,14 +109,14 @@ const Login = ({ mode }) => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting }
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       email: "",
       password: "",
     },
-    mode: 'onChange' // Enable real-time validation
+    mode: "onChange", // Enable real-time validation
   });
 
   // ErrorMessage Helper Function
@@ -131,36 +128,38 @@ const Login = ({ mode }) => {
     return "Something went wrong, please try again";
   };
 
-  const handleLogin = useCallback(async (data) => {
-    try {
-      setShowLoading(true);
+  const handleLogin = useCallback(
+    async (data) => {
+      try {
+        setShowLoading(true);
 
-      const response = await signIn("credentials", {
-        email: data.email,
-        password: data.password,
-        redirect: false,
-      });
+        const response = await signIn("credentials", {
+          email: data.email,
+          password: data.password,
+          redirect: false,
+        });
 
-      // Early return for successful login
-      if (response?.ok) {
-        toast.success("Login successful!");
-        router.replace(searchParams.get("redirectTo") ?? "/");
+        // Early return for successful login
+        if (response?.ok) {
+          toast.success("Login successful!");
+          router.replace(searchParams.get("redirectTo") ?? "/");
 
-        return;
+          return;
+        }
+
+        // Handle error cases
+        const errorMessage = getLoginErrorMessage(response);
+
+        toast.error(errorMessage);
+      } catch (error) {
+        console.error("Login error:", error);
+        toast.error("An unexpected error occurred");
+      } finally {
+        setShowLoading(false);
       }
-
-      // Handle error cases
-      const errorMessage = getLoginErrorMessage(response);
-
-      toast.error(errorMessage);
-
-    } catch (error) {
-      console.error('Login error:', error);
-      toast.error("An unexpected error occurred");
-    } finally {
-      setShowLoading(false);
-    }
-  }, [router, searchParams]);
+    },
+    [router, searchParams],
+  );
 
   return (
     <>
@@ -215,8 +214,7 @@ const Login = ({ mode }) => {
                     }}
                     {...(errors.email && {
                       error: true,
-                      helperText:
-                        errors?.email?.message,
+                      helperText: errors?.email?.message,
                     })}
                   />
                 )}

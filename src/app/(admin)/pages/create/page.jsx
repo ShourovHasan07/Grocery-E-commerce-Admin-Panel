@@ -6,7 +6,6 @@ export const metadata = {
 };
 
 const PageCreateApp = async () => {
-
   return <PageCreate />;
 };
 

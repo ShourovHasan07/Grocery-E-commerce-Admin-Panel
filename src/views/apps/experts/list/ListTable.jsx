@@ -18,8 +18,7 @@ import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
 import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
-import Tooltip from '@mui/material/Tooltip';
-
+import Tooltip from "@mui/material/Tooltip";
 
 // Third-party Imports
 import classnames from "classnames";
@@ -38,7 +37,12 @@ import {
 } from "@tanstack/react-table";
 
 import ConfirmDialog from "@components/dialogs/ConfirmDialog";
-import { activeStatusLabel, activeStatusColor, popularStatusLabel, popularStatusColor } from "@/utils/helpers";
+import {
+  activeStatusLabel,
+  activeStatusColor,
+  popularStatusLabel,
+  popularStatusColor,
+} from "@/utils/helpers";
 import pageApiHelper from "@/utils/pageApiHelper";
 
 // Util Imports
@@ -73,7 +77,6 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
-
   // console.log("tableData data:", tableData);
   // States
   const dataObj = tableData?.experts || [];
@@ -108,7 +111,10 @@ const ListTable = ({ tableData }) => {
 
             <Tooltip title="Achievements" arrow placement="top">
               <IconButton>
-                <Link href={`/experts/${row.original.id}/achievements`} className="flex">
+                <Link
+                  href={`/experts/${row.original.id}/achievements`}
+                  className="flex"
+                >
                   <i className="tabler-award text-success" />
                 </Link>
               </IconButton>
@@ -116,7 +122,10 @@ const ListTable = ({ tableData }) => {
 
             <Tooltip title="Languages" arrow placement="top">
               <IconButton>
-                <Link href={`/experts/${row.original.id}/languages`} className="flex">
+                <Link
+                  href={`/experts/${row.original.id}/languages`}
+                  className="flex"
+                >
                   <i className="tabler-abc text-info" />
                 </Link>
               </IconButton>
@@ -124,27 +133,35 @@ const ListTable = ({ tableData }) => {
 
             <Tooltip title="Time Slots" arrow placement="top">
               <IconButton>
-                <Link href={`/experts/${row.original.id}/time-slots`} className="flex">
+                <Link
+                  href={`/experts/${row.original.id}/time-slots`}
+                  className="flex"
+                >
                   <i className="tabler-clock text-info" />
                 </Link>
               </IconButton>
             </Tooltip>
 
-
             <Tooltip title="Edit" arrow placement="top">
               <IconButton>
-                <Link href={`/experts/${row.original.id}/edit`} className="flex">
+                <Link
+                  href={`/experts/${row.original.id}/edit`}
+                  className="flex"
+                >
                   <i className="tabler-edit text-primary" />
                 </Link>
               </IconButton>
             </Tooltip>
 
             <Tooltip title="Delete" arrow placement="top">
-              <IconButton onClick={() => setDialogOpen((prevState) => ({
-                ...prevState,
-                open: !prevState.open,
-                id: row.original.id,
-              }))}
+              <IconButton
+                onClick={() =>
+                  setDialogOpen((prevState) => ({
+                    ...prevState,
+                    open: !prevState.open,
+                    id: row.original.id,
+                  }))
+                }
               >
                 <i className="tabler-trash text-error" />
               </IconButton>
@@ -159,7 +176,11 @@ const ListTable = ({ tableData }) => {
       },
       {
         header: "Name",
-        cell: ({ row }) => <Typography className="text-wrap w-[200px]">{row.original.name}</Typography>,
+        cell: ({ row }) => (
+          <Typography className="text-wrap w-[200px]">
+            {row.original.name}
+          </Typography>
+        ),
       },
       columnHelper.accessor("image", {
         header: "Image",
@@ -291,8 +312,10 @@ const ListTable = ({ tableData }) => {
 
       // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {
-        setData(prevData => prevData.filter((item) => item.id !== itemId));
-        setFilteredData(prevData => prevData.filter((item) => item.id !== itemId));
+        setData((prevData) => prevData.filter((item) => item.id !== itemId));
+        setFilteredData((prevData) =>
+          prevData.filter((item) => item.id !== itemId),
+        );
 
         setDialogOpen((prevState) => ({
           ...prevState,
@@ -301,12 +324,11 @@ const ListTable = ({ tableData }) => {
 
         toast.success("Deleted successfully");
       }
-
     } catch (error) {
       // console.error('Delete failed:', error);
 
       // Show error in toast
-      toast.error(error.message)
+      toast.error(error.message);
     }
   };
 
@@ -425,12 +447,16 @@ const ListTable = ({ tableData }) => {
 
       <ConfirmDialog
         dialogData={dialogOpen}
-        handleCloseDialog={() => setDialogOpen((prevState) => ({
-          ...prevState,
-          open: !prevState.open,
-          id: null,
-        }))}
-        handleDelete={() => { handleDelete(dialogOpen.id); }}
+        handleCloseDialog={() =>
+          setDialogOpen((prevState) => ({
+            ...prevState,
+            open: !prevState.open,
+            id: null,
+          }))
+        }
+        handleDelete={() => {
+          handleDelete(dialogOpen.id);
+        }}
       />
     </>
   );

@@ -1,5 +1,4 @@
-
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 import routeApiHelper from "@/utils/routeApiHelper";
 
@@ -8,33 +7,50 @@ export async function GET(request, { params }) {
 
   if (!token) {
     return NextResponse.json(
-      { success: false, data: null, message: "Authorization header is missing" },
-      { status: 401 }
+      {
+        success: false,
+        data: null,
+        message: "Authorization header is missing",
+      },
+      { status: 401 },
     );
   }
 
   const { id } = await params;
 
   try {
-    const result = await routeApiHelper.get(`experts/${id}/with-list`, { model: 'achievements' }, token);
+    const result = await routeApiHelper.get(
+      `experts/${id}/with-list`,
+      { model: "achievements" },
+      token,
+    );
 
     // console.log(result)
 
     if (result.success) {
       return NextResponse.json(
-        { success: true, expert: result?.data?.expert || [], message: "expert fetched successfully" },
-        { status: 200 }
+        {
+          success: true,
+          expert: result?.data?.expert || [],
+          message: "expert fetched successfully",
+        },
+        { status: 200 },
       );
     }
 
     return NextResponse.json(
       { success: false, data: [], message: "experts not found" },
-      { status: 404 }
+      { status: 404 },
     );
   } catch (error) {
     return NextResponse.json(
-      { success: false, data: [], message: "Internal server error", error: error.message },
-      { status: 500 }
+      {
+        success: false,
+        data: [],
+        message: "Internal server error",
+        error: error.message,
+      },
+      { status: 500 },
     );
   }
 }

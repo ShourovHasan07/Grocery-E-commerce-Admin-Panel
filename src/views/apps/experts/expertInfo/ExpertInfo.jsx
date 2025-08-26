@@ -11,7 +11,6 @@ import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
 import { formattedDate } from "@/utils/formatters";
 
 const ExpertInfo = ({ expert }) => {
-
   return (
     <Card className="mb-4">
       <CardHeader title="Expert Info" />
@@ -45,8 +44,12 @@ const ExpertInfo = ({ expert }) => {
                       className="capitalize"
                     />
                   </td>
-                  <td className="border px-4 py-2">{formattedDate(expert.createdAt)}</td>
-                  <td className="border px-4 py-2">{formattedDate(expert.updatedAt)}</td>
+                  <td className="border px-4 py-2">
+                    {formattedDate(expert.createdAt)}
+                  </td>
+                  <td className="border px-4 py-2">
+                    {formattedDate(expert.updatedAt)}
+                  </td>
                 </tr>
               </tbody>
             </table>

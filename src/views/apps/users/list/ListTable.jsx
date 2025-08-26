@@ -15,7 +15,6 @@ import IconButton from "@mui/material/IconButton";
 import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
 
-
 import classnames from "classnames";
 
 import { rankItem } from "@tanstack/match-sorter-utils";
@@ -33,9 +32,8 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 
-
 // Third-party Imports
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from "@mui/material/Tooltip";
 
 // Util Imports
 import { formattedDate } from "@/utils/formatters";
@@ -99,15 +97,23 @@ const ListTable = ({ tableData }) => {
       },
       {
         header: "User Name",
-        cell: ({ row }) => <Typography className="text-wrap w-[200px]">{row.original.name || ''}</Typography>,
+        cell: ({ row }) => (
+          <Typography className="text-wrap w-[200px]">
+            {row.original.name || ""}
+          </Typography>
+        ),
       },
       {
         header: "email",
-        cell: ({ row }) => <Typography className="w-full block">{row.original.email}</Typography>,
+        cell: ({ row }) => (
+          <Typography className="w-full block">{row.original.email}</Typography>
+        ),
       },
       {
         header: "phone",
-        cell: ({ row }) => <Typography className="w-full block">{row.original.phone}</Typography>,
+        cell: ({ row }) => (
+          <Typography className="w-full block">{row.original.phone}</Typography>
+        ),
       },
       columnHelper.accessor("status", {
         header: "Status",

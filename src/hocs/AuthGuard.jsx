@@ -1,7 +1,6 @@
-
 import { getServerSession } from "next-auth";
 
-import ClientTokenGuard from './ClientTokenGuard';
+import ClientTokenGuard from "./ClientTokenGuard";
 
 import { authOptions } from "@/libs/auth";
 
@@ -17,9 +16,5 @@ export default async function AuthGuard({ children }) {
   }
 
   // Let client component handle token validation
-  return (
-    <ClientTokenGuard session={session}>
-      {children}
-    </ClientTokenGuard>
-  );
+  return <ClientTokenGuard session={session}>{children}</ClientTokenGuard>;
 }

@@ -44,13 +44,13 @@ const VerticalMenu = ({ scrollMenu }) => {
     <ScrollWrapper
       {...(isBreakpointReached
         ? {
-          className: "bs-full overflow-y-auto overflow-x-hidden",
-          onScroll: (container) => scrollMenu(container, false),
-        }
+            className: "bs-full overflow-y-auto overflow-x-hidden",
+            onScroll: (container) => scrollMenu(container, false),
+          }
         : {
-          options: { wheelPropagation: false, suppressScrollX: true },
-          onScrollY: (container) => scrollMenu(container, true),
-        })}
+            options: { wheelPropagation: false, suppressScrollX: true },
+            onScrollY: (container) => scrollMenu(container, true),
+          })}
     >
       {/* Incase you also want to scroll NavHeader to scroll with Vertical Menu, remove NavHeader from above and paste it below this comment */}
       {/* Vertical Menu */}
@@ -68,19 +68,14 @@ const VerticalMenu = ({ scrollMenu }) => {
         }}
         menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
       >
-
-
-
         <MenuItem href="/dashboard" icon={<i className="tabler-smart-home" />}>
           Dashboard
         </MenuItem>
-
 
         <SubMenu label="Roles" icon={<i className="tabler-shield" />}>
           <MenuItem href="/roles/create">New Role</MenuItem>
           <MenuItem href="/roles">Role List</MenuItem>
         </SubMenu>
-
 
         <SubMenu label="Admins" icon={<i className="tabler-users" />}>
           <MenuItem href="/admins/create">New Admin</MenuItem>
@@ -108,7 +103,10 @@ const VerticalMenu = ({ scrollMenu }) => {
           Client
         </MenuItem>
 
-        <MenuItem href="/bookings" icon={<i className="tabler-brand-booking" />}>
+        <MenuItem
+          href="/bookings"
+          icon={<i className="tabler-brand-booking" />}
+        >
           Bookings
         </MenuItem>
 
@@ -116,10 +114,6 @@ const VerticalMenu = ({ scrollMenu }) => {
           <MenuItem href="/pages/create">New Page</MenuItem>
           <MenuItem href="/pages">Page List</MenuItem>
         </SubMenu>
-
-
-
-
       </Menu>
     </ScrollWrapper>
   );

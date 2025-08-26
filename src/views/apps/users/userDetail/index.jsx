@@ -4,7 +4,6 @@ import Grid from "@mui/material/Grid2";
 // Component Imports
 import UserDetail from "./UserDetail";
 
-
 const UsersDetails = ({ user }) => {
   return (
     <Grid container>

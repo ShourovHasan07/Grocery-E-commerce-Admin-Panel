@@ -28,29 +28,35 @@ const TableFilters = ({ setData, tableData }) => {
     const getRoles = async () => {
       if (token) {
         try {
-          const result = await pageApiHelper.get('admins/create-edit-options', {}, token);
+          const result = await pageApiHelper.get(
+            "admins/create-edit-options",
+            {},
+            token,
+          );
 
           if (result.success && result?.data?.data?.roles) {
             setRoles(result.data.data.roles);
           }
-        } catch (error) {
-        }
+        } catch (error) {}
       }
     };
 
-    getRoles()
+    getRoles();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     const filteredData = tableData?.filter((item) => {
-      if (search &&
+      if (
+        search &&
         !item.name.toLowerCase().includes(search.toLowerCase()) &&
         !item.email.toLowerCase().includes(search.toLowerCase())
-      ) return false;
-      if (status && status != '' && item.status !== stringToBoolean(status)) return false;
-      if (role && role != '' && item.roleId !== role) return false;
+      )
+        return false;
+      if (status && status != "" && item.status !== stringToBoolean(status))
+        return false;
+      if (role && role != "" && item.roleId !== role) return false;
 
       return true;
     });

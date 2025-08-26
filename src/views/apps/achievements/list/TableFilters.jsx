@@ -18,8 +18,10 @@ const TableFilters = ({ setData, tableData }) => {
 
   useEffect(() => {
     const filteredData = tableData?.filter((item) => {
-      if (search && !item.title.toLowerCase().includes(search.toLowerCase())) return false;
-      if (status && status != '' && item.status !== stringToBoolean(status)) return false;
+      if (search && !item.title.toLowerCase().includes(search.toLowerCase()))
+        return false;
+      if (status && status != "" && item.status !== stringToBoolean(status))
+        return false;
 
       return true;
     });

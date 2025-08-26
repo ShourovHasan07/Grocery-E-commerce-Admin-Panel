@@ -11,16 +11,18 @@ import pageApiHelper from "@/utils/pageApiHelper";
 import LeftOverview from "@/views/apps/experts/view/left-overview";
 import RightOverview from "@/views/apps/experts/view/right-overview";
 
-
-
 const getExpertData = async (id) => {
   // Vars
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   if (session.accessToken) {
     try {
       // Fetching the categories data
-      const result = await pageApiHelper.get(`experts/${id}`, {}, session.accessToken);
+      const result = await pageApiHelper.get(
+        `experts/${id}`,
+        {},
+        session.accessToken,
+      );
 
       if (result.success) {
         return result.data;
@@ -35,7 +37,7 @@ const getExpertData = async (id) => {
   }
 
   return null;
-}
+};
 
 export const metadata = {
   title: "Expert Detail - AskValor",
@@ -43,7 +45,7 @@ export const metadata = {
 
 const ExpertView = async ({ params }) => {
   // Vars
-  const { id } = await params
+  const { id } = await params;
 
   const { data } = await getExpertData(id);
 

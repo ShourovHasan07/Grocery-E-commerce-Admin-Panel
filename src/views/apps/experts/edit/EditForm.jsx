@@ -3,7 +3,7 @@
 // React Imports
 import { useEffect, useRef, useState } from "react";
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 // MUI Imports
@@ -14,7 +14,7 @@ import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Chip from '@mui/material/Chip'
+import Chip from "@mui/material/Chip";
 
 // Third-party Imports
 import { toast } from "react-toastify";
@@ -28,7 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
 
 import CustomTextField from "@core/components/mui/TextField";
-import CustomAutocomplete from '@core/components/mui/Autocomplete'
+import CustomAutocomplete from "@core/components/mui/Autocomplete";
 
 import pageApiHelper from "@/utils/pageApiHelper";
 
@@ -36,15 +36,15 @@ import pageApiHelper from "@/utils/pageApiHelper";
 
 const schema = z.object({
   name: z
-    .string()
+    .string({ message: "This field is required" })
     .min(1, "This field is required")
     .min(3, "Name must be at least 3 characters long"),
   email: z
-    .string()
+    .string({ message: "This field is required" })
     .min(1, "This field is required")
     .email("Please enter a valid email address"),
   userName: z
-    .string()
+    .string({ message: "This field is required" })
     .min(1, "This field is required")
     .min(3, "User Name must be at least 3 characters long"),
 
@@ -55,11 +55,16 @@ const schema = z.object({
   //   .refine((val) => val === undefined || !isNaN(val), "Must be a valid number")
   //   .refine((val) => val === undefined || val >= 0, "Hourly rate must be a positive number"),
   rating: z
-    .string()
+    .string({ message: "This field is required" })
     .min(1, "This field is required")
-    .transform((val) => val === "" || val === undefined ? undefined : Number(val))
+    .transform((val) =>
+      val === "" || val === undefined ? undefined : Number(val),
+    )
     .refine((val) => val === undefined || !isNaN(val), "Must be a valid number")
-    .refine((val) => val === undefined || val >= 0, "Rating must be a positive number")
+    .refine(
+      (val) => val === undefined || val >= 0,
+      "Rating must be a positive number",
+    )
     .refine((val) => val === undefined || val <= 5, "Rating must not exceed 5"),
   image: z
     .any()
@@ -73,20 +78,22 @@ const schema = z.object({
           ["image/jpeg", "image/png", "image/svg+xml"].includes(file[0]?.type)),
       {
         message: "Only .jpg, .jpeg, .png, and .svg formats are supported",
-      }
+      },
     ),
   status: z.boolean().default(true),
   isVerified: z.boolean().default(false),
-  phone: z.string().default(""),
-  address: z.string().default(""),
-  aboutMe: z.string().default(""),
-  title: z.string().default(""),
-  categories: z.array(
-    z.object({
-      id: z.number(),
-      name: z.string()
-    })
-  ).default([]),
+  phone: z.string().nullable().default(""),
+  address: z.string().nullable().default(""),
+  aboutMe: z.string().nullable().default(""),
+  title: z.string().nullable().default(""),
+  categories: z
+    .array(
+      z.object({
+        id: z.number(),
+        name: z.string(),
+      }),
+    )
+    .default([]),
 });
 
 const EditForm = ({ expertData, categoryData }) => {
@@ -106,16 +113,18 @@ const EditForm = ({ expertData, categoryData }) => {
     defaultValues: {
       ...expertData,
       image: "",
-      categories: expertData.categories
-        ?.filter(expertCat =>
-          categoryData.some(availableCat => availableCat.id === expertCat.id)
-        )
-        .map(cat => ({
-          id: cat.id,
-          name: cat.name
-        })) || [],
-    }
-
+      categories:
+        expertData.categories
+          ?.filter((expertCat) =>
+            categoryData.some(
+              (availableCat) => availableCat.id === expertCat.id,
+            ),
+          )
+          .map((cat) => ({
+            id: cat.id,
+            name: cat.name,
+          })) || [],
+    },
   });
 
   const handleImageChange = (files, onChange) => {
@@ -153,14 +162,13 @@ const EditForm = ({ expertData, categoryData }) => {
       form.append("userName", formData.userName.trim());
       form.append("status", formData.status.toString());
       form.append("isVerified", formData.isVerified.toString());
-      form.append("phone", formData.phone.trim());
-      form.append("address", formData.address.trim());
-      form.append("aboutMe", formData.aboutMe.trim());
-      form.append("title", formData.title.trim());
+      form.append("phone", formData.phone ? formData.phone.trim() : "");
+      form.append("address", formData.address ? formData.address.trim() : "");
+      form.append("aboutMe", formData.aboutMe ? formData.aboutMe.trim() : "");
+      form.append("title", formData.title ? formData.title.trim() : "");
 
       // form.append("hourlyRate", formData.hourlyRate);
       form.append("rating", formData.rating);
-
 
       // Append image if exists
       if (formData.image?.[0]) {
@@ -175,25 +183,27 @@ const EditForm = ({ expertData, categoryData }) => {
 
       const headerConfig = {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          "Content-Type": "multipart/form-data",
+        },
       };
 
-      res = await pageApiHelper.put(`experts/${expertData.id}/edit`, form, token);
+      res = await pageApiHelper.put(
+        `experts/${expertData.id}/edit`,
+        form,
+        token,
+      );
 
       if (!res?.success && res?.status === 400) {
-
         let errors = res?.data?.data?.errors || [];
 
         if (errors) {
-          Object.keys(errors).forEach(key => {
+          Object.keys(errors).forEach((key) => {
             setError(key, {
               type: "server",
-              message: errors[key]
+              message: errors[key],
             });
           });
         }
-
 
         return;
       }
@@ -204,9 +214,8 @@ const EditForm = ({ expertData, categoryData }) => {
         // Optionally, redirect or perform other actions after successful creation
         router.push("/experts");
       }
-
     } catch (error) {
-      toast.error(error.message || 'Something went wrong');
+      toast.error(error.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
@@ -226,6 +235,7 @@ const EditForm = ({ expertData, categoryData }) => {
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
+                    value={field.value ?? ""}
                     fullWidth
                     className="mb-4"
                     label="Name"
@@ -245,6 +255,7 @@ const EditForm = ({ expertData, categoryData }) => {
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
+                    value={field.value ?? ""}
                     fullWidth
                     type="email"
                     className="mb-4"
@@ -266,7 +277,7 @@ const EditForm = ({ expertData, categoryData }) => {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    value={field.value || ''}
+                    value={field.value ?? ""}
                     className="mb-4"
                     label="User Name"
                     placeholder="User name"
@@ -294,7 +305,8 @@ const EditForm = ({ expertData, categoryData }) => {
                       inputRef={fileInputRef}
                       inputProps={{
                         accept: "image/*",
-                        onChange: (e) => handleImageChange(e.target.files, onChange),
+                        onChange: (e) =>
+                          handleImageChange(e.target.files, onChange),
                       }}
                       error={!!errors.image}
                       helperText={errors.image?.message}
@@ -319,6 +331,7 @@ const EditForm = ({ expertData, categoryData }) => {
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
+                    value={field.value ?? ""}
                     fullWidth
                     className="mb-4"
                     label="Phone"
@@ -338,6 +351,7 @@ const EditForm = ({ expertData, categoryData }) => {
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
+                    value={field.value ?? ""}
                     fullWidth
                     className="mb-4"
                     label="Address"
@@ -349,7 +363,6 @@ const EditForm = ({ expertData, categoryData }) => {
                   />
                 )}
               />
-
             </Grid>
 
             <Grid size={{ md: 6 }}>
@@ -360,6 +373,7 @@ const EditForm = ({ expertData, categoryData }) => {
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
+                    value={field.value ?? ""}
                     fullWidth
                     className="mb-4"
                     label="Title"
@@ -415,7 +429,7 @@ const EditForm = ({ expertData, categoryData }) => {
                         inputProps={{
                           min: 0,
                           max: 5,
-                          step: 0.1
+                          step: 0.1,
                         }}
                         {...(errors.rating && {
                           error: true,
@@ -424,7 +438,6 @@ const EditForm = ({ expertData, categoryData }) => {
                       />
                     )}
                   />
-
                 </Grid>
               </Grid>
 
@@ -436,14 +449,14 @@ const EditForm = ({ expertData, categoryData }) => {
                     {...field}
                     multiple
                     options={categoryData || []}
-                    id='categories'
+                    id="categories"
                     className="mb-4"
-                    getOptionLabel={option => option.name || ''}
-                    renderInput={params => (
+                    getOptionLabel={(option) => option.name || ""}
+                    renderInput={(params) => (
                       <CustomTextField
                         {...params}
-                        label='Categories'
-                        placeholder='Select categories'
+                        label="Categories"
+                        placeholder="Select categories"
                         error={!!errors.categories}
                         helperText={errors.categories?.message}
                       />
@@ -454,13 +467,15 @@ const EditForm = ({ expertData, categoryData }) => {
                           label={option.name}
                           {...getCatProps({ index })}
                           key={option.id}
-                          size='small'
+                          size="small"
                         />
                       ))
                     }
                     onChange={(_, value) => field.onChange(value)}
                     value={field.value || []}
-                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                    isOptionEqualToValue={(option, value) =>
+                      option.id === value.id
+                    }
                   />
                 )}
               />
@@ -472,7 +487,7 @@ const EditForm = ({ expertData, categoryData }) => {
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
-                    value={field.value || ''}
+                    value={field.value || ""}
                     fullWidth
                     multiline
                     minRows={6}
@@ -514,7 +529,7 @@ const EditForm = ({ expertData, categoryData }) => {
                       <FormControlLabel
                         control={
                           <Checkbox
-                            color='success'
+                            color="success"
                             checked={Boolean(field.value)}
                             onChange={(e) => field.onChange(e.target.checked)}
                           />
@@ -525,7 +540,6 @@ const EditForm = ({ expertData, categoryData }) => {
                   }}
                 />
               </div>
-
             </Grid>
 
             <Grid size={{ xs: 12 }} className="flex gap-4">
@@ -535,7 +549,7 @@ const EditForm = ({ expertData, categoryData }) => {
                 disabled={isSubmitting}
                 endIcon={
                   isSubmitting ? (
-                    <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' />
+                    <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
                   ) : null
                 }
               >

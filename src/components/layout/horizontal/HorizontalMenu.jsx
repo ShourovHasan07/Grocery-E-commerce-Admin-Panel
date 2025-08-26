@@ -36,7 +36,7 @@ const RenderVerticalExpandIcon = ({ open, transitionDuration }) => (
   </StyledVerticalNavExpandIcon>
 );
 
-const HorizontalMenu = ({ }) => {
+const HorizontalMenu = ({}) => {
   // Hooks
   const verticalNavOptions = useVerticalNav();
   const theme = useTheme();
