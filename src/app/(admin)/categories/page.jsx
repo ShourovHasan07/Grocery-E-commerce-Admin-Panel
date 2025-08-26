@@ -1,5 +1,5 @@
 // Component Imports
-import { getServerSession } from 'next-auth';
+import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/libs/auth";
 
@@ -11,14 +11,18 @@ export const metadata = {
 };
 
 const getCategoryData = async () => {
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   // console.log("Session:", session);
 
   if (session.accessToken) {
     try {
       // Fetching the categories data
-      const result = await pageApiHelper.get('categories', { pageSize: 200 }, session.accessToken);
+      const result = await pageApiHelper.get(
+        "categories",
+        { pageSize: 200 },
+        session.accessToken,
+      );
 
       if (result.success) {
         return result.data;
@@ -33,10 +37,10 @@ const getCategoryData = async () => {
   }
 
   return null;
-}
+};
 
 const ListApp = async () => {
-const { data } = await getCategoryData();
+  const { data } = await getCategoryData();
 
   return <CategoryList tData={data} />;
 };

@@ -86,7 +86,9 @@ const UserActivityTimeLine = () => {
                   <Typography variant="body2" className="font-medium">
                     Lester McCarthy (Client)
                   </Typography>
-                  <Typography variant="body2">CEO of AnnaNovas IT Ltd</Typography>
+                  <Typography variant="body2">
+                    CEO of AnnaNovas IT Ltd
+                  </Typography>
                 </div>
               </div>
             </TimelineContent>

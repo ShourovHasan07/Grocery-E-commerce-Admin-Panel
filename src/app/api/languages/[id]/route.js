@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 import routeApiHelper from "@/utils/routeApiHelper";
 
@@ -8,8 +8,12 @@ export async function PUT(request, { params }) {
 
   if (!token) {
     return NextResponse.json(
-      { success: false, data: null, message: "Authorization header is missing" },
-      { status: 401 }
+      {
+        success: false,
+        data: null,
+        message: "Authorization header is missing",
+      },
+      { status: 401 },
     );
   }
 
@@ -19,7 +23,7 @@ export async function PUT(request, { params }) {
     if (!id || !/^\d+$/.test(id)) {
       return NextResponse.json(
         { success: false, message: "Invalid languages ID" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -33,16 +37,21 @@ export async function PUT(request, { params }) {
 
     let headerConfig = {};
 
-    if (incomingFormData.has('image')) {
+    if (incomingFormData.has("image")) {
       headerConfig = {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          "Content-Type": "multipart/form-data",
+        },
       };
     }
 
     // Call backend API
-    const response = await routeApiHelper.put(`languages/${id}`, outgoingFormData, token, headerConfig);
+    const response = await routeApiHelper.put(
+      `languages/${id}`,
+      outgoingFormData,
+      token,
+      headerConfig,
+    );
 
     if (!response.success) {
       return NextResponse.json(
@@ -51,7 +60,7 @@ export async function PUT(request, { params }) {
           message: "Backend update failed",
           data: response.data,
         },
-        { status: response.status || 500 }
+        { status: response.status || 500 },
       );
     }
 
@@ -61,7 +70,7 @@ export async function PUT(request, { params }) {
         data: response.data,
         message: "Language updated successfully",
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -70,7 +79,7 @@ export async function PUT(request, { params }) {
         message: "Internal server error",
         error: error?.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -81,8 +90,12 @@ export async function DELETE(request, { params }) {
 
   if (!token) {
     return NextResponse.json(
-      { success: false, data: null, message: "Authorization header is missing" },
-      { status: 401 }
+      {
+        success: false,
+        data: null,
+        message: "Authorization header is missing",
+      },
+      { status: 401 },
     );
   }
 
@@ -91,8 +104,8 @@ export async function DELETE(request, { params }) {
 
     if (!id || !/^\d+$/.test(id)) {
       return NextResponse.json(
-        { success: false, message: 'Invalid languages ID' },
-        { status: 400 }
+        { success: false, message: "Invalid languages ID" },
+        { status: 400 },
       );
     }
 
@@ -100,20 +113,23 @@ export async function DELETE(request, { params }) {
 
     if (!result.success) {
       return NextResponse.json(
-        { success: false, message: 'languages not found or deletion failed' },
-        { status: 404 }
+        { success: false, message: "languages not found or deletion failed" },
+        { status: 404 },
       );
     }
 
     return NextResponse.json(
-      { success: true, data: result, message: result?.message || 'Language deleted successfully' },
-      { status: 200 }
+      {
+        success: true,
+        data: result,
+        message: result?.message || "Language deleted successfully",
+      },
+      { status: 200 },
     );
   } catch (error) {
     return NextResponse.json(
-      { success: false, message: 'Server error' },
-      { status: 500 }
+      { success: false, message: "Server error" },
+      { status: 500 },
     );
   }
 }
-

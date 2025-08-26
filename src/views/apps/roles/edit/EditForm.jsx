@@ -3,7 +3,7 @@
 // React Imports
 import { useEffect, useRef, useState } from "react";
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 // MUI Imports
@@ -39,7 +39,6 @@ const schema = z.object({
     .min(3, "Name must be at least 3 characters long"),
 
   status: z.boolean().default(true),
-
 });
 
 const EditForm = ({ role }) => {
@@ -60,8 +59,8 @@ const EditForm = ({ role }) => {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      ...role
-    }
+      ...role,
+    },
   });
 
   // form submission
@@ -77,18 +76,16 @@ const EditForm = ({ role }) => {
       const res = await pageApiHelper.put(`roles/${role.id}`, form, token);
 
       if (!res?.success && res?.status === 400) {
-
         let errors = res?.data?.data?.errors || [];
 
         if (errors) {
-          Object.keys(errors).forEach(key => {
+          Object.keys(errors).forEach((key) => {
             setError(key, {
               type: "server",
-              message: errors[key]
+              message: errors[key],
             });
           });
         }
-
 
         return;
       }
@@ -99,9 +96,8 @@ const EditForm = ({ role }) => {
         // Optionally, redirect or perform other actions after successful creation
         router.push("/roles");
       }
-
     } catch (error) {
-      toast.error(error.message || 'Something went wrong');
+      toast.error(error.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
@@ -147,13 +143,9 @@ const EditForm = ({ role }) => {
                   );
                 }}
               />
-
             </Grid>
 
-            <Grid size={{ md: 6 }}>
-
-
-            </Grid>
+            <Grid size={{ md: 6 }}></Grid>
 
             <Grid size={{ xs: 12 }} className="flex gap-4">
               <Button
@@ -162,7 +154,7 @@ const EditForm = ({ role }) => {
                 disabled={isSubmitting}
                 endIcon={
                   isSubmitting ? (
-                    <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' />
+                    <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
                   ) : null
                 }
               >

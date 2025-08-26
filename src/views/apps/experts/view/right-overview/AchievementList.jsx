@@ -7,10 +7,7 @@ import Grid from "@mui/material/Grid2";
 import CustomAvatar from "@core/components/mui/Avatar";
 import { formattedDate } from "@/utils/formatters";
 
-
 const AchievementList = ({ expertData }) => {
-  console.log(expertData.achievements)
-
   const getAvatar = (params) => {
     const { avatar, name } = params;
 
@@ -21,14 +18,10 @@ const AchievementList = ({ expertData }) => {
     }
   };
 
-  
-return (
+  return (
     <>
       <Card>
-        <CardHeader
-          title="Expert Achievements"
-          className="pb-1"
-        />
+        <CardHeader title="Expert Achievements" className="pb-1" />
 
         <CardContent>
           <Grid size={{ xs: 12 }}>
@@ -54,13 +47,18 @@ return (
                         })}
                       </td>
                       <td className="border px-4 py-2">{achievement.title}</td>
-                      <td className="border px-4 py-2">{achievement.subTitle}</td>
-                      <td className="border px-4 py-2">{formattedDate(achievement.pivot.createdAt)}</td>
+                      <td className="border px-4 py-2">
+                        {achievement.subTitle}
+                      </td>
+                      <td className="border px-4 py-2">
+                        {formattedDate(achievement.pivot.createdAt)}
+                      </td>
                     </tr>
                   ))}
-                  {(!expertData.achievements || expertData.achievements.length === 0) && (
+                  {(!expertData.achievements ||
+                    expertData.achievements.length === 0) && (
                     <tr>
-                      <td colSpan={3} className="border px-4 py-2 text-center">
+                      <td colSpan={5} className="border px-4 py-2 text-center">
                         No achievement found
                       </td>
                     </tr>

@@ -4,16 +4,11 @@ import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid2";
 
-
 const CategoryList = ({ expertData }) => {
-
   return (
     <>
       <Card>
-        <CardHeader
-          title="About Me"
-          className="pb-0"
-        />
+        <CardHeader title="About Me" className="pb-0" />
 
         <CardContent>
           <Grid size={{ xs: 12 }}>
@@ -23,10 +18,7 @@ const CategoryList = ({ expertData }) => {
           </Grid>
         </CardContent>
 
-        <CardHeader
-          title="Expert Categories"
-          className="pb-1"
-        />
+        <CardHeader title="Expert Categories" className="pb-1" />
         <CardContent>
           <Grid size={{ xs: 12 }}>
             <div className="w-full overflow-x-auto">
@@ -34,7 +26,9 @@ const CategoryList = ({ expertData }) => {
                 <thead>
                   <tr className="bg-gray-50">
                     <th className="border px-4 py-2 text-start">ID</th>
-                    <th className="border px-4 py-2 text-start">Category Name</th>
+                    <th className="border px-4 py-2 text-start">
+                      Category Name
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -44,7 +38,8 @@ const CategoryList = ({ expertData }) => {
                       <td className="border px-4 py-2">{category.name}</td>
                     </tr>
                   ))}
-                  {(!expertData.categories || expertData.categories.length === 0) && (
+                  {(!expertData.categories ||
+                    expertData.categories.length === 0) && (
                     <tr>
                       <td colSpan={2} className="border px-4 py-2 text-center">
                         No categories found

@@ -73,7 +73,7 @@ const UserDropdown = () => {
       console.error(error);
 
       // Show above error in a toast like following
-      toast.error(error.message)
+      toast.error(error.message);
     }
   };
 
@@ -139,18 +139,14 @@ const UserDropdown = () => {
                   <Divider className="mlb-1" />
                   <MenuItem
                     className="mli-2 gap-3"
-                    onClick={(e) =>
-                      handleDropdownClose(e, "/user-profile")
-                    }
+                    onClick={(e) => handleDropdownClose(e, "/user-profile")}
                   >
                     <i className="tabler-user" />
                     <Typography color="text.primary">My Profile</Typography>
                   </MenuItem>
                   <MenuItem
                     className="mli-2 gap-3"
-                    onClick={(e) =>
-                      handleDropdownClose(e, "/account-settings")
-                    }
+                    onClick={(e) => handleDropdownClose(e, "/account-settings")}
                   >
                     <i className="tabler-settings" />
                     <Typography color="text.primary">Settings</Typography>

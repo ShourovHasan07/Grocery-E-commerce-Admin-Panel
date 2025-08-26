@@ -4,16 +4,12 @@ import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid2";
 
-
 const LanguageList = ({ expertData }) => {
   // console.log(expertData.languages)
   return (
     <>
       <Card>
-        <CardHeader
-          title="Expert Languages"
-          className="pb-1"
-        />
+        <CardHeader title="Expert Languages" className="pb-1" />
 
         <CardContent>
           <Grid size={{ xs: 12 }}>
@@ -31,10 +27,13 @@ const LanguageList = ({ expertData }) => {
                     <tr key={index}>
                       <td className="border px-4 py-2">{index + 1}</td>
                       <td className="border px-4 py-2">{language.name}</td>
-                      <td className="border px-4 py-2">{language?.pivot?.level}</td>
+                      <td className="border px-4 py-2">
+                        {language?.pivot?.level}
+                      </td>
                     </tr>
                   ))}
-                  {(!expertData.languages || expertData.languages.length === 0) && (
+                  {(!expertData.languages ||
+                    expertData.languages.length === 0) && (
                     <tr>
                       <td colSpan={3} className="border px-4 py-2 text-center">
                         No languages found

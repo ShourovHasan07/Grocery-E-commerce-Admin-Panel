@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 import routeApiHelper from "@/utils/routeApiHelper";
 
@@ -8,8 +8,12 @@ export async function POST(request, { params }) {
 
   if (!token) {
     return NextResponse.json(
-      { success: false, data: null, message: "Authorization header is missing" },
-      { status: 401 }
+      {
+        success: false,
+        data: null,
+        message: "Authorization header is missing",
+      },
+      { status: 401 },
     );
   }
 
@@ -19,8 +23,8 @@ export async function POST(request, { params }) {
 
     if (!id || !/^\d+$/.test(id)) {
       return NextResponse.json(
-        { success: false, message: 'Invalid expert language  ID' },
-        { status: 400 }
+        { success: false, message: "Invalid expert language  ID" },
+        { status: 400 },
       );
     }
 
@@ -32,36 +36,34 @@ export async function POST(request, { params }) {
       outgoingFormData.append(key, value);
     }
 
-    const result = await routeApiHelper.post(`experts/${id}/detach/language`, outgoingFormData, token);
+    const result = await routeApiHelper.post(
+      `experts/${id}/detach/language`,
+      outgoingFormData,
+      token,
+    );
 
     if (!result.success) {
       return NextResponse.json(
-        { success: false, message: 'expert language  not found or deletion failed' },
-        { status: 404 }
+        {
+          success: false,
+          message: "expert language  not found or deletion failed",
+        },
+        { status: 404 },
       );
     }
 
     return NextResponse.json(
-      { success: true, data: result, message: result?.message || 'expert language  deleted successfully' },
-      { status: 200 }
+      {
+        success: true,
+        data: result,
+        message: result?.message || "expert language  deleted successfully",
+      },
+      { status: 200 },
     );
   } catch (error) {
     return NextResponse.json(
-      { success: false, message: 'Server error' },
-      { status: 500 }
+      { success: false, message: "Server error" },
+      { status: 500 },
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

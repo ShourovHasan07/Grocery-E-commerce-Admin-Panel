@@ -14,10 +14,18 @@ import { Controller } from "react-hook-form";
 import CustomTextField from "@core/components/mui/TextField";
 import AppReactDatepicker from "@/libs/styles/AppReactDatepicker";
 
-
 const EditDrawer = (props) => {
   // Props
-  const { weeks, open, onClose, control, errors, handleSubmit, onSubmit } = props;
+  const {
+    weeks,
+    open,
+    onClose,
+    control,
+    errors,
+    handleSubmit,
+    onSubmit,
+    isSubmitting,
+  } = props;
 
   return (
     <Drawer
@@ -36,7 +44,10 @@ const EditDrawer = (props) => {
       </div>
       <Divider />
       <div>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 p-6">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-3 p-6"
+        >
           <Grid container spacing={4} sx={{ mt: 2 }}>
             <Controller
               name="dayOfWeek"
@@ -55,11 +66,12 @@ const EditDrawer = (props) => {
                   <MenuItem value="" disabled>
                     Select a Day
                   </MenuItem>
-                  {weeks.length > 0 && weeks.map((day) => (
-                    <MenuItem key={day.key} value={day.key}>
-                      {day.value}
-                    </MenuItem>
-                  ))}
+                  {weeks.length > 0 &&
+                    weeks.map((day) => (
+                      <MenuItem key={day.key} value={day.key}>
+                        {day.value}
+                      </MenuItem>
+                    ))}
                 </CustomTextField>
               )}
             />
@@ -77,7 +89,9 @@ const EditDrawer = (props) => {
                       selected={field.value}
                       onChange={field.onChange}
                       dateFormat="h:mm aa"
-                      customInput={<CustomTextField label="Start Time (GMT)" fullWidth />}
+                      customInput={
+                        <CustomTextField label="Start Time (GMT)" fullWidth />
+                      }
                     />
                   )}
                 />
@@ -95,14 +109,23 @@ const EditDrawer = (props) => {
                       selected={field.value}
                       onChange={field.onChange}
                       dateFormat="h:mm aa"
-                      customInput={<CustomTextField label="End Time (GMT)" fullWidth />}
+                      customInput={
+                        <CustomTextField label="End Time (GMT)" fullWidth />
+                      }
                     />
                   )}
                 />
               </Grid>
             </Grid>
             {errors.startTime && (
-              <p className="text-red-500 text-sm mt-1">{errors.startTime.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.startTime.message}
+              </p>
+            )}
+            {errors.overlap && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.overlap.message}
+              </p>
             )}
           </Grid>
 
@@ -130,10 +153,25 @@ const EditDrawer = (props) => {
           </Grid>
 
           <Grid className="flex gap-3">
-            <Button type="submit" variant="contained">
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={isSubmitting}
+              endIcon={
+                isSubmitting ? (
+                  <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
+                ) : null
+              }
+            >
               Update
             </Button>
-            <Button onClick={onClose} variant="tonal" color="error" sx={{ mr: 2 }}>
+            <Button
+              disabled={isSubmitting}
+              onClick={onClose}
+              variant="tonal"
+              color="error"
+              sx={{ mr: 2 }}
+            >
               Cancel
             </Button>
           </Grid>

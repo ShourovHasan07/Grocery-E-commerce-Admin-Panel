@@ -3,7 +3,7 @@
 // React Imports
 import { useRef, useState } from "react";
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { useSession } from "next-auth/react";
@@ -38,7 +38,6 @@ const schema = z.object({
     .min(3, "Name must be at least 3 characters long"),
 
   status: z.boolean().default(true),
-
 });
 
 const CreateForm = () => {
@@ -62,7 +61,6 @@ const CreateForm = () => {
     },
   });
 
-
   //form submission
   const { data: session } = useSession();
   const token = session?.accessToken;
@@ -81,14 +79,13 @@ const CreateForm = () => {
       // console.log("create roles from res:", res);
 
       if (!res?.success && res?.status === 400) {
-
         let errors = res?.data?.errors || [];
 
         if (errors) {
-          Object.keys(errors).forEach(key => {
+          Object.keys(errors).forEach((key) => {
             setError(key, {
               type: "server",
-              message: errors[key]
+              message: errors[key],
             });
           });
         }
@@ -103,9 +100,8 @@ const CreateForm = () => {
         // Optionally, redirect or perform other actions after successful creation
         router.push("/roles");
       }
-
     } catch (error) {
-      toast.error(error.message || 'Something went wrong');
+      toast.error(error.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
@@ -156,7 +152,7 @@ const CreateForm = () => {
                 disabled={isSubmitting}
                 endIcon={
                   isSubmitting ? (
-                    <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' />
+                    <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
                   ) : null
                 }
               >

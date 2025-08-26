@@ -8,18 +8,20 @@ import { authOptions } from "@/libs/auth";
 import pageApiHelper from "@/utils/pageApiHelper";
 
 // Component Imports
-import LeftOverview from "@/views/apps/experts/view/left-overview";
-import RightOverview from "@/views/apps/experts/view/right-overview";
+import Detail from "@/views/apps/pages/detail/Detail";
 
-
-const getExpertData = async (id) => {
+const getPageData = async (id) => {
   // Vars
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   if (session?.accessToken) {
     try {
       // Fetching the categories data
-      const result = await pageApiHelper.get(`pages/${id}`, {}, session.accessToken);
+      const result = await pageApiHelper.get(
+        `pages/${id}`,
+        {},
+        session.accessToken,
+      );
 
       if (result.success) {
         return result.data;
@@ -34,7 +36,7 @@ const getExpertData = async (id) => {
   }
 
   return null;
-}
+};
 
 export const metadata = {
   title: "Page Detail - AskValor",
@@ -42,20 +44,11 @@ export const metadata = {
 
 const ExpertView = async ({ params }) => {
   // Vars
-  const { id } = await params
+  const { id } = await params;
 
-  const { data } = await getExpertData(id);
+  const { data } = await getPageData(id);
 
-  return (
-    <Grid container spacing={6}>
-      <Grid size={{ xs: 12, lg: 4, md: 5 }}>
-        <LeftOverview expertData={data.expert} />
-      </Grid>
-      <Grid size={{ xs: 12, lg: 8, md: 7 }}>
-        <RightOverview expert={data.expert} />
-      </Grid>
-    </Grid>
-  );
+  return <Detail page={data.page} />;
 };
 
 export default ExpertView;

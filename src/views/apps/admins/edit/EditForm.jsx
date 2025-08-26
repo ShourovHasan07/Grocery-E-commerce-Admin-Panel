@@ -3,7 +3,7 @@
 // React Imports
 import { useEffect, useRef, useState } from "react";
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 // MUI Imports
@@ -48,7 +48,6 @@ const schema = z.object({
 });
 
 const EditForm = ({ adminData, roles }) => {
-
   const router = useRouter();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,9 +64,8 @@ const EditForm = ({ adminData, roles }) => {
     resolver: zodResolver(schema),
     defaultValues: {
       ...adminData,
-      phone: adminData?.phone || '',
-    }
-
+      phone: adminData?.phone || "",
+    },
   });
 
   // form submission
@@ -83,21 +81,23 @@ const EditForm = ({ adminData, roles }) => {
       form.append("phone", formData.phone?.trim());
       form.append("status", formData.status.toString());
 
-      const res = await pageApiHelper.put(`admins/${adminData.id}`, form, token);
+      const res = await pageApiHelper.put(
+        `admins/${adminData.id}`,
+        form,
+        token,
+      );
 
       if (!res?.success && res?.status === 400) {
-
         let errors = res?.data?.data?.errors || [];
 
         if (errors) {
-          Object.keys(errors).forEach(key => {
+          Object.keys(errors).forEach((key) => {
             setError(key, {
               type: "server",
-              message: errors[key]
+              message: errors[key],
             });
           });
         }
-
 
         return;
       }
@@ -108,9 +108,8 @@ const EditForm = ({ adminData, roles }) => {
         // Optionally, redirect or perform other actions after successful creation
         router.push("/admins");
       }
-
     } catch (error) {
-      toast.error(error.message || 'Something went wrong');
+      toast.error(error.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
@@ -145,7 +144,6 @@ const EditForm = ({ adminData, roles }) => {
                         {role.displayName}
                       </MenuItem>
                     ))}
-
                   </CustomTextField>
                 )}
               />
@@ -225,13 +223,9 @@ const EditForm = ({ adminData, roles }) => {
                   );
                 }}
               />
-
             </Grid>
 
-            <Grid size={{ md: 6 }}>
-
-
-            </Grid>
+            <Grid size={{ md: 6 }}></Grid>
 
             <Grid size={{ xs: 12 }} className="flex gap-4">
               <Button
@@ -240,7 +234,7 @@ const EditForm = ({ adminData, roles }) => {
                 disabled={isSubmitting}
                 endIcon={
                   isSubmitting ? (
-                    <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' />
+                    <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
                   ) : null
                 }
               >

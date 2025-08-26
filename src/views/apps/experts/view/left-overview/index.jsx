@@ -5,7 +5,6 @@ import Grid from "@mui/material/Grid2";
 import Details from "./Details";
 
 const LeftOverview = ({ expertData }) => {
-
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>

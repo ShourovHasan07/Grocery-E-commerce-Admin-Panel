@@ -73,7 +73,6 @@ const AboutOverview = ({ data }) => {
           </CardContent>
         </Card>
       </Grid>
-
     </Grid>
   );
 };

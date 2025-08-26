@@ -1,22 +1,21 @@
 // 👉 IsEmpty
-export const isEmpty = value => {
-  if (value === null || value === undefined || value === '')
-    return true
+export const isEmpty = (value) => {
+  if (value === null || value === undefined || value === "") return true;
 
-  return !!(Array.isArray(value) && value.length === 0)
-}
+  return !!(Array.isArray(value) && value.length === 0);
+};
 
 // 👉 IsNullOrUndefined
-export const isNullOrUndefined = value => {
-  return value === null || value === undefined
-}
+export const isNullOrUndefined = (value) => {
+  return value === null || value === undefined;
+};
 
 export const stringToBoolean = (stringValue) => {
   if (stringValue === null || stringValue === undefined) {
     return false;
   }
 
-  if (typeof stringValue === 'boolean') {
+  if (typeof stringValue === "boolean") {
     return stringValue;
   }
 
@@ -38,43 +37,45 @@ export const stringToBoolean = (stringValue) => {
     default:
       return false;
   }
-}
+};
 
 // 👉 IsEmptyArray
-export const isEmptyArray = arr => {
-  return Array.isArray(arr) && arr.length === 0
-}
+export const isEmptyArray = (arr) => {
+  return Array.isArray(arr) && arr.length === 0;
+};
 
 // 👉 IsObject
-export const isObject = obj => obj !== null && !!obj && typeof obj === 'object' && !Array.isArray(obj)
+export const isObject = (obj) =>
+  obj !== null && !!obj && typeof obj === "object" && !Array.isArray(obj);
 
 // 👉 IsToday
-export const isToday = date => {
-  const today = new Date()
+export const isToday = (date) => {
+  const today = new Date();
 
-  return (date.getDate() === today.getDate()
-    && date.getMonth() === today.getMonth()
-    && date.getFullYear() === today.getFullYear())
-}
+  return (
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
+  );
+};
 
 // 👉 isJWT
-export const isJWT = token => {
-  return token && token.split('.').length === 3;
-}
+export const isJWT = (token) => {
+  return token && token.split(".").length === 3;
+};
 
 // 👉 parseJWT
-export const parseJWT = token => {
+export const parseJWT = (token) => {
   try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
 
     const jsonPayload = decodeURIComponent(
       atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join(""),
     );
-
 
     return JSON.parse(jsonPayload);
   } catch (error) {
@@ -82,89 +83,88 @@ export const parseJWT = token => {
 
     return null;
   }
-}
+};
 
 // 👉 Status
-export const activeStatusLabel = status => {
+export const activeStatusLabel = (status) => {
   switch (status) {
     case false:
-      return 'Inactive'
+      return "Inactive";
     case true:
-      return 'Active'
+      return "Active";
     default:
-      return 'N/A'
+      return "N/A";
   }
-}
-
+};
 
 // 👉 Status Color
-export const activeStatusColor = status => {
+export const activeStatusColor = (status) => {
   switch (status) {
     case false:
-      return 'warning'
+      return "warning";
     case true:
-      return 'success'
+      return "success";
     case completed:
-      return 'success'
+      return "success";
     default:
-      return 'secondary'
+      return "secondary";
   }
-}
+};
 
 //pending, confirmed, ongoing, completed, cancelled,
-export const bookingStatusLabel = status => {
+export const bookingStatusLabel = (status) => {
   switch (status) {
-    case 'cancelled':
-      return 'Cancelled';
-    case 'completed':
-      return 'Completed';
-    case 'ongoing':
-      return 'Ongoing';
-    case 'confirmed':
-      return 'Upcoming';
-    case 'pending':
-      return 'Pending';
+    case "cancelled":
+      return "Cancelled";
+    case "completed":
+      return "Completed";
+    case "ongoing":
+      return "Ongoing";
+    case "confirmed":
+      return "Upcoming";
+    case "pending":
+      return "Pending";
     default:
       return String(status);
   }
-}
+};
 
-export const bookingStatusColor = status => {
+export const bookingStatusColor = (status) => {
   switch (status) {
-    case 'cancelled':
-      return 'error';
-    case 'completed':
-      return 'success';
-    case 'ongoing':
-      return 'info';
-    case 'confirmed':
-      return 'primary';
-    case 'pending':
-      return 'warning';
+    case "cancelled":
+      return "error";
+    case "completed":
+      return "success";
+    case "ongoing":
+      return "info";
+    case "confirmed":
+      return "primary";
+    case "pending":
+      return "warning";
     default:
-      return 'default';
+      return "default";
   }
-}
+};
 
 // 👉 Popular Status
-export const popularStatusLabel = popular => {
+export const popularStatusLabel = (popular) => {
   switch (popular) {
     case true:
-      return 'Yes'
+      return "Yes";
     default:
-      return 'No'
+      return "No";
   }
-}
+};
 
 // 👉 Popular Color
-export const popularStatusColor = popular => {
+export const popularStatusColor = (popular) => {
   switch (popular) {
     case true:
-      return 'success'
+      return "success";
     default:
-      return 'secondary'
+      return "secondary";
   }
-}
+};
 
 // 👉 Format Time
 export const timeFormat = (time24h) => {
@@ -174,4 +174,4 @@ export const timeFormat = (time24h) => {
   hours = +hours % 12 || 12; // convert '00' to '12'
 
   return `${hours}:${minutes} ${modifier}`;
-}
+};

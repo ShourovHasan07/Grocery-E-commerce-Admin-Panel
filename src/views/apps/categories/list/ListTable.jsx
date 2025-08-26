@@ -34,11 +34,10 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 
-import CustomAvatar from "@core/components/mui/Avatar";// Util Imports
+import CustomAvatar from "@core/components/mui/Avatar"; // Util Imports
 import { getInitials } from "@/utils/getInitials";
 import ConfirmDialog from "@components/dialogs/ConfirmDialog";
-import AddDrawer from './AddDrawer'
-
+import AddDrawer from "./AddDrawer";
 
 // Third-party Imports
 
@@ -53,7 +52,12 @@ import TablePaginationComponent from "@components/TablePaginationComponent";
 import CustomTextField from "@core/components/mui/TextField";
 
 // Util Imports
-import { activeStatusLabel, activeStatusColor, popularStatusLabel, popularStatusColor } from "@/utils/helpers";
+import {
+  activeStatusLabel,
+  activeStatusColor,
+  popularStatusLabel,
+  popularStatusColor,
+} from "@/utils/helpers";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
@@ -93,7 +97,6 @@ const ListTable = ({ tableData }) => {
     data: {},
   });
 
-
   // Session
   const { data: session } = useSession();
   const token = session?.accessToken;
@@ -107,8 +110,10 @@ const ListTable = ({ tableData }) => {
 
       // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {
-        setData(prevData => prevData.filter((item) => item.id !== itemId));
-        setFilteredData(prevData => prevData.filter((item) => item.id !== itemId));
+        setData((prevData) => prevData.filter((item) => item.id !== itemId));
+        setFilteredData((prevData) =>
+          prevData.filter((item) => item.id !== itemId),
+        );
 
         setDialogOpen((prevState) => ({
           ...prevState,
@@ -118,12 +123,11 @@ const ListTable = ({ tableData }) => {
 
         toast.success("Deleted successfully");
       }
-
     } catch (error) {
       // console.error('Delete failed:', error);
 
       // Show error in toast
-      toast.error(error.message)
+      toast.error(error.message);
     }
   };
 
@@ -134,21 +138,27 @@ const ListTable = ({ tableData }) => {
         cell: ({ row }) => (
           <div className="flex items-center">
             <IconButton
-              onClick={() => setAddDrawerOpen((prevState) => ({
-                ...prevState,
-                open: !prevState.open,
-                type: "edit",
-                data: row.original
-              }))}
+              onClick={() =>
+                setAddDrawerOpen((prevState) => ({
+                  ...prevState,
+                  open: !prevState.open,
+                  type: "edit",
+                  data: row.original,
+                }))
+              }
             >
               <i className="tabler-edit text-textPrimary" />
             </IconButton>
 
-            <IconButton onClick={() => setDialogOpen((prevState) => ({
-              ...prevState,
-              open: !prevState.open,
-              data: row.original
-            }))}>
+            <IconButton
+              onClick={() =>
+                setDialogOpen((prevState) => ({
+                  ...prevState,
+                  open: !prevState.open,
+                  data: row.original,
+                }))
+              }
+            >
               <i className="tabler-trash text-textSecondary" />
             </IconButton>
           </div>
@@ -275,15 +285,17 @@ const ListTable = ({ tableData }) => {
           </CustomTextField>
           <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
             <Button
-              variant='contained'
-              startIcon={<i className='tabler-plus' />}
-              onClick={() => setAddDrawerOpen((prevState) => ({
-                ...prevState,
-                open: !prevState.open,
-                type: "create",
-                data: {}
-              }))}
-              className='max-sm:is-full'
+              variant="contained"
+              startIcon={<i className="tabler-plus" />}
+              onClick={() =>
+                setAddDrawerOpen((prevState) => ({
+                  ...prevState,
+                  open: !prevState.open,
+                  type: "create",
+                  data: {},
+                }))
+              }
+              className="max-sm:is-full"
             >
               Add New Category
             </Button>
@@ -375,12 +387,14 @@ const ListTable = ({ tableData }) => {
       </Card>
       <AddDrawer
         drawerData={addDrawerOpen}
-        handleClose={() => setAddDrawerOpen((prevState) => ({
-          ...prevState,
-          open: !prevState.open,
-          type: prevState.type,
-          data: {},
-        }))}
+        handleClose={() =>
+          setAddDrawerOpen((prevState) => ({
+            ...prevState,
+            open: !prevState.open,
+            type: prevState.type,
+            data: {},
+          }))
+        }
         userData={data}
         setData={setData}
         setType={addDrawerOpen.type}
@@ -388,12 +402,16 @@ const ListTable = ({ tableData }) => {
 
       <ConfirmDialog
         dialogData={dialogOpen}
-        handleCloseDialog={() => setDialogOpen((prevState) => ({
-          ...prevState,
-          open: !prevState.open,
-          data: {},
-        }))}
-        handleDelete={() => { handleDelete(dialogOpen.data.id); }}
+        handleCloseDialog={() =>
+          setDialogOpen((prevState) => ({
+            ...prevState,
+            open: !prevState.open,
+            data: {},
+          }))
+        }
+        handleDelete={() => {
+          handleDelete(dialogOpen.data.id);
+        }}
       />
     </>
   );

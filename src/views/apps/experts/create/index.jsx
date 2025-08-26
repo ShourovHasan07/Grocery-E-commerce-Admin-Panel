@@ -4,7 +4,6 @@ import Grid from "@mui/material/Grid2";
 import CreateForm from "./CreateForm";
 
 const ExpertCreate = ({ categoryData }) => {
-
   //console.log("ExpertCreate categoryData:", categoryData);
 
   return (

@@ -6,16 +6,19 @@ import pageApiHelper from "@/utils/pageApiHelper";
 // Component Imports
 import ExpertCreate from "@/views/apps/experts/create";
 
-
 // expert category options data
 const getCategoryData = async () => {
   // Vars
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   if (session?.accessToken) {
     try {
       // Fetching the categories data
-      const result = await pageApiHelper.get('experts/create-edit-options', {}, session.accessToken);
+      const result = await pageApiHelper.get(
+        "experts/create-edit-options",
+        {},
+        session.accessToken,
+      );
 
       if (result.success) {
         return result.data;
@@ -30,7 +33,7 @@ const getCategoryData = async () => {
   }
 
   return null;
-}
+};
 
 export const metadata = {
   title: "Experts - AskValor",

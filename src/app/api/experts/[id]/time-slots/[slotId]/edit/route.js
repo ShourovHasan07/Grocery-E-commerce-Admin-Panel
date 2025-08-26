@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 import routeApiHelper from "@/utils/routeApiHelper";
 
@@ -8,8 +8,12 @@ export async function POST(request, { params }) {
 
   if (!token) {
     return NextResponse.json(
-      { success: false, data: null, message: "Authorization header is missing" },
-      { status: 401 }
+      {
+        success: false,
+        data: null,
+        message: "Authorization header is missing",
+      },
+      { status: 401 },
     );
   }
 
@@ -18,15 +22,15 @@ export async function POST(request, { params }) {
 
     if (!id || !/^\d+$/.test(id)) {
       return NextResponse.json(
-        { success: false, message: 'Invalid expert ID' },
-        { status: 400 }
+        { success: false, message: "Invalid expert ID" },
+        { status: 400 },
       );
     }
 
     if (!slotId || !/^\d+$/.test(slotId)) {
       return NextResponse.json(
         { success: false, message: "Invalid time-slot ID" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -39,7 +43,11 @@ export async function POST(request, { params }) {
     }
 
     // Call backend API using apiHelper
-    const response = await routeApiHelper.post(`experts/time-slot/${slotId}/edit`, outgoingFormData, token);
+    const response = await routeApiHelper.post(
+      `experts/time-slot/${slotId}/edit`,
+      outgoingFormData,
+      token,
+    );
 
     if (!response.success) {
       return NextResponse.json(
@@ -48,7 +56,7 @@ export async function POST(request, { params }) {
           message: "Backend update failed",
           data: response.data,
         },
-        { status: response.status || 500 }
+        { status: response.status || 500 },
       );
     }
 
@@ -58,7 +66,7 @@ export async function POST(request, { params }) {
         data: response.data,
         message: "time-slot updated successfully",
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -67,17 +75,7 @@ export async function POST(request, { params }) {
         message: "Internal server error",
         error: error?.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-
-
-
-
-
-
-
-
-
-

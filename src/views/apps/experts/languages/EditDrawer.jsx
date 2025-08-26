@@ -10,10 +10,17 @@ import { Controller } from "react-hook-form";
 
 import CustomTextField from "@core/components/mui/TextField";
 
-
 const EditDrawer = (props) => {
   // Props
-  const { open, onClose, control, errors, handleSubmit, onSubmit, isSubmitting } = props;
+  const {
+    open,
+    onClose,
+    control,
+    errors,
+    handleSubmit,
+    onSubmit,
+    isSubmitting,
+  } = props;
 
   return (
     <Drawer
@@ -32,7 +39,10 @@ const EditDrawer = (props) => {
       </div>
       <Divider />
       <div>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 p-6">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-3 p-6"
+        >
           <Grid container spacing={4} sx={{ mt: 2 }}>
             <Controller
               name="lagName"
@@ -72,17 +82,27 @@ const EditDrawer = (props) => {
                 />
               )}
             />
-
           </Grid>
 
           <Grid className="flex gap-3">
             <Button
               type="submit"
-              variant="contained" disabled={isSubmitting}
-              endIcon={isSubmitting ? <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' /> : null}>
+              variant="contained"
+              disabled={isSubmitting}
+              endIcon={
+                isSubmitting ? (
+                  <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
+                ) : null
+              }
+            >
               Update
             </Button>
-            <Button onClick={onClose} variant="tonal" color="error" sx={{ mr: 2 }}>
+            <Button
+              onClick={onClose}
+              variant="tonal"
+              color="error"
+              sx={{ mr: 2 }}
+            >
               Cancel
             </Button>
           </Grid>

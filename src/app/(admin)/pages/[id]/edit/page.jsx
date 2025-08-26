@@ -9,12 +9,16 @@ import pageApiHelper from "@/utils/pageApiHelper";
 
 const getExpertData = async (id) => {
   // Vars
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   if (session?.accessToken) {
     try {
       // Fetching the categories data
-      const result = await pageApiHelper.get(`pages/${id}`, {}, session.accessToken);
+      const result = await pageApiHelper.get(
+        `pages/${id}`,
+        {},
+        session.accessToken,
+      );
 
       if (result.success) {
         return result.data;
@@ -22,14 +26,12 @@ const getExpertData = async (id) => {
 
       return null;
     } catch (error) {
-
       return null;
     }
   }
 
   return null;
-}
-
+};
 
 export const metadata = {
   title: "Page Edit - AskValor",
@@ -39,7 +41,7 @@ const PageEditApp = async ({ params }) => {
   const { id } = await params;
   const editPage = await getExpertData(id);
 
-  const pageData = editPage?.data?.page || {}
+  const pageData = editPage?.data?.page || {};
 
   return <PageEdit pageData={pageData} />;
 };

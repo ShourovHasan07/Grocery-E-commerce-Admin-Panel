@@ -19,7 +19,6 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-
 // Third-party Imports
 import { toast } from "react-toastify";
 
@@ -75,7 +74,6 @@ const AddDrawer = (props) => {
       setFormData(initialData);
       resetForm(initialData);
     }
-
   }, [data, resetForm]);
 
   // form submission
@@ -96,21 +94,34 @@ const AddDrawer = (props) => {
 
       const headerConfig = {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          "Content-Type": "multipart/form-data",
+        },
       };
 
-      if (setType === 'edit') {
-        response = await pageApiHelper.put(`languages/${data.id}`, form, token, headerConfig);
+      if (setType === "edit") {
+        response = await pageApiHelper.put(
+          `languages/${data.id}`,
+          form,
+          token,
+          headerConfig,
+        );
         toastMessage = "Language updated successfully";
       } else {
-        response = await pageApiHelper.post('languages', form, token, headerConfig);
+        response = await pageApiHelper.post(
+          "languages",
+          form,
+          token,
+          headerConfig,
+        );
         toastMessage = "Language created successfully";
       }
 
       const res = response?.data;
 
-      if (!response?.success && (response?.status === 400 || response?.status === 404)) {
+      if (
+        !response?.success &&
+        (response?.status === 400 || response?.status === 404)
+      ) {
         if (res?.status === 404) {
           toast.error("Language not found");
 
@@ -120,24 +131,23 @@ const AddDrawer = (props) => {
         let errors = res?.data?.errors || [];
 
         if (errors) {
-          Object.keys(errors).forEach(key => {
+          Object.keys(errors).forEach((key) => {
             setError(key, {
               type: "server",
-              message: errors[key]
+              message: errors[key],
             });
           });
         }
-
 
         return;
       }
 
       if (res?.success && res?.data?.success) {
-        if (setType === 'edit') {
-          const updatedData = userData.map(item =>
+        if (setType === "edit") {
+          const updatedData = userData.map((item) =>
             item.id === res?.data?.language?.id
               ? { ...item, ...res?.data?.language }
-              : item
+              : item,
           );
 
           setData(updatedData);
@@ -151,9 +161,8 @@ const AddDrawer = (props) => {
 
         toast.success(toastMessage);
       }
-
     } catch (error) {
-      toast.error(error.message || 'Something went wrong');
+      toast.error(error.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
@@ -175,7 +184,9 @@ const AddDrawer = (props) => {
       sx={{ "& .MuiDrawer-paper": { width: { xs: 300, sm: 400 } } }}
     >
       <div className="flex items-center justify-between plb-5 pli-6">
-        <Typography variant="h5">{setType == 'edit' ? 'Edit Language' : 'Add New Language'}</Typography>
+        <Typography variant="h5">
+          {setType == "edit" ? "Edit Language" : "Add New Language"}
+        </Typography>
         <IconButton size="small" onClick={handleReset}>
           <i className="tabler-x text-2xl text-textPrimary" />
         </IconButton>
@@ -233,7 +244,7 @@ const AddDrawer = (props) => {
               disabled={isSubmitting}
               endIcon={
                 isSubmitting ? (
-                  <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' />
+                  <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
                 ) : null
               }
             >

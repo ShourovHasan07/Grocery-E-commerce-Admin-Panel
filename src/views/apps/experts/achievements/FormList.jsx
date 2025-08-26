@@ -3,8 +3,7 @@
 // React Imports
 import { useState } from "react";
 
-
-import { useParams } from 'next/navigation';
+import { useParams } from "next/navigation";
 
 import Link from "next/link";
 
@@ -34,7 +33,6 @@ import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 import CustomAvatar from "@core/components/mui/Avatar";
 
 import CustomTextField from "@core/components/mui/TextField";
-
 
 import pageApiHelper from "@/utils/pageApiHelper";
 
@@ -70,9 +68,8 @@ const FormList = ({ achievementDropdown, achievementList }) => {
     resolver: zodResolver(schema),
     defaultValues: {
       achievement: "",
-    }
+    },
   });
-
 
   // form submission
   const { data: session } = useSession();
@@ -86,7 +83,11 @@ const FormList = ({ achievementDropdown, achievementList }) => {
 
       form.append("achievement", formData.achievement);
 
-      const res = await pageApiHelper.post(`experts/${id}/attach/achievement`, form, token);
+      const res = await pageApiHelper.post(
+        `experts/${id}/attach/achievement`,
+        form,
+        token,
+      );
 
       const response = res?.data;
       const innerData = response?.data;
@@ -96,10 +97,10 @@ const FormList = ({ achievementDropdown, achievementList }) => {
           let errors = innerData?.errors || [];
 
           if (errors) {
-            Object.keys(errors).forEach(key => {
+            Object.keys(errors).forEach((key) => {
               setError(key, {
                 type: "server",
-                message: errors[key]
+                message: errors[key],
               });
             });
 
@@ -118,14 +119,13 @@ const FormList = ({ achievementDropdown, achievementList }) => {
         setAchievements(innerData.achievements);
 
         resetForm({
-          achievement: ""
-        })
+          achievement: "",
+        });
 
         toast.success("Achievement Added successfully");
       }
-
     } catch (error) {
-      toast.error(error.message || 'Something went wrong');
+      toast.error(error.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
@@ -147,12 +147,17 @@ const FormList = ({ achievementDropdown, achievementList }) => {
 
       form.append("achievement", itemId);
 
-      const res = await pageApiHelper.post(`experts/${id}/detach/achievement`, form, token);
-
+      const res = await pageApiHelper.post(
+        `experts/${id}/detach/achievement`,
+        form,
+        token,
+      );
 
       // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {
-        setAchievements(prevData => achievements.filter((item) => item.id !== itemId));
+        setAchievements((prevData) =>
+          achievements.filter((item) => item.id !== itemId),
+        );
 
         setDialogOpen((prevState) => ({
           ...prevState,
@@ -161,13 +166,16 @@ const FormList = ({ achievementDropdown, achievementList }) => {
 
         toast.success("Deleted successfully");
 
-        return
+        return;
       }
 
-      toast.error(res?.data?.error || "Something went wrong while deleting the achievement");
+      toast.error(
+        res?.data?.error ||
+          "Something went wrong while deleting the achievement",
+      );
     } catch (error) {
       // Show error in toast
-      toast.error(error.message)
+      toast.error(error.message);
     }
   };
 
@@ -195,16 +203,17 @@ const FormList = ({ achievementDropdown, achievementList }) => {
                         helperText: errors.achievement.message,
                       })}
                     >
-                      <MenuItem value="" selected>Select Achievement</MenuItem>
+                      <MenuItem value="" selected>
+                        Select Achievement
+                      </MenuItem>
                       {achievementDropdown?.map((achievement) => (
-                        <MenuItem key={achievement.id} value={achievement.id}>{achievement.title}</MenuItem>
+                        <MenuItem key={achievement.id} value={achievement.id}>
+                          {achievement.title}
+                        </MenuItem>
                       ))}
                     </CustomTextField>
                   )}
                 />
-
-
-
               </Grid>
 
               <Grid size={{ xs: 12 }} className="flex gap-4">
@@ -214,7 +223,7 @@ const FormList = ({ achievementDropdown, achievementList }) => {
                   disabled={isSubmitting}
                   endIcon={
                     isSubmitting ? (
-                      <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' />
+                      <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
                     ) : null
                   }
                 >
@@ -252,30 +261,40 @@ const FormList = ({ achievementDropdown, achievementList }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {achievements && achievements.map((achievement, index) => (
-                    <tr key={index}>
-                      <td className="border px-4 py-2 text-center">
-                        <IconButton onClick={() => setDialogOpen((prevState) => ({
-                          ...prevState,
-                          open: !prevState.open,
-                          id: achievement.id,
-                        }))}
-                        >
-                          <i className="tabler-trash text-error" />
-                        </IconButton>
-                      </td>
-                      <td className="border px-4 py-2">{index + 1}</td>
-                      <td className="border px-4 py-2">
-                        {getAvatar({
-                          avatar: achievement.image,
-                          name: achievement.title,
-                        })}
-                      </td>
-                      <td className="border px-4 py-2">{achievement.title}</td>
-                      <td className="border px-4 py-2">{achievement.subTitle}</td>
-                      <td className="border px-4 py-2">{formattedDate(achievement.pivot.createdAt)}</td>
-                    </tr>
-                  ))}
+                  {achievements &&
+                    achievements.map((achievement, index) => (
+                      <tr key={index}>
+                        <td className="border px-4 py-2 text-center">
+                          <IconButton
+                            onClick={() =>
+                              setDialogOpen((prevState) => ({
+                                ...prevState,
+                                open: !prevState.open,
+                                id: achievement.id,
+                              }))
+                            }
+                          >
+                            <i className="tabler-trash text-error" />
+                          </IconButton>
+                        </td>
+                        <td className="border px-4 py-2">{index + 1}</td>
+                        <td className="border px-4 py-2">
+                          {getAvatar({
+                            avatar: achievement.image,
+                            name: achievement.title,
+                          })}
+                        </td>
+                        <td className="border px-4 py-2">
+                          {achievement.title}
+                        </td>
+                        <td className="border px-4 py-2">
+                          {achievement.subTitle}
+                        </td>
+                        <td className="border px-4 py-2">
+                          {formattedDate(achievement.pivot.createdAt)}
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
@@ -284,12 +303,16 @@ const FormList = ({ achievementDropdown, achievementList }) => {
 
         <ConfirmDialog
           dialogData={dialogOpen}
-          handleCloseDialog={() => setDialogOpen((prevState) => ({
-            ...prevState,
-            open: !prevState.open,
-            id: null,
-          }))}
-          handleDelete={() => { handleDelete(dialogOpen.id); }}
+          handleCloseDialog={() =>
+            setDialogOpen((prevState) => ({
+              ...prevState,
+              open: !prevState.open,
+              id: null,
+            }))
+          }
+          handleDelete={() => {
+            handleDelete(dialogOpen.id);
+          }}
         />
       </Card>
     </>

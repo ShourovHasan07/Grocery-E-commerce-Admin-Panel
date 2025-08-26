@@ -6,7 +6,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 // MUI Imports
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid2";
@@ -23,11 +23,9 @@ import Checkbox from "@mui/material/Checkbox";
 import { toast } from "react-toastify";
 import { Controller, useForm } from "react-hook-form";
 
-
 // Components Imports
 
 import { useSession } from "next-auth/react";
-
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,7 +34,6 @@ import CustomTextField from "@core/components/mui/TextField";
 
 import pageApiHelper from "@/utils/pageApiHelper";
 
-
 // Validation Schema
 const schema = z
   .object({
@@ -44,7 +41,9 @@ const schema = z
     name: z.string().min(3, "Name must be at least 3 characters"),
     email: z.string().email("Please enter a valid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
-    confirm_password: z.string().min(6, "Confirm Password must be at least 6 characters"),
+    confirm_password: z
+      .string()
+      .min(6, "Confirm Password must be at least 6 characters"),
     phone: z.string().default(""),
     status: z.boolean().default(true),
   })
@@ -52,8 +51,6 @@ const schema = z
     message: "Passwords do not match",
     path: ["confirm_password"],
   });
-
-
 
 const CreateForm = ({ tableData }) => {
   // States
@@ -83,13 +80,11 @@ const CreateForm = ({ tableData }) => {
     },
   });
 
-
   //form submission
   const { data: session } = useSession();
   const token = session?.accessToken;
 
   const onSubmit = async (formData) => {
-
     setIsSubmitting(true);
 
     try {
@@ -101,7 +96,6 @@ const CreateForm = ({ tableData }) => {
       form.append("phone", formData.phone);
       form.append("password", formData.password);
       form.append("status", formData.status.toString());
-
 
       const headerConfig = {
         headers: { "Content-Type": "multipart/form-data" },
@@ -115,8 +109,8 @@ const CreateForm = ({ tableData }) => {
         Object.keys(errors).forEach((key) => {
           setError(key, { type: "server", message: errors[key] });
         });
-        
-return;
+
+        return;
       }
 
       if (res?.success && res?.data?.success) {
@@ -130,8 +124,6 @@ return;
       setIsSubmitting(false);
     }
   };
-
-
 
   return (
     <Card>
@@ -162,7 +154,6 @@ return;
                         {createOption.displayName}
                       </MenuItem>
                     ))}
-
                   </CustomTextField>
                 )}
               />
@@ -204,7 +195,6 @@ return;
                   />
                 )}
               />
-
             </Grid>
 
             <Grid size={{ md: 6 }}>
@@ -243,8 +233,16 @@ return;
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton onClick={() => setIsPasswordShown((prev) => !prev)}>
-                            <i className={isPasswordShown ? "tabler-eye" : "tabler-eye-off"} />
+                          <IconButton
+                            onClick={() => setIsPasswordShown((prev) => !prev)}
+                          >
+                            <i
+                              className={
+                                isPasswordShown
+                                  ? "tabler-eye"
+                                  : "tabler-eye-off"
+                              }
+                            />
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -269,8 +267,18 @@ return;
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton onClick={() => setIsConfirmPasswordShown((prev) => !prev)}>
-                            <i className={isConfirmPasswordShown ? "tabler-eye" : "tabler-eye-off"} />
+                          <IconButton
+                            onClick={() =>
+                              setIsConfirmPasswordShown((prev) => !prev)
+                            }
+                          >
+                            <i
+                              className={
+                                isConfirmPasswordShown
+                                  ? "tabler-eye"
+                                  : "tabler-eye-off"
+                              }
+                            />
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -305,7 +313,7 @@ return;
                 disabled={isSubmitting}
                 endIcon={
                   isSubmitting ? (
-                    <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' />
+                    <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
                   ) : null
                 }
               >

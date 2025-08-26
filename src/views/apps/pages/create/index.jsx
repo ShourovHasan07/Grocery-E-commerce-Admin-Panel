@@ -4,7 +4,6 @@ import Grid from "@mui/material/Grid2";
 import CreateForm from "./CreateForm";
 
 const PageCreate = () => {
-
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>

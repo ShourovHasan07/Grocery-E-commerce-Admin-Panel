@@ -3,7 +3,7 @@
 // React Imports
 import { useEffect, useRef, useState } from "react";
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 // MUI Imports
@@ -43,7 +43,9 @@ const schema = z
       .min(1, "This field is required")
       .email("Please enter a valid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
-    confirm_password: z.string().min(6, "Confirm Password must be at least 6 characters"),
+    confirm_password: z
+      .string()
+      .min(6, "Confirm Password must be at least 6 characters"),
     status: z.boolean().default(true),
   })
 
@@ -51,10 +53,6 @@ const schema = z
     message: "Passwords do not match",
     path: ["confirm_password"],
   });
-
-
-
-
 
 const EditForm = ({ adminData }) => {
   const router = useRouter();
@@ -76,10 +74,9 @@ const EditForm = ({ adminData }) => {
     resolver: zodResolver(schema),
     defaultValues: {
       ...adminData,
-      password: '',
-      confirm_password: '',
-    }
-
+      password: "",
+      confirm_password: "",
+    },
   });
 
   // form submission
@@ -92,21 +89,23 @@ const EditForm = ({ adminData }) => {
       form.append("password", formData.password);
       form.append("confirmPassword", formData.confirm_password);
 
-      const res = await pageApiHelper.put(`admins/${adminData.id}/reset-password`, form, token);
+      const res = await pageApiHelper.put(
+        `admins/${adminData.id}/reset-password`,
+        form,
+        token,
+      );
 
       if (!res?.success && res?.status === 400) {
-
         let errors = res?.data?.data?.errors || [];
 
         if (errors) {
-          Object.keys(errors).forEach(key => {
+          Object.keys(errors).forEach((key) => {
             setError(key, {
               type: "server",
-              message: errors[key]
+              message: errors[key],
             });
           });
         }
-
 
         return;
       }
@@ -116,9 +115,8 @@ const EditForm = ({ adminData }) => {
 
         router.push("/admins");
       }
-
     } catch (error) {
-      toast.error(error.message || 'Something went wrong');
+      toast.error(error.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
@@ -188,8 +186,16 @@ const EditForm = ({ adminData }) => {
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton onClick={() => setIsPasswordShown((prev) => !prev)}>
-                            <i className={isPasswordShown ? "tabler-eye" : "tabler-eye-off"} />
+                          <IconButton
+                            onClick={() => setIsPasswordShown((prev) => !prev)}
+                          >
+                            <i
+                              className={
+                                isPasswordShown
+                                  ? "tabler-eye"
+                                  : "tabler-eye-off"
+                              }
+                            />
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -214,8 +220,18 @@ const EditForm = ({ adminData }) => {
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton onClick={() => setIsConfirmPasswordShown((prev) => !prev)}>
-                            <i className={isConfirmPasswordShown ? "tabler-eye" : "tabler-eye-off"} />
+                          <IconButton
+                            onClick={() =>
+                              setIsConfirmPasswordShown((prev) => !prev)
+                            }
+                          >
+                            <i
+                              className={
+                                isConfirmPasswordShown
+                                  ? "tabler-eye"
+                                  : "tabler-eye-off"
+                              }
+                            />
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -223,13 +239,9 @@ const EditForm = ({ adminData }) => {
                   />
                 )}
               />
-
             </Grid>
 
-            <Grid size={{ md: 6 }}>
-
-
-            </Grid>
+            <Grid size={{ md: 6 }}></Grid>
 
             <Grid size={{ xs: 12 }} className="flex gap-4">
               <Button
@@ -238,7 +250,7 @@ const EditForm = ({ adminData }) => {
                 disabled={isSubmitting}
                 endIcon={
                   isSubmitting ? (
-                    <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' />
+                    <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
                   ) : null
                 }
               >

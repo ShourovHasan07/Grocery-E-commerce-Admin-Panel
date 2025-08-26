@@ -79,9 +79,9 @@ const Footer = ({ mode }) => {
                             "rgb(var(--mui-mainColorChannels-dark) / 0.22)",
                         },
                         "&.MuiFilledInput-root:not(.Mui-focused):not(.Mui-disabled):hover":
-                        {
-                          borderColor: "rgba(255 255 255 / 0.6) !important",
-                        },
+                          {
+                            borderColor: "rgba(255 255 255 / 0.6) !important",
+                          },
                       },
                     }}
                   />

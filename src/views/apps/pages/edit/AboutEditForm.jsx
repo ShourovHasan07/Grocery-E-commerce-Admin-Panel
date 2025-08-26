@@ -6,8 +6,6 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-import { useSession } from "next-auth/react";
-
 // MUI Imports
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid2";
@@ -26,20 +24,26 @@ import { z } from "zod";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import TinyMCE from "@components/TinyMCE";
+import { useSession } from "next-auth/react";
+
 import CustomTextField from "@core/components/mui/TextField";
 
 import pageApiHelper from "@/utils/pageApiHelper";
 
 // Zod Imports
 const schema = z.object({
-  title: z.string().min(1, "This field is required"),
+  title: z
+    .string({ message: "This field is required" })
+    .min(1, "This field is required"),
   url: z
-    .string()
+    .string({ message: "This field is required" })
     .min(1, "This field is required")
     .min(3, "User Name must be at least 3 characters long"),
-  meta_title: z.string().default(""),
-  detail: z.string().trim().min(1, "This field is required"),
+  meta_title: z.string().nullable().default(""),
+  detail: z
+    .string({ message: "This field is required" })
+    .trim()
+    .min(1, "This field is required"),
   image: z
     .any()
     .refine((file) => !file || (file instanceof FileList && file.length > 0), {
@@ -69,34 +73,29 @@ const schema = z.object({
       },
     ),
   status: z.boolean().default(true),
-  meta_description: z.string().default(""),
+  meta_description: z.string().nullable().default(""),
 });
 
-const CreateForm = () => {
+const AboutEditForm = ({ page }) => {
+  console.log(page);
+
   // States
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Hooks
-
   const router = useRouter();
 
   const {
     control,
-    reset,
     handleSubmit,
     formState: { errors },
     setError,
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      title: "",
-      url: "",
-      meta_title: "",
-      detail: "",
-      meta_description: "",
+      ...page,
       image: "",
       meta_og_image: "",
-      status: true,
     },
   });
 
@@ -106,7 +105,7 @@ const CreateForm = () => {
   const fileInputRefOg = useRef(null);
   const [imagePreviewOg, setImagePreviewOg] = useState(null);
 
-  //handle changed
+  //handle change
   const handleImageChange = (files, onChange) => {
     if (files?.[0]) {
       const reader = new FileReader();
@@ -139,7 +138,8 @@ const CreateForm = () => {
     onChange(files);
   };
 
-  //form submission
+  // form submission
+
   const { data: session } = useSession();
   const token = session?.accessToken;
 
@@ -149,12 +149,18 @@ const CreateForm = () => {
     try {
       const form = new FormData();
 
-      form.append("title", formData.title.trim());
-      form.append("url", formData.url.trim());
-      form.append("detail", formData.detail.trim());
-      form.append("meta_title", formData.meta_title.trim());
+      form.append("title", formData.title ? formData.title.trim() : "");
+      form.append("url", formData.url ? formData.url.trim() : "");
+      form.append("detail", formData.detail ? formData.detail.trim() : "");
+      form.append(
+        "meta_title",
+        formData.meta_title ? formData.meta_title.trim() : "",
+      );
       form.append("status", formData.status.toString());
-      form.append("meta_description", formData.meta_description.trim());
+      form.append(
+        "meta_description",
+        formData.meta_description ? formData.meta_description.trim() : "",
+      );
 
       // Append image if exists
       if (formData.image?.[0]) {
@@ -165,7 +171,7 @@ const CreateForm = () => {
         form.append("meta_og_image", formData.meta_og_image[0]);
       }
 
-      //let res;
+      let res;
 
       const headerConfig = {
         headers: {
@@ -173,12 +179,15 @@ const CreateForm = () => {
         },
       };
 
-      const res = await pageApiHelper.post(`pages`, form, token, headerConfig);
+      res = await pageApiHelper.put(
+        `pages/${page.id}`,
+        form,
+        token,
+        headerConfig,
+      );
 
       if (!res?.success && res?.status === 400) {
         let errors = res?.data?.data?.errors || [];
-
-        console.log(errors);
 
         if (errors) {
           Object.keys(errors).forEach((key) => {
@@ -193,8 +202,7 @@ const CreateForm = () => {
       }
 
       if (res?.success && res?.data?.data?.success) {
-        handleReset();
-        toast.success("Page created successfully");
+        toast.success("Page updated successfully");
 
         // Optionally, redirect or perform other actions after successful creation
         router.push("/pages");
@@ -206,24 +214,9 @@ const CreateForm = () => {
     }
   };
 
-  const handleReset = () => {
-    setImagePreview(null);
-    setImagePreviewOg(null);
-    reset();
-
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-
-    if (fileInputRefOg.current) {
-      fileInputRefOg.current.value = "";
-    }
-  };
-
   return (
     <Card>
-      <CardHeader title="New Page Info" />
+      <CardHeader title="Update Page Info" />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={{ md: 6 }}>
@@ -235,31 +228,14 @@ const CreateForm = () => {
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
+                    value={field.value || ""}
                     fullWidth
                     className="mb-4"
-                    label="Title"
+                    label="Banner Title"
                     placeholder="Title"
                     {...(errors.title && {
                       error: true,
                       helperText: errors.title.message,
-                    })}
-                  />
-                )}
-              />
-              <Controller
-                name="url"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    className="mb-4"
-                    label="Slug Url"
-                    placeholder="Slug url"
-                    {...(errors.url && {
-                      error: true,
-                      helperText: errors.url.message,
                     })}
                   />
                 )}
@@ -301,12 +277,35 @@ const CreateForm = () => {
               />
 
               <Controller
+                name="detail"
+                control={control}
+                rules={{ required: false }}
+                render={({ field }) => (
+                  <CustomTextField
+                    {...field}
+                    value={field.value || ""}
+                    fullWidth
+                    multiline
+                    minRows={2}
+                    className="mb-2"
+                    label="Section top title"
+                    placeholder="Detail"
+                    {...(errors.detail && {
+                      error: true,
+                      helperText: errors.detail.message,
+                    })}
+                  />
+                )}
+              />
+
+              <Controller
                 name="meta_title"
                 control={control}
                 rules={{ required: true }}
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
+                    value={field.value || ""}
                     fullWidth
                     type="meta_title"
                     className="mb-4"
@@ -329,6 +328,7 @@ const CreateForm = () => {
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
+                    value={field.value || ""}
                     fullWidth
                     multiline
                     minRows={2}
@@ -350,6 +350,7 @@ const CreateForm = () => {
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
+                    value={field.value || ""}
                     fullWidth
                     multiline
                     minRows={2}
@@ -418,43 +419,6 @@ const CreateForm = () => {
               />
             </Grid>
 
-            <Grid className="w-full">
-              <label>Detail</label>
-              <Controller
-                name="detail"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <TinyMCE
-                    value={field.value}
-                    onEditorChange={(content) => field.onChange(content)}
-                    init={{
-                      height: 500,
-                      menubar: false,
-                      plugins: [
-                        "advlist",
-                        "anchor",
-                        "autolink",
-                        "image",
-                        "link",
-                        "lists",
-                        "searchreplace",
-                        "table",
-                        "wordcount",
-                      ],
-                      toolbar:
-                        "undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright | bullist numlist outdent indent | removeformat",
-                    }}
-                  />
-                )}
-              />
-              {errors.detail && (
-                <p className="text-[#ff4c51] mt-[2px] text-[13px]">
-                  {errors.detail.message}
-                </p>
-              )}
-            </Grid>
-
             <Grid size={{ xs: 12 }} className="flex gap-4">
               <Button
                 variant="contained"
@@ -467,16 +431,6 @@ const CreateForm = () => {
                 }
               >
                 Submit
-              </Button>
-
-              <Button
-                variant="tonal"
-                color="secondary"
-                type="reset"
-                onClick={handleReset}
-                disabled={isSubmitting}
-              >
-                Reset
               </Button>
 
               <Button
@@ -495,4 +449,4 @@ const CreateForm = () => {
   );
 };
 
-export default CreateForm;
+export default AboutEditForm;

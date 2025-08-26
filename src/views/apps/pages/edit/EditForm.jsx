@@ -3,7 +3,7 @@
 // React Imports
 import { useRef, useState } from "react";
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 // MUI Imports
@@ -14,7 +14,6 @@ import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-
 
 // Third-party Imports
 import { toast } from "react-toastify";
@@ -27,7 +26,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useSession } from "next-auth/react";
 
-import TinyMCE from '@components/TinyMCE'
+import TinyMCE from "@components/TinyMCE";
 import CustomTextField from "@core/components/mui/TextField";
 
 import pageApiHelper from "@/utils/pageApiHelper";
@@ -35,15 +34,15 @@ import pageApiHelper from "@/utils/pageApiHelper";
 // Zod Imports
 const schema = z.object({
   title: z
-    .string()
+    .string({ message: "This field is required" })
     .min(1, "This field is required"),
   url: z
-    .string()
+    .string({ message: "This field is required" })
     .min(1, "This field is required")
     .min(3, "User Name must be at least 3 characters long"),
-  meta_title: z.string().default(""),
+  meta_title: z.string().nullable().default(""),
   detail: z
-    .string()
+    .string({ message: "This field is required" })
     .trim()
     .min(1, "This field is required"),
   image: z
@@ -58,7 +57,7 @@ const schema = z.object({
           ["image/jpeg", "image/png", "image/svg+xml"].includes(file[0]?.type)),
       {
         message: "Only .jpg, .jpeg, .png, and .svg formats are supported",
-      }
+      },
     ),
   meta_og_image: z
     .any()
@@ -72,10 +71,10 @@ const schema = z.object({
           ["image/jpeg", "image/png", "image/svg+xml"].includes(file[0]?.type)),
       {
         message: "Only .jpg, .jpeg, .png, and .svg formats are supported",
-      }
+      },
     ),
   status: z.boolean().default(true),
-  meta_description: z.string().default(""),
+  meta_description: z.string().nullable().default(""),
 });
 
 const EditForm = ({ page }) => {
@@ -96,8 +95,7 @@ const EditForm = ({ page }) => {
       ...page,
       image: "",
       meta_og_image: "",
-    }
-
+    },
   });
 
   const fileInputRef = useRef(null);
@@ -150,13 +148,18 @@ const EditForm = ({ page }) => {
     try {
       const form = new FormData();
 
-      form.append("title", formData.title.trim());
-      form.append("url", formData.url.trim());
-      form.append("detail", formData.detail.trim());
-      form.append("meta_title", formData.meta_title.trim());
+      form.append("title", formData.title ? formData.title.trim() : "");
+      form.append("url", formData.url ? formData.url.trim() : "");
+      form.append("detail", formData.detail ? formData.detail.trim() : "");
+      form.append(
+        "meta_title",
+        formData.meta_title ? formData.meta_title.trim() : "",
+      );
       form.append("status", formData.status.toString());
-      form.append("meta_description", formData.meta_description.trim());
-
+      form.append(
+        "meta_description",
+        formData.meta_description ? formData.meta_description.trim() : "",
+      );
 
       // Append image if exists
       if (formData.image?.[0]) {
@@ -171,25 +174,28 @@ const EditForm = ({ page }) => {
 
       const headerConfig = {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          "Content-Type": "multipart/form-data",
+        },
       };
 
-      res = await pageApiHelper.put(`pages/${page.id}`, form, token, headerConfig);
+      res = await pageApiHelper.put(
+        `pages/${page.id}`,
+        form,
+        token,
+        headerConfig,
+      );
 
       if (!res?.success && res?.status === 400) {
-
         let errors = res?.data?.data?.errors || [];
 
         if (errors) {
-          Object.keys(errors).forEach(key => {
+          Object.keys(errors).forEach((key) => {
             setError(key, {
               type: "server",
-              message: errors[key]
+              message: errors[key],
             });
           });
         }
-
 
         return;
       }
@@ -200,9 +206,8 @@ const EditForm = ({ page }) => {
         // Optionally, redirect or perform other actions after successful creation
         router.push("/pages");
       }
-
     } catch (error) {
-      toast.error(error.message || 'Something went wrong');
+      toast.error(error.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
@@ -222,6 +227,7 @@ const EditForm = ({ page }) => {
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
+                    value={field.value || ""}
                     fullWidth
                     className="mb-4"
                     label="Title"
@@ -240,6 +246,7 @@ const EditForm = ({ page }) => {
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
+                    value={field.value || ""}
                     fullWidth
                     className="mb-4"
                     label="Slug Url"
@@ -268,7 +275,8 @@ const EditForm = ({ page }) => {
                       inputRef={fileInputRef}
                       inputProps={{
                         accept: "image/*",
-                        onChange: (e) => handleImageChange(e.target.files, onChange),
+                        onChange: (e) =>
+                          handleImageChange(e.target.files, onChange),
                       }}
                       error={!!errors.image}
                       helperText={errors.image?.message}
@@ -293,6 +301,7 @@ const EditForm = ({ page }) => {
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
+                    value={field.value || ""}
                     fullWidth
                     type="meta_title"
                     className="mb-4"
@@ -305,7 +314,6 @@ const EditForm = ({ page }) => {
                   />
                 )}
               />
-
             </Grid>
 
             <Grid size={{ md: 6 }}>
@@ -316,6 +324,7 @@ const EditForm = ({ page }) => {
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
+                    value={field.value || ""}
                     fullWidth
                     multiline
                     minRows={2}
@@ -337,6 +346,7 @@ const EditForm = ({ page }) => {
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
+                    value={field.value || ""}
                     fullWidth
                     multiline
                     minRows={2}
@@ -367,7 +377,8 @@ const EditForm = ({ page }) => {
                       inputRef={fileInputRefOg}
                       inputProps={{
                         accept: "image/*",
-                        onChange: (e) => handleImageChangeOg(e.target.files, onChange),
+                        onChange: (e) =>
+                          handleImageChangeOg(e.target.files, onChange),
                       }}
                       error={!!errors.meta_og_image}
                       helperText={errors.meta_og_image?.message}
@@ -402,9 +413,7 @@ const EditForm = ({ page }) => {
                   );
                 }}
               />
-
             </Grid>
-
 
             <Grid className="w-full">
               <label>Detail</label>
@@ -414,17 +423,24 @@ const EditForm = ({ page }) => {
                 rules={{ required: true }}
                 render={({ field }) => (
                   <TinyMCE
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                     onEditorChange={(content) => field.onChange(content)}
                     init={{
                       height: 500,
                       menubar: false,
                       plugins: [
-                        'advlist', 'anchor', 'autolink', 'image', 'link', 'lists',
-                        'searchreplace', 'table', 'wordcount'
+                        "advlist",
+                        "anchor",
+                        "autolink",
+                        "image",
+                        "link",
+                        "lists",
+                        "searchreplace",
+                        "table",
+                        "wordcount",
                       ],
                       toolbar:
-                        'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright | bullist numlist outdent indent | removeformat'
+                        "undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright | bullist numlist outdent indent | removeformat",
                     }}
                   />
                 )}
@@ -443,7 +459,7 @@ const EditForm = ({ page }) => {
                 disabled={isSubmitting}
                 endIcon={
                   isSubmitting ? (
-                    <i className='tabler-rotate-clockwise-2 motion-safe:animate-spin' />
+                    <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
                   ) : null
                 }
               >

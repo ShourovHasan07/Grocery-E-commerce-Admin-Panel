@@ -5,14 +5,16 @@ import ExpertInfo from "../expertInfo/ExpertInfo";
 import FormList from "./FormList";
 
 const ExpertAchievement = ({ expert, achievementDropdown }) => {
-
-  const achievementList = expert.achievements || []
+  const achievementList = expert.achievements || [];
 
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>
         <ExpertInfo expert={expert} />
-        <FormList achievementDropdown={achievementDropdown} achievementList={achievementList} />
+        <FormList
+          achievementDropdown={achievementDropdown}
+          achievementList={achievementList}
+        />
       </Grid>
     </Grid>
   );

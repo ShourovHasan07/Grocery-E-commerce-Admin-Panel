@@ -7,15 +7,12 @@ import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Chip from "@mui/material/Chip";
 
-
 import { bookingStatusLabel, bookingStatusColor } from "@/utils/helpers";
 import { formattedDate } from "@/utils/formatters";
 import NotFound from "@/components/NotFound";
 import Link from "@/components/Link";
 
-
 const BookingInfo = ({ booking }) => {
-
   // if 404
   const isBookingInvalid =
     !booking ||
@@ -48,36 +45,54 @@ const BookingInfo = ({ booking }) => {
                   <td className="border px-4 py-2 w-4/5">{booking.id}</td>
                 </tr>
                 <tr className="text-left">
-                  <th className="border px-4 py-2 w-1/5 align-top">Client Name</th>
+                  <th className="border px-4 py-2 w-1/5 align-top">
+                    Client Name
+                  </th>
                   <td className="border px-4 py-2 w-4/5">
-                    <Link className="text-info" href={`/users/${booking.user.id}`}>
+                    <Link
+                      className="text-info"
+                      href={`/users/${booking.user.id}`}
+                    >
                       {booking.user.name}
                     </Link>
                   </td>
                 </tr>
                 <tr className="text-left">
-                  <th className="border px-4 py-2 w-1/5 align-top">Expert Name</th>
+                  <th className="border px-4 py-2 w-1/5 align-top">
+                    Expert Name
+                  </th>
                   <td className="border px-4 py-2 w-4/5">
-                    <Link className="text-info" href={`/experts/${booking.expert.id}`}>
+                    <Link
+                      className="text-info"
+                      href={`/experts/${booking.expert.id}`}
+                    >
                       {booking.expert.name}
                     </Link>
                   </td>
                 </tr>
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-1/5">Booking Date</th>
-                  <td className="border px-4 py-2 w-4/5">{booking.bookingDate}</td>
+                  <td className="border px-4 py-2 w-4/5">
+                    {booking.bookingDate}
+                  </td>
                 </tr>
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-1/5">Start At</th>
-                  <td className="border px-4 py-2 w-4/5">{formattedDate(booking.startAt)}</td>
+                  <td className="border px-4 py-2 w-4/5">
+                    {formattedDate(booking.startAt)}
+                  </td>
                 </tr>
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-1/5">End At</th>
-                  <td className="border px-4 py-2 w-4/5">{formattedDate(booking.endAt)}</td>
+                  <td className="border px-4 py-2 w-4/5">
+                    {formattedDate(booking.endAt)}
+                  </td>
                 </tr>
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-1/5">Booking Time</th>
-                  <td className="border px-4 py-2 w-4/5">{booking.timeMin} mins</td>
+                  <td className="border px-4 py-2 w-4/5">
+                    {booking.timeMin} mins
+                  </td>
                 </tr>
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-1/5">Fee</th>
@@ -85,7 +100,9 @@ const BookingInfo = ({ booking }) => {
                 </tr>
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-1/5">Service Charge</th>
-                  <td className="border px-4 py-2 w-4/5">{booking.serviceCharge}</td>
+                  <td className="border px-4 py-2 w-4/5">
+                    {booking.serviceCharge}
+                  </td>
                 </tr>
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-1/5">Discount</th>
@@ -110,15 +127,21 @@ const BookingInfo = ({ booking }) => {
                 </tr>
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-1/5">CreatedAt</th>
-                  <td className="border px-4 py-2 w-4/5">{formattedDate(booking.createdAt)}</td>
+                  <td className="border px-4 py-2 w-4/5">
+                    {formattedDate(booking.createdAt)}
+                  </td>
                 </tr>
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-1/5">UpdatedAt</th>
-                  <td className="border px-4 py-2 w-4/5">{formattedDate(booking.updatedAt)}</td>
+                  <td className="border px-4 py-2 w-4/5">
+                    {formattedDate(booking.updatedAt)}
+                  </td>
                 </tr>
 
                 <tr className="text-left">
-                  <th className="border px-4 py-2 w-1/5 align-top">Transactions</th>
+                  <th className="border px-4 py-2 w-1/5 align-top">
+                    Transactions
+                  </th>
                   <td className="border px-4 py-2 w-4/5">
                     {booking.transactions?.length > 0 ? (
                       <div className="overflow-x-auto">
@@ -126,7 +149,9 @@ const BookingInfo = ({ booking }) => {
                           <thead>
                             <tr className="bg-gray-100 text-sm">
                               <th className="border px-2 py-1">ID</th>
-                              <th className="border px-2 py-1">Transaction ID</th>
+                              <th className="border px-2 py-1">
+                                Transaction ID
+                              </th>
                               <th className="border px-2 py-1">Amount</th>
                               <th className="border px-2 py-1">Type</th>
                               <th className="border px-2 py-1">Method</th>
@@ -138,28 +163,34 @@ const BookingInfo = ({ booking }) => {
                             {booking.transactions.map((txn, index) => (
                               <tr key={txn.id || index} className="text-sm">
                                 <td className="border px-2 py-1">{txn.id}</td>
-                                <td className="border px-2 py-1">{txn.transactionId}</td>
-                                <td className="border px-2 py-1">{txn.amount}</td>
-                                <td className="border px-2 py-1 capitalize">{txn.type}</td>
-                                <td className="border px-2 py-1 capitalize">{txn.paymentMethod}</td>
+                                <td className="border px-2 py-1">
+                                  {txn.transactionId}
+                                </td>
+                                <td className="border px-2 py-1">
+                                  {txn.amount}
+                                </td>
+                                <td className="border px-2 py-1 capitalize">
+                                  {txn.type}
+                                </td>
+                                <td className="border px-2 py-1 capitalize">
+                                  {txn.paymentMethod}
+                                </td>
                                 <td className=" px-2 py-1">{txn.status}</td>
-                                <td className="border px-2 py-1">{formattedDate(txn.createdAt)}</td>
+                                <td className="border px-2 py-1">
+                                  {formattedDate(txn.createdAt)}
+                                </td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
                       </div>
                     ) : (
-                      <div className="text-sm text-red-500">No transaction found.</div>
+                      <div className="text-sm text-red-500">
+                        No transaction found.
+                      </div>
                     )}
                   </td>
                 </tr>
-
-
-
-
-
-
               </tbody>
             </table>
           </div>

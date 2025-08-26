@@ -1,20 +1,22 @@
 // Component Imports
-import { getServerSession } from 'next-auth';
+import { getServerSession } from "next-auth";
 
 import ExpertList from "@/views/apps/experts/list";
 
 import { authOptions } from "@/libs/auth";
-import pageApiHelper from '@/utils/pageApiHelper';
+import pageApiHelper from "@/utils/pageApiHelper";
 
 const getExpertData = async () => {
-
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   if (session?.accessToken) {
     try {
       // Fetching the experts data
-      const result = await pageApiHelper.get('experts', { pageSize: 200 }, session.accessToken);
-
+      const result = await pageApiHelper.get(
+        "experts",
+        { pageSize: 200 },
+        session.accessToken,
+      );
 
       if (result.success) {
         return result.data;
@@ -29,7 +31,7 @@ const getExpertData = async () => {
   }
 
   return null;
-}
+};
 
 export const metadata = {
   title: "Experts - AskValor",

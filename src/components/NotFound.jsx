@@ -8,7 +8,7 @@ const NotFound = ({
   title = "Not Found",
   message = "The requested information is missing or unavailable.",
   buttonLabel = "Back",
-  redirectPath = "/"
+  redirectPath = "/",
 }) => {
   const router = useRouter();
 
@@ -22,7 +22,10 @@ const NotFound = ({
             className="object-cover bs-[400px] md:bs-[450px] lg:bs-[500px] mbs-10 md:mbs-12 lg:mbs-18"
           />
         </div>
-        <Typography variant="h6" className="text-red-500  text-xl font-semibold">
+        <Typography
+          variant="h6"
+          className="text-red-500  text-xl font-semibold"
+        >
           {title}
         </Typography>
         <Typography className="text-sm text-gray-700 leading-relaxed">
