@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
+
 import routeApiHelper from "@/utils/routeApiHelper";
 
-// Page detail
+//Page with section
 export async function GET(request, { params }) {
   const token = request.headers.get("authorization");
-  const { id, sectionId } = params;
-
-  
+  const { id, sectionId } = await params;
 
   if (!token) {
     return NextResponse.json(
@@ -20,7 +19,11 @@ export async function GET(request, { params }) {
   }
 
   try {
-    const result = await routeApiHelper.get(`pages/${id}/sections/${sectionId}`, {}, token);
+    const result = await routeApiHelper.get(
+      `pages/${id}/sections/${sectionId}`,
+      {},
+      token,
+    );
 
     if (result.success) {
       return NextResponse.json(
@@ -50,10 +53,7 @@ export async function GET(request, { params }) {
   }
 }
 
-
-
 // update pagesSections
-
 export async function PUT(request, { params }) {
   const token = request.headers.get("authorization");
 
@@ -68,10 +68,7 @@ export async function PUT(request, { params }) {
     );
   }
 
-    const { id, sectionId } = params;
-
-   
-
+  const { id, sectionId } = await params;
 
   try {
     const incomingFormData = await request.formData();
@@ -104,7 +101,7 @@ export async function PUT(request, { params }) {
         {
           success: true,
           data: result.data,
-          message: "pages Sections  update successfully",
+          message: "Page section update successfully",
         },
         { status: 200 },
       );
@@ -114,7 +111,7 @@ export async function PUT(request, { params }) {
       {
         success: false,
         data: result.data,
-        message: result.message || "pages Sections update failed",
+        message: result.message || "Page section update failed",
       },
       { status: result.status || 400 },
     );

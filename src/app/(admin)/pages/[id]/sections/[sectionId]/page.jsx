@@ -17,7 +17,7 @@ const getPageData = async (id, sectionId) => {
     const result = await pageApiHelper.get(
       `pages/${id}/sections/${sectionId}`,
       {},
-      session.accessToken
+      session.accessToken,
     );
 
     if (result.success) return result.data;
@@ -25,6 +25,7 @@ const getPageData = async (id, sectionId) => {
     return null;
   } catch (error) {
     console.error("Error fetching page section:", error);
+
     return null;
   }
 };
@@ -34,11 +35,9 @@ export const metadata = {
 };
 
 const ExpertView = async ({ params }) => {
-  const { id, sectionId } = await  params;
+  const { id, sectionId } = await params;
 
-  const {data} = await getPageData(id, sectionId);
-
-  
+  const { data } = await getPageData(id, sectionId);
 
   return <SectionsDetailUpdate pageSection={data.page_section} />;
 };

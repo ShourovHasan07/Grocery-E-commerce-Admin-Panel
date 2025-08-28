@@ -23,9 +23,6 @@ const getPageData = async (id) => {
         session.accessToken,
       );
 
-
-
-
       if (result.success) {
         return result.data;
       }

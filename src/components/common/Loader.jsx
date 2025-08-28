@@ -1,7 +1,3 @@
-
-
-
-
 // "use client";
 
 // import React from "react";
@@ -21,21 +17,6 @@
 
 // export default LoaderIcon;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 "use client";
 
 import React from "react";
@@ -47,15 +28,10 @@ const LoaderIcon = ({ size = 12, topColor = "border-t-orange-500" }) => {
       style={{
         width: `${size}px`,
         height: `${size}px`,
-        verticalAlign: "middle", 
+        verticalAlign: "middle",
       }}
     ></div>
   );
 };
 
 export default LoaderIcon;
-
-
-
-
-

@@ -1,8 +1,6 @@
 // Next Imports
 import { getServerSession } from "next-auth/next";
 
-import Grid from "@mui/material/Grid2";
-
 import { authOptions } from "@/libs/auth";
 
 import pageApiHelper from "@/utils/pageApiHelper";

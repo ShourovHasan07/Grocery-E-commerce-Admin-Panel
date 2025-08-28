@@ -5,8 +5,6 @@ import EditForm from "./EditForm";
 import AboutEditForm from "./AboutEditForm";
 
 const PageEdit = ({ pageData }) => {
-  console.log(pageData);
-
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>

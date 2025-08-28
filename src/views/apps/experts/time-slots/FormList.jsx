@@ -163,7 +163,6 @@ const FormList = ({ weekDaysDropdown, availabilityList }) => {
 
     setIsSubmitting(true);
 
-
     // edit api Call
     if (editMode && editingSlotId) {
       try {

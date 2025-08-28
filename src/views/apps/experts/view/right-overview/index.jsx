@@ -9,10 +9,6 @@ import AchievementList from "./AchievementList";
 import TimeSlots from "./TimeSlots";
 
 const RightOverview = ({ expert }) => {
-
-
-
-
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>

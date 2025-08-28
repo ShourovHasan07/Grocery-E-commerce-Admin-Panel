@@ -17,8 +17,6 @@ import IconButton from "@mui/material/IconButton";
 import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
 
-
-
 import classnames from "classnames";
 
 import { rankItem } from "@tanstack/match-sorter-utils";
@@ -36,9 +34,8 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 
-
 // Third-party Imports
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from "@mui/material/Tooltip";
 
 import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 
@@ -72,7 +69,6 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
-
   const dataObj = tableData?.pages || [];
 
   const [rowSelection, setRowSelection] = useState({});
@@ -127,7 +123,11 @@ const ListTable = ({ tableData }) => {
       },
       {
         header: "Title",
-        cell: ({ row }) => <Typography className="text-wrap w-[150px]">{row.original.title}</Typography>,
+        cell: ({ row }) => (
+          <Typography className="text-wrap w-[150px]">
+            {row.original.title}
+          </Typography>
+        ),
       },
       {
         header: "Url",
@@ -208,8 +208,10 @@ const ListTable = ({ tableData }) => {
 
       // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {
-        setData(prevData => prevData.filter((item) => item.id !== itemId));
-        setFilteredData(prevData => prevData.filter((item) => item.id !== itemId));
+        setData((prevData) => prevData.filter((item) => item.id !== itemId));
+        setFilteredData((prevData) =>
+          prevData.filter((item) => item.id !== itemId),
+        );
 
         setDialogOpen((prevState) => ({
           ...prevState,
@@ -218,12 +220,11 @@ const ListTable = ({ tableData }) => {
 
         toast.success("Deleted successfully");
       }
-
     } catch (error) {
       // console.error('Delete failed:', error);
 
       // Show error in toast
-      toast.error(error.message)
+      toast.error(error.message);
     }
   };
 
@@ -331,12 +332,16 @@ const ListTable = ({ tableData }) => {
 
         <ConfirmDialog
           dialogData={dialogOpen}
-          handleCloseDialog={() => setDialogOpen((prevState) => ({
-            ...prevState,
-            open: !prevState.open,
-            id: null,
-          }))}
-          handleDelete={() => { handleDelete(dialogOpen.id); }}
+          handleCloseDialog={() =>
+            setDialogOpen((prevState) => ({
+              ...prevState,
+              open: !prevState.open,
+              id: null,
+            }))
+          }
+          handleDelete={() => {
+            handleDelete(dialogOpen.id);
+          }}
         />
       </Card>
     </>

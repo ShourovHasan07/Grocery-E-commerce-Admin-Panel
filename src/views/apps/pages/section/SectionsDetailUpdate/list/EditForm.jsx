@@ -40,17 +40,8 @@ const schema = z.object({
     .min(1, "This field is required")
     .min(3, "Name must be at least 3 characters long"),
   title: z.string().min(3, "Title must be at least 3 characters long"),
-detail: z.string().min(1, "Detail is required"),
-status: z.boolean(), 
-
-  
-  // hourlyRate: z
-  //   .string()
-  //   .min(1, "This field is required")
-  //   .transform((val) => val === "" || val === undefined ? undefined : Number(val))
-  //   .refine((val) => val === undefined || !isNaN(val), "Must be a valid number")
-  //   .refine((val) => val === undefined || val >= 0, "Hourly rate must be a positive number"),
-  
+  detail: z.string().min(1, "Detail is required"),
+  status: z.boolean(),
   image: z
     .any()
     .refine((file) => !file || (file instanceof FileList && file.length > 0), {
@@ -65,16 +56,9 @@ status: z.boolean(),
         message: "Only .jpg, .jpeg, .png, and .svg formats are supported",
       },
     ),
-  
-  
 });
 
 const EditForm = ({ pageSection }) => {
-
- 
-
-
-
   // States
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -91,7 +75,6 @@ const EditForm = ({ pageSection }) => {
     defaultValues: {
       ...pageSection,
       image: "",
-
     },
   });
 
@@ -125,23 +108,18 @@ const EditForm = ({ pageSection }) => {
     try {
       const form = new FormData();
 
-
-      form.append("preTitle", formData.preTitle.trim());
-      form.append("title", formData.title.trim());
-      form.append("status", formData.status ? "true" : "false");
-
-      form.append("detail", formData.detail.toString());
-      
-
-      
+      form.append(
+        "preTitle",
+        formData.preTitle ? formData.preTitle.trim() : "",
+      );
+      form.append("title", formData.title ? formData.title.trim() : "");
+      form.append("status", formData.status.toString());
+      form.append("detail", formData.detail ? formData.detail.trim() : "");
 
       // Append image if exists
-              if (formData.image && formData.image.length > 0) {
-          form.append("image", formData.image[0]);
-        }
-
-
-      let res;
+      if (formData.image && formData.image.length > 0) {
+        form.append("image", formData.image[0]);
+      }
 
       const headerConfig = {
         headers: {
@@ -149,10 +127,11 @@ const EditForm = ({ pageSection }) => {
         },
       };
 
-      res = await pageApiHelper.put(
+      const res = await pageApiHelper.put(
         `pages/${pageSection.pageId}/sections/${pageSection.id}`,
         form,
         token,
+        headerConfig,
       );
 
       if (!res?.success && res?.status === 400) {
@@ -171,7 +150,7 @@ const EditForm = ({ pageSection }) => {
       }
 
       if (res?.success && res?.data?.data?.success) {
-        toast.success("Pages Sections  updated successfully");
+        toast.success("Page Section updated successfully");
 
         // Optionally, redirect or perform other actions after successful creation
         router.push(`/pages/${pageSection.pageId}/sections`);
@@ -189,156 +168,124 @@ const EditForm = ({ pageSection }) => {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container>
+            <Grid size={{ xs: 12 }}>
+              <Controller
+                name="preTitle"
+                control={control}
+                rules={{ required: false }}
+                render={({ field }) => (
+                  <CustomTextField
+                    {...field}
+                    value={field.value ?? ""}
+                    fullWidth
+                    className="mb-4"
+                    label="Pre Title"
+                    placeholder="Pre title"
+                    {...(errors.phone && {
+                      error: true,
+                      helperText: errors.phone.message,
+                    })}
+                  />
+                )}
+              />
 
-
-
-            <Grid size={{ xs: 12 }} >
-
-
-
-
-
-
-
-
-
-
-          
-
-
-            <Controller
-              name="title"
-              control={control}
-              rules={{ required: false }}
-              render={({ field }) => (
-                <CustomTextField
-                  {...field}
-                  value={field.value ?? ""}
-                  fullWidth
-                  className="mb-4"
-                  label="Title"
-                  placeholder="title"
-                  {...(errors.title && {
+              <Controller
+                name="title"
+                control={control}
+                rules={{ required: false }}
+                render={({ field }) => (
+                  <CustomTextField
+                    {...field}
+                    value={field.value ?? ""}
+                    fullWidth
+                    className="mb-4"
+                    label="Title"
+                    placeholder="Title"
+                    {...(errors.title && {
                       error: true,
                       helperText: errors.title.message,
                     })}
-                />
-              )}
-            />
+                  />
+                )}
+              />
 
-
-
-            <Controller
-              name="preTitle"
-              control={control}
-              rules={{ required: false }}
-              render={({ field }) => (
-                <CustomTextField
-                  {...field}
-                  value={field.value ?? ""}
-                  fullWidth
-                  className="mb-4"
-                  label="PreTitle"
-                  placeholder="title"
-                  {...(errors.phone && {
-                    error: true,
-                    helperText: errors.phone.message,
-                  })}
-                />
-              )}
-            />
-
-
-
-
-
-
-           
-
-            <Controller
-              name="detail"
-              control={control}
-              rules={{ required: false }}
-              render={({ field }) => (
-                <CustomTextField
-                  {...field}
-                  value={field.value || ""}
-                  fullWidth
-                  multiline
-                  minRows={12}
-                  className="mb-2 w-full "
-                  label="Detail"
-                  placeholder="About Me"
-                  {...(errors.aboutMe && {
-                    error: true,
-                    helperText: errors.aboutMe.message,
-                  })}
-                />
-              )}
-            />
-
-
-
-             <Controller
-              name="image"
-              control={control}
-              render={({ field: { onChange, value, ...field } }) => (
-                <div className="space-y-2">
+              <Controller
+                name="detail"
+                control={control}
+                rules={{ required: false }}
+                render={({ field }) => (
                   <CustomTextField
                     {...field}
-                    type="file"
+                    value={field.value || ""}
                     fullWidth
-                    label="Upload Image"
-                    variant="outlined"
-                    size="small"
+                    multiline
+                    minRows={12}
                     className="mb-4"
-                    inputRef={fileInputRef}
-                    inputProps={{
-                      accept: "image/*",
-                      onChange: (e) =>
-                        handleImageChange(e.target.files, onChange),
-                    }}
-                    error={!!errors.image}
-                    helperText={errors.image?.message}
+                    label="Detail"
+                    placeholder="Detail"
+                    {...(errors.aboutMe && {
+                      error: true,
+                      helperText: errors.aboutMe.message,
+                    })}
                   />
-                  {imagePreview && (
-                    <div className="mt-2">
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        className="max-h-[50px] rounded-md"
+                )}
+              />
+
+              <Controller
+                name="image"
+                control={control}
+                render={({ field: { onChange, value, ...field } }) => (
+                  <div className="space-y-2">
+                    <CustomTextField
+                      {...field}
+                      type="file"
+                      fullWidth
+                      label="Upload Image"
+                      variant="outlined"
+                      size="small"
+                      className="mb-2"
+                      inputRef={fileInputRef}
+                      inputProps={{
+                        accept: "image/*",
+                        onChange: (e) =>
+                          handleImageChange(e.target.files, onChange),
+                      }}
+                      error={!!errors.image}
+                      helperText={errors.image?.message}
+                    />
+                    {imagePreview && (
+                      <div className="mt-2">
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="max-h-[50px] rounded-md"
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+              />
+
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => {
+                  return (
+                    <div className="mb-4">
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={Boolean(field.value)}
+                            onChange={(e) => field.onChange(e.target.checked)}
+                          />
+                        }
+                        label="Active"
                       />
                     </div>
-                  )}
-                </div>
-              )}
-            />
-
-
-
-
-            <Controller
-              name="status"
-              control={control}
-              render={({ field }) => {
-                return (
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={Boolean(field.value)}
-                        onChange={(e) => field.onChange(e.target.checked)}
-                      />
-                    }
-                    label="Active"
-                  />
-                );
-              }}
-            />
-
-             
-
- </Grid>
-
+                  );
+                }}
+              />
+            </Grid>
 
             <Grid size={{ xs: 12 }} className="flex gap-4">
               <Button
@@ -358,7 +305,7 @@ const EditForm = ({ pageSection }) => {
                 variant="tonal"
                 color="error"
                 component={Link}
-                href={"/pages"}
+                href={`/pages/${pageSection.pageId}/sections`}
               >
                 Cancel
               </Button>
