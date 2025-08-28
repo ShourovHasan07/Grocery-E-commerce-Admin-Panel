@@ -1,12 +1,14 @@
 // Next Imports
 import { getServerSession } from "next-auth/next";
 
+import Grid from "@mui/material/Grid2";
+
 import { authOptions } from "@/libs/auth";
 
 import pageApiHelper from "@/utils/pageApiHelper";
 
 // Component Imports
-import Detail from "@/views/apps/pages/detail/Detail";
+import DetailUpdate from "@/views/apps/pages/section/list";
 
 const getPageData = async (id) => {
   // Vars
@@ -40,13 +42,13 @@ export const metadata = {
   title: "Page Detail - AskValor",
 };
 
-const ExpertView = async ({ params }) => {
+const pagesSectionsView = async ({ params }) => {
   // Vars
   const { id } = await params;
 
   const { data } = await getPageData(id);
 
-  return <Detail page={data.page} />;
+  return <DetailUpdate page={data.page} />;
 };
 
-export default ExpertView;
+export default pagesSectionsView;

@@ -26,9 +26,7 @@ const CategoryList = ({ expertData }) => {
                 <thead>
                   <tr className="bg-gray-50">
                     <th className="border px-4 py-2 text-start">ID</th>
-                    <th className="border px-4 py-2 text-start">
-                      Category Name
-                    </th>
+                    <th className="border px-4 py-2 text-start">Name</th>
                   </tr>
                 </thead>
                 <tbody>

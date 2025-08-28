@@ -77,8 +77,6 @@ const schema = z.object({
 });
 
 const AboutEditForm = ({ page }) => {
-  console.log(page);
-
   // States
   const [isSubmitting, setIsSubmitting] = useState(false);
 
