@@ -19,6 +19,7 @@ import IconButton from "@mui/material/IconButton";
 import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
 import Tooltip from "@mui/material/Tooltip";
+import LoaderIcon from "@/components/common/Loader";
 
 // Third-party Imports
 import classnames from "classnames";
@@ -59,6 +60,7 @@ import { getInitials } from "@/utils/getInitials";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
+import { useRouter } from 'next/navigation';
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -93,6 +95,16 @@ const ListTable = ({ tableData }) => {
     id: null,
   });
 
+
+
+
+  // loadeing 
+
+  const [loadingId, setLoadingId] = useState(null);
+  const router = useRouter();
+
+
+
   // Hooks
 
   const columns = useMemo(
@@ -100,72 +112,95 @@ const ListTable = ({ tableData }) => {
       columnHelper.accessor("action", {
         header: "Action",
         cell: ({ row }) => (
-          <div className="text-wrap w-[150px]">
-            <Tooltip title="Detail">
-              <IconButton>
-                <Link href={`/experts/${row.original.id}`} className="flex">
-                  <i className="tabler-eye text-secondary" />
-                </Link>
-              </IconButton>
-            </Tooltip>
+          <div className="text-wrap w-[120px]">
+              {/* Detail */}
+          <Tooltip title="Detail">
+            <IconButton
+              onClick={() => {
+                const path = `/experts/${row.original.id}`;
+                setLoadingId(`detail-${row.original.id}`);
+                router.push(path);
+              }}
+            >
+              {loadingId === `detail-${row.original.id}` ? <LoaderIcon size={17}  topColor="border-t-green-400"    /> : <i className="tabler-eye text-secondary" />}
+            </IconButton>
+          </Tooltip>
 
-            <Tooltip title="Achievements" arrow placement="top">
-              <IconButton>
-                <Link
-                  href={`/experts/${row.original.id}/achievements`}
-                  className="flex"
-                >
-                  <i className="tabler-award text-success" />
-                </Link>
-              </IconButton>
-            </Tooltip>
 
-            <Tooltip title="Languages" arrow placement="top">
-              <IconButton>
-                <Link
-                  href={`/experts/${row.original.id}/languages`}
-                  className="flex"
-                >
-                  <i className="tabler-abc text-info" />
-                </Link>
-              </IconButton>
-            </Tooltip>
 
-            <Tooltip title="Time Slots" arrow placement="top">
-              <IconButton>
-                <Link
-                  href={`/experts/${row.original.id}/time-slots`}
-                  className="flex"
-                >
-                  <i className="tabler-clock text-info" />
-                </Link>
-              </IconButton>
-            </Tooltip>
 
-            <Tooltip title="Edit" arrow placement="top">
-              <IconButton>
-                <Link
-                  href={`/experts/${row.original.id}/edit`}
-                  className="flex"
-                >
-                  <i className="tabler-edit text-primary" />
-                </Link>
-              </IconButton>
-            </Tooltip>
+            {/* Achievements */}
+          <Tooltip title="Achievements" arrow placement="top">
+            <IconButton
+              onClick={() => {
+                const path = `/experts/${row.original.id}/achievements`;
+                setLoadingId(`ach-${row.original.id}`);
+                router.push(path);
+              }}
+            >
+              {loadingId === `ach-${row.original.id}` ? <LoaderIcon size={17}  topColor="border-t-violet-400"   /> : <i className="tabler-award text-success" />}
+            </IconButton>
+          </Tooltip>
 
-            <Tooltip title="Delete" arrow placement="top">
-              <IconButton
-                onClick={() =>
-                  setDialogOpen((prevState) => ({
-                    ...prevState,
-                    open: !prevState.open,
-                    id: row.original.id,
-                  }))
-                }
-              >
-                <i className="tabler-trash text-error" />
-              </IconButton>
-            </Tooltip>
+
+           
+          {/* Languages */}
+          <Tooltip title="Languages" arrow placement="top">
+            <IconButton
+              onClick={() => {
+                const path = `/experts/${row.original.id}/languages`;
+                setLoadingId(`lang-${row.original.id}`);
+                router.push(path);
+              }}
+            >
+              {loadingId === `lang-${row.original.id}` ? <LoaderIcon size={17} topColor="border-t-cyan-500 p-2 " /> : <i className="tabler-abc text-info" />}
+            </IconButton>
+          </Tooltip>
+
+
+             {/* Time Slots */}
+          <Tooltip title="Time Slots" arrow placement="top">
+            <IconButton
+              onClick={() => {
+                const path = `/experts/${row.original.id}/time-slots`;
+                setLoadingId(`time-${row.original.id}`);
+                router.push(path);
+              }}
+            >
+              {loadingId === `time-${row.original.id}` ? <LoaderIcon size={17}   topColor="border-t-red-500"/> : <i className="tabler-clock text-info" />}
+            </IconButton>
+          </Tooltip>
+
+
+            {/* Edit */}
+          <Tooltip title="Edit" arrow placement="top">
+            <IconButton
+              onClick={() => {
+                const path = `/experts/${row.original.id}/edit`;
+                setLoadingId(`edit-${row.original.id}`);
+                router.push(path);
+              }}
+            >
+              {loadingId === `edit-${row.original.id}` ? <LoaderIcon size={17} topColor="border-t-yellow-900" /> : <i className="tabler-edit text-primary" />}
+            </IconButton>
+          </Tooltip>
+
+
+             {/* Delete */}
+          <Tooltip title="Delete" arrow placement="top">
+            <IconButton
+              onClick={() =>
+                setDialogOpen((prevState) => ({
+                  ...prevState,
+                  open: !prevState.open,
+                  id: row.original.id,
+                }))
+              }
+            >
+              <i className="tabler-trash text-error" />
+            </IconButton>
+          </Tooltip>
+
           </div>
         ),
         enableSorting: false,
@@ -255,7 +290,7 @@ const ListTable = ({ tableData }) => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, filteredData],
+    [data, filteredData,loadingId],
   );
 
   const table = useReactTable({
