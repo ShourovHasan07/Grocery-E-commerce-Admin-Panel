@@ -66,8 +66,10 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
   return itemRank.passed;
 };
 
+
 // Column Definitions
 const columnHelper = createColumnHelper();
+
 
 const ListTable = ({ tableData }) => {
   //console.log("Table Data:", tableData);
