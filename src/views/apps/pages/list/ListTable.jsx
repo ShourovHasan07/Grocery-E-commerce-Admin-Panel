@@ -5,6 +5,8 @@ import { useState, useMemo } from "react";
 
 import Link from "next/link";
 
+import { useRouter } from "next/navigation";
+
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 
@@ -43,6 +45,7 @@ import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 import TableFilters from "./TableFilters";
 import TablePaginationComponent from "@components/TablePaginationComponent";
 import CustomTextField from "@core/components/mui/TextField";
+import LoaderIcon from "@/components/common/Loader";
 
 // Util Imports
 import { formattedDate } from "@/utils/formatters";
@@ -81,40 +84,67 @@ const ListTable = ({ tableData }) => {
     id: null,
   });
 
+  // loader state
+  const [loadingId, setLoadingId] = useState(null);
+   const router = useRouter();
+
+
+
   const columns = useMemo(
     () => [
       columnHelper.accessor("action", {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-            <Tooltip title="Detail">
-              <IconButton>
-                <Link href={`/pages/${row.original.id}`} className="flex">
+             <Tooltip title="Detail">
+              <IconButton
+                onClick={() => {
+                  setLoadingId(`detail-${row.original.id}`);
+                  router.push(`/pages/${row.original.id}`);
+                }}
+              >
+                {loadingId === `detail-${row.original.id}` ? (
+                  <LoaderIcon size={17} topColor="border-t-yellow-500" />
+                ) : (
                   <i className="tabler-eye text-secondary" />
-                </Link>
+                )}
               </IconButton>
             </Tooltip>
 
-            <Tooltip title="Edit" arrow placement="top">
-              <IconButton>
-                <Link href={`/pages/${row.original.id}/edit`} className="flex">
+            <Tooltip title="Edit">
+              <IconButton
+                onClick={() => {
+                  setLoadingId(`edit-${row.original.id}`);
+                  router.push(`/pages/${row.original.id}/edit`);
+                }}
+              >
+                {loadingId === `edit-${row.original.id}` ? (
+                  <LoaderIcon size={17} topColor="border-t-blue-500" />
+                ) : (
                   <i className="tabler-edit text-primary" />
-                </Link>
+                )}
               </IconButton>
             </Tooltip>
+
 
             {row.original.url === "about-us" && (
-              <Tooltip title="Page Sections" arrow placement="top">
-                <IconButton>
-                  <Link
-                    href={`/pages/${row.original.id}/sections`}
-                    className="flex"
-                  >
+              <Tooltip title="Page Sections">
+                <IconButton
+                  onClick={() => {
+                    setLoadingId(`sections-${row.original.id}`);
+                    router.push(`/pages/${row.original.id}/sections`);
+                  }}
+                >
+                  {loadingId === `sections-${row.original.id}` ? (
+                    <LoaderIcon size={17} topColor="border-t-green-500" />
+                  ) : (
                     <i className="tabler-article text-info" />
-                  </Link>
+                  )}
                 </IconButton>
               </Tooltip>
             )}
+
+           
 
             {row.original.type !== "predefine" && (
               <Tooltip title="Delete" arrow placement="top">
@@ -180,7 +210,7 @@ const ListTable = ({ tableData }) => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, filteredData],
+    [data, filteredData,loadingId],
   );
 
   const table = useReactTable({

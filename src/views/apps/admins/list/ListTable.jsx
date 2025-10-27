@@ -6,6 +6,8 @@ import { useState, useMemo } from "react";
 // Next Imports
 import Link from "next/link";
 
+import { useRouter } from "next/navigation";
+
 // MUI Imports
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -45,14 +47,18 @@ import TableFilters from "./TableFilters";
 import TablePaginationComponent from "@components/TablePaginationComponent";
 import CustomTextField from "@core/components/mui/TextField";
 import CustomAvatar from "@core/components/mui/Avatar";
+import ConfirmDialog from "@/components/dialogs/ConfirmDialog";
+import LoaderIcon from "@/components/common/Loader";
 
 // Util Imports
 import { getInitials } from "@/utils/getInitials";
 
+
+
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
 import { activeStatusColor, activeStatusLabel } from "@/utils/helpers";
-import ConfirmDialog from "@/components/dialogs/ConfirmDialog";
+
 
 import pageApiHelper from "@/utils/pageApiHelper";
 
@@ -85,6 +91,13 @@ const ListTable = ({ tableData }) => {
     id: null,
   });
 
+
+   // loader state
+  const [loadingId, setLoadingId] = useState(null);
+  const router = useRouter();
+
+
+
   // Hooks
 
   const columns = useMemo(
@@ -99,19 +112,36 @@ const ListTable = ({ tableData }) => {
               </Link>
             </IconButton> */}
 
-            <IconButton>
-              <Link href={`/admins/${row.original.id}/edit`} className="flex">
+            {/* Edit */}
+            <IconButton
+              onClick={() => {
+                const path = `/admins/${row.original.id}/edit`;
+
+                setLoadingId(`edit-${row.original.id}`);
+                router.push(path);
+              }}
+            >
+              {loadingId === `edit-${row.original.id}` ? (
+                <LoaderIcon size={17} topColor="border-t-yellow-500" />
+              ) : (
                 <i className="tabler-edit text-textPrimary" />
-              </Link>
+              )}
             </IconButton>
 
-            <IconButton>
-              <Link
-                href={`/admins/${row.original.id}/reset-password`}
-                className="flex"
-              >
+            {/* Reset Password */}
+            <IconButton
+              onClick={() => {
+                const path = `/admins/${row.original.id}/reset-password`;
+
+                setLoadingId(`reset-${row.original.id}`);
+                router.push(path);
+              }}
+            >
+              {loadingId === `reset-${row.original.id}` ? (
+                <LoaderIcon size={17} topColor="border-t-violet-500" />
+              ) : (
                 <i className="tabler-lock-password" />
-              </Link>
+              )}
             </IconButton>
 
             <IconButton
@@ -180,7 +210,7 @@ const ListTable = ({ tableData }) => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, filteredData],
+    [data, filteredData,loadingId],
   );
 
   const table = useReactTable({

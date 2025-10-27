@@ -4,6 +4,7 @@
 import { useState, useMemo } from "react";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 // MUI Imports
 import Card from "@mui/material/Card";
@@ -42,6 +43,7 @@ import { formattedDate } from "@/utils/formatters";
 import TableFilters from "./TableFilters";
 import TablePaginationComponent from "@components/TablePaginationComponent";
 import CustomTextField from "@core/components/mui/TextField";
+import LoaderIcon from "@/components/common/Loader";
 
 // Util Imports
 import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
@@ -74,6 +76,13 @@ const ListTable = ({ tableData }) => {
   const [filteredData, setFilteredData] = useState(data);
   const [globalFilter, setGlobalFilter] = useState("");
 
+  // loader state
+  const [loadingId, setLoadingId] = useState(null);
+  const router = useRouter();
+
+
+
+
   const columns = useMemo(
     () => [
       columnHelper.accessor("action", {
@@ -81,11 +90,29 @@ const ListTable = ({ tableData }) => {
         cell: ({ row }) => (
           <div className="flex items-center">
             <Tooltip title="Detail">
-              <IconButton>
+              {/* <IconButton>
                 <Link className="flex" href={`/users/${row.original.id}`}>
                   <i className="tabler-eye text-secondary" />
                 </Link>
+              </IconButton> */}
+
+
+               <IconButton
+                onClick={() => {
+                  const path = `/users/${row.original.id}`;
+
+                  setLoadingId(`users-${row.original.id}`);
+                  router.push(path);
+                }}
+              >
+                {loadingId === `users-${row.original.id}` ? (
+                  <LoaderIcon size={17} topColor="border-t-yellow-500" />
+                ) : (
+                  <i className="tabler-eye text-secondary" />
+                )}
               </IconButton>
+
+
             </Tooltip>
           </div>
         ),
@@ -144,7 +171,7 @@ const ListTable = ({ tableData }) => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, filteredData],
+    [data, filteredData,loadingId],
   );
 
   const table = useReactTable({

@@ -4,6 +4,8 @@
 import { useState, useMemo } from "react";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 
 import { useSession } from "next-auth/react";
 
@@ -53,6 +55,8 @@ import TableFilters from "./TableFilters";
 import TablePaginationComponent from "@components/TablePaginationComponent";
 import CustomTextField from "@core/components/mui/TextField";
 import CustomAvatar from "@core/components/mui/Avatar";
+import LoaderIcon from "@/components/common/Loader";
+
 
 // Util Imports
 import { getInitials } from "@/utils/getInitials";
@@ -90,6 +94,12 @@ const ListTable = ({ tableData }) => {
     id: null,
   });
 
+  // loader state
+  const [loadingId, setLoadingId] = useState(null);
+  const router = useRouter();
+
+
+
   // Hooks
 
   const columns = useMemo(
@@ -99,10 +109,19 @@ const ListTable = ({ tableData }) => {
         cell: ({ row }) => (
           <div>
             <Tooltip title="Edit" arrow placement="top">
-              <IconButton>
-                <Link href={`/roles/${row.original.id}/edit`} className="flex">
+              <IconButton
+                onClick={() => {
+                  const path = `/roles/${row.original.id}/edit`;
+
+                  setLoadingId(`edit-${row.original.id}`);
+                  router.push(path);
+                }}
+              >
+                {loadingId === `edit-${row.original.id}` ? (
+                  <LoaderIcon size={17} topColor="border-t-yellow-500" />
+                ) : (
                   <i className="tabler-edit text-primary" />
-                </Link>
+                )}
               </IconButton>
             </Tooltip>
 
@@ -160,7 +179,7 @@ const ListTable = ({ tableData }) => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, filteredData],
+    [data, filteredData,loadingId],
   );
 
   const table = useReactTable({

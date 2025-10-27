@@ -54,18 +54,18 @@ const schema = z.object({
   //   .transform((val) => val === "" || val === undefined ? undefined : Number(val))
   //   .refine((val) => val === undefined || !isNaN(val), "Must be a valid number")
   //   .refine((val) => val === undefined || val >= 0, "Hourly rate must be a positive number"),
-  rating: z
-    .string({ message: "This field is required" })
-    .min(1, "This field is required")
-    .transform((val) =>
-      val === "" || val === undefined ? undefined : Number(val),
-    )
-    .refine((val) => val === undefined || !isNaN(val), "Must be a valid number")
-    .refine(
-      (val) => val === undefined || val >= 0,
-      "Rating must be a positive number",
-    )
-    .refine((val) => val === undefined || val <= 5, "Rating must not exceed 5"),
+  // rating: z
+  //   .string({ message: "This field is required" })
+  //   .min(1, "This field is required")
+  //   .transform((val) =>
+  //     val === "" || val === undefined ? undefined : Number(val),
+  //   )
+  //   .refine((val) => val === undefined || !isNaN(val), "Must be a valid number")
+  //   .refine(
+  //     (val) => val === undefined || val >= 0,
+  //     "Rating must be a positive number",
+  //   )
+  //   .refine((val) => val === undefined || val <= 5, "Rating must not exceed 5"),
   image: z
     .any()
     .refine((file) => !file || (file instanceof FileList && file.length > 0), {
@@ -168,7 +168,7 @@ const EditForm = ({ expertData, categoryData }) => {
       form.append("title", formData.title ? formData.title.trim() : "");
 
       // form.append("hourlyRate", formData.hourlyRate);
-      form.append("rating", formData.rating);
+      // form.append("rating", formData.rating);
 
       // Append image if exists
       if (formData.image?.[0]) {
@@ -413,7 +413,7 @@ const EditForm = ({ expertData, categoryData }) => {
                   />
                 </Grid> */}
 
-                <Grid size={{ md: 12 }}>
+                {/* <Grid size={{ md: 12 }}>
                   <Controller
                     name="rating"
                     control={control}
@@ -438,7 +438,7 @@ const EditForm = ({ expertData, categoryData }) => {
                       />
                     )}
                   />
-                </Grid>
+                </Grid> */}
               </Grid>
 
               <Controller
