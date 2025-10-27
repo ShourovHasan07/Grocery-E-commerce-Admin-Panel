@@ -112,6 +112,7 @@ const ListTable = ({ tableData }) => {
               <IconButton
                 onClick={() => {
                   const path = `/roles/${row.original.id}/edit`;
+
                   setLoadingId(`edit-${row.original.id}`);
                   router.push(path);
                 }}

@@ -116,6 +116,7 @@ const ListTable = ({ tableData }) => {
             <IconButton
               onClick={() => {
                 const path = `/admins/${row.original.id}/edit`;
+
                 setLoadingId(`edit-${row.original.id}`);
                 router.push(path);
               }}
@@ -131,6 +132,7 @@ const ListTable = ({ tableData }) => {
             <IconButton
               onClick={() => {
                 const path = `/admins/${row.original.id}/reset-password`;
+
                 setLoadingId(`reset-${row.original.id}`);
                 router.push(path);
               }}

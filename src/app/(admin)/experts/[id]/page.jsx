@@ -51,10 +51,10 @@ const ExpertView = async ({ params }) => {
 
   return (
     <Grid container spacing={6}>
-      <Grid size={{ xs: 12, lg: 4, md: 5 }}>
+      <Grid size={{ xs: 12 }}>
         <LeftOverview expertData={data.expert} />
       </Grid>
-      <Grid size={{ xs: 12, lg: 8, md: 7 }}>
+      <Grid size={{ xs: 12 }}>
         <RightOverview expert={data.expert} />
       </Grid>
     </Grid>

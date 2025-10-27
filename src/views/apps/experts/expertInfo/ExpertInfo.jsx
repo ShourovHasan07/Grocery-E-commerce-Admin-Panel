@@ -24,6 +24,7 @@ const ExpertInfo = ({ expert }) => {
                   <th className="border px-4 py-2">Name</th>
                   <th className="border px-4 py-2">Email</th>
                   <th className="border px-4 py-2">Phone</th>
+                  <th className="border px-4 py-2">Agv. Rating</th>
                   <th className="border px-4 py-2">Status</th>
                   <th className="border px-4 py-2">Created At</th>
                   <th className="border px-4 py-2">Updated At</th>
@@ -35,6 +36,7 @@ const ExpertInfo = ({ expert }) => {
                   <td className="border px-4 py-2">{expert.name}</td>
                   <td className="border px-4 py-2">{expert.email}</td>
                   <td className="border px-4 py-2">{expert.phone}</td>
+                  <td className="border px-4 py-2 text-center">{expert.rating} ({expert.reviewCount})</td>
                   <td className="border px-4 py-2 text-center">
                     <Chip
                       variant="tonal"

@@ -113,6 +113,7 @@ const ListTable = ({ tableData }) => {
                <IconButton
                               onClick={() => {
                                 const path = `/bookings/${row.original.id}`;
+
                                 setLoadingId(`bookings-${row.original.id}`);
                                 router.push(path);
                               }}
