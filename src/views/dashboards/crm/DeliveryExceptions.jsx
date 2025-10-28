@@ -85,10 +85,10 @@ const DeliveryExceptions = () => {
               show: true,
               fontSize: "0.9375rem",
               fontWeight: 400,
-              label: "AVG. Exceptions",
+              label: "AVG. Bookings",
               color: "var(--mui-palette-text-secondary)",
               formatter() {
-                return "30%";
+                return "90%";
               },
             },
           },

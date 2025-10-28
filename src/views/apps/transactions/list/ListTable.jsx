@@ -72,7 +72,7 @@ const columnHelper = createColumnHelper();
 
 
 const ListTable = ({ tableData }) => {
-  console.log("Table Data:", tableData);
+  // console.log("Table Data:", tableData);
 
   // States
   const dataObj = tableData?.transactions || [];

@@ -38,7 +38,7 @@ const getData = async () => {
 
 const ListApp = async () => {
   const result = await getData();
-  const transactionsData = result.data;
+  const transactionsData = result?.data || [];
 
   return <TransactionsList tData={transactionsData} />;
 };
