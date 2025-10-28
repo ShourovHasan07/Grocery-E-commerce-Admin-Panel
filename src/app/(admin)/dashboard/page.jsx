@@ -2,17 +2,11 @@
 import Grid from "@mui/material/Grid2";
 
 // Component Imports
-import DistributedBarChartOrder from "@views/dashboards/crm/DistributedBarChartOrder";
-import LineAreaYearlySalesChart from "@views/dashboards/crm/LineAreaYearlySalesChart";
+import DailyProgress from "@views/dashboards/crm/DailyProgress";
+import DeliveryExceptions from "@views/dashboards/crm/DeliveryExceptions";
 import CardStatVertical from "@/components/card-statistics/Vertical";
 import BarChartRevenueGrowth from "@views/dashboards/crm/BarChartRevenueGrowth";
-import EarningReportsWithTabs from "@views/dashboards/crm/EarningReportsWithTabs";
-import RadarSalesChart from "@views/dashboards/crm/RadarSalesChart";
-import SalesByCountries from "@views/dashboards/crm/SalesByCountries";
-import ProjectStatus from "@views/dashboards/crm/ProjectStatus";
-import ActiveProjects from "@views/dashboards/crm/ActiveProjects";
 import LastTransaction from "@views/dashboards/crm/LastTransaction";
-import ActivityTimeline from "@views/dashboards/crm/ActivityTimeline";
 
 // Server Action Imports
 import { getServerMode } from "@core/utils/serverHelpers";
@@ -22,69 +16,68 @@ export const metadata = {
 };
 
 const DashboardCRM = async () => {
-  // Vars
-  const serverMode = await getServerMode();
-
   return (
     <Grid container spacing={6}>
-      {/* <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }}>
-        <DistributedBarChartOrder />
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <BarChartRevenueGrowth />
       </Grid>
-      <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }}>
-        <LineAreaYearlySalesChart />
-      </Grid>
-      <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }}>
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <CardStatVertical
-          title="Total Profit"
-          subtitle="Last Week"
-          stats="1.28k"
-          avatarColor="error"
+          title="Total Ongoing"
+          subtitle="Today"
+          avatarColor="info"
           avatarIcon="tabler-credit-card"
           avatarSkin="light"
           avatarSize={44}
           chipText="-12.2%"
-          chipColor="error"
+          chipColor="info"
           chipVariant="tonal"
+          qty={128}
+          url={`/bookings?status=ongoing&startDate=&endDate=`}
         />
       </Grid>
-      <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }}>
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <CardStatVertical
-          title="Total Sales"
-          subtitle="Last Week"
-          stats="24.67k"
+          title="Total Completed"
+          subtitle="Today"
           avatarColor="success"
-          avatarIcon="tabler-currency-dollar"
+          avatarIcon="tabler-credit-card"
           avatarSkin="light"
           avatarSize={44}
           chipText="+24.67%"
           chipColor="success"
           chipVariant="tonal"
+          qty={128}
+          url={`/bookings?status=completed&startDate=&endDate=`}
         />
       </Grid>
-      <Grid size={{ xs: 12, md: 8, lg: 4 }}>
-        <BarChartRevenueGrowth />
-      </Grid>
-      <Grid size={{ xs: 12, lg: 8 }}>
-        <EarningReportsWithTabs />
-      </Grid>
-      <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-        <RadarSalesChart />
-      </Grid>
-      <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-        <SalesByCountries />
-      </Grid>
-      <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-        <ProjectStatus />
-      </Grid>
-      <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-        <ActiveProjects />
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <CardStatVertical
+          title="Total Cancelled"
+          subtitle="Today"
+          avatarColor="error"
+          avatarIcon="tabler-credit-card"
+          avatarSkin="light"
+          avatarSize={44}
+          chipText="+24.67%"
+          chipColor="error"
+          chipVariant="error"
+          qty={128}
+          url={`/bookings?status=cancelled&startDate=&endDate=`}
+        />
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
-        <LastTransaction serverMode={serverMode} />
+        <DeliveryExceptions />
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
-        <ActivityTimeline />
-      </Grid> */}
+        <DailyProgress />
+      </Grid>
+      <Grid size={{ xs: 12, md: 6 }}>
+        <LastTransaction title="Latest 5 Transactions" />
+      </Grid>
+      <Grid size={{ xs: 12, md: 6 }}>
+        <LastTransaction title="Latest 5 Disbursements" />
+      </Grid>
     </Grid>
   );
 };

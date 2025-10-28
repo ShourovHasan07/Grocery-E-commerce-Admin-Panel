@@ -114,22 +114,22 @@ const BarChartRevenueGrowth = () => {
   };
 
   return (
-    <Card>
+    <Card className="bs-full">
       <CardContent className="flex justify-between gap-2">
         <div className="flex flex-col justify-between">
           <div className="flex flex-col gap-y-2">
-            <Typography variant="h5">Revenue Growth</Typography>
-            <Typography>Weekly Report</Typography>
+            <Typography variant="h5">Total Bookings</Typography>
+            <Typography>This Monthly</Typography>
           </div>
           <div className="flex flex-col gap-y-2 items-start">
-            <Typography variant="h3">$4,673</Typography>
+            <Typography variant="h3">843</Typography>
             <Chip variant="tonal" size="small" color="success" label="+15.2%" />
           </div>
         </div>
         <AppReactApexCharts
           type="bar"
           width={170}
-          height={172}
+          height={150}
           series={series}
           options={options}
         />

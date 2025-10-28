@@ -16,35 +16,36 @@ import OptionMenu from "@core/components/option-menu";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
+import { getCurrency } from "@/utils/helpers";
 
 // Vars
 const data = [
   {
-    trend: "+$1,678",
-    status: "verified",
+    amount: 28,
+    status: "paid",
     cardType: "Credit",
     cardNumber: "*4230",
     imgName: "visa",
     date: `17 Mar ${new Date().getFullYear()}`,
   },
   {
-    trend: "-$839",
-    status: "rejected",
+    amount: 23,
+    status: "failed",
     cardType: "Credit",
     cardNumber: "*5578",
     imgName: "mastercard",
     date: `12 Feb ${new Date().getFullYear()}`,
   },
   {
-    trend: "+$435",
+    amount: 12,
     cardType: "ATM",
-    status: "verified",
+    status: "paid",
     cardNumber: "*4567",
     imgName: "american-express",
     date: `28 Feb ${new Date().getFullYear()}`,
   },
   {
-    trend: "+$2,345",
+    amount: 42,
     status: "pending",
     cardType: "Credit",
     cardNumber: "*5699",
@@ -52,36 +53,29 @@ const data = [
     date: `08 Jan ${new Date().getFullYear()}`,
   },
   {
-    trend: "+$1,758",
-    status: "rejected",
+    amount: 38,
+    status: "failed",
     cardType: "Credit",
     cardNumber: "*2451",
     imgName: "visa",
     date: `19 Oct ${new Date().getFullYear()}`,
-  },
+  }
 ];
 
 const statusObj = {
-  rejected: { text: "Rejected", color: "error" },
   pending: { text: "Pending", color: "secondary" },
-  "on-hold": { text: "On hold", color: "warning" },
-  verified: { text: "Verified", color: "success" },
+  failed: { text: "Failed", color: "error" },
+  paid: { text: "Paid", color: "success" },
 };
 
-const LastTransaction = ({ serverMode }) => {
+const LastTransaction = ({ title }) => {
   // Hooks
   const { mode } = useColorScheme();
-
-  // Vars
-  const _mode = (mode === "system" ? serverMode : mode) || serverMode;
 
   return (
     <Card>
       <CardHeader
-        title="Last Transaction"
-        action={
-          <OptionMenu options={["Show all entries", "Refresh", "Download"]} />
-        }
+        title={title}
       />
       <div className="overflow-x-auto">
         <table className={tableStyles.table}>
@@ -90,7 +84,7 @@ const LastTransaction = ({ serverMode }) => {
               <th className="leading-6 plb-4 pis-6 pli-2">Card</th>
               <th className="leading-6 plb-4 pli-2">Date</th>
               <th className="leading-6 plb-4 pli-2">Status</th>
-              <th className="leading-6 plb-4 pie-6 pli-2 text-right">Trend</th>
+              <th className="leading-6 plb-4 pie-6 pli-2 text-right">Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -101,8 +95,8 @@ const LastTransaction = ({ serverMode }) => {
                     <Avatar
                       variant="rounded"
                       className={classnames("is-[50px] bs-[30px]", {
-                        "bg-white": _mode === "dark",
-                        "bg-actionHover": _mode === "light",
+                        "bg-white": mode === "dark",
+                        "bg-actionHover": mode === "light",
                       })}
                     >
                       <img
@@ -115,15 +109,11 @@ const LastTransaction = ({ serverMode }) => {
                       <Typography color="text.primary">
                         {row.cardNumber}
                       </Typography>
-                      <Typography variant="body2" color="text.disabled">
-                        {row.cardType}
-                      </Typography>
                     </div>
                   </div>
                 </td>
                 <td className="pli-2 plb-3">
                   <div className="flex flex-col">
-                    <Typography color="text.primary">Sent</Typography>
                     <Typography variant="body2" color="text.disabled">
                       {row.date}
                     </Typography>
@@ -138,7 +128,7 @@ const LastTransaction = ({ serverMode }) => {
                   />
                 </td>
                 <td className="pli-2 plb-3 pie-6 text-right">
-                  <Typography color="text.primary">{row.trend}</Typography>
+                  <Typography color="text.primary">{getCurrency} {row.amount}</Typography>
                 </td>
               </tr>
             ))}

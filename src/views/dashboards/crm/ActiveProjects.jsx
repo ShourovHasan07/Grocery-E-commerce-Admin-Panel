@@ -11,47 +11,29 @@ import OptionMenu from "@core/components/option-menu";
 // Vars
 const data = [
   {
-    title: "Laravel",
-    subtitle: "eCommerce",
+    title: "Legal Compliance",
     progress: 54,
     progressColor: "error",
-    imgSrc: "/images/logos/laravel.png",
+    img: "/images/logos/laravel.png",
   },
   {
-    title: "Figma",
-    subtitle: "App UI Kit",
+    title: "Growth Hacking",
     progress: 85,
     progressColor: "primary",
-    imgSrc: "/images/logos/figma.png",
+    img: "/images/logos/figma.png",
   },
   {
-    title: "VusJs",
-    subtitle: "Calendar App",
+    title: "Business Model",
     progress: 64,
     progressColor: "success",
-    imgSrc: "/images/logos/vue.png",
+    img: "/images/logos/vue.png",
   },
   {
-    title: "React",
-    subtitle: "Dashboard",
+    title: "MVP Strategy",
     progress: 40,
     progressColor: "info",
-    imgSrc: "/images/logos/react.png",
-  },
-  {
-    title: "Bootstrap",
-    subtitle: "Website",
-    progress: 17,
-    progressColor: "primary",
-    imgSrc: "/images/logos/bootstrap.png",
-  },
-  {
-    title: "Sketch",
-    subtitle: "Website Design",
-    progress: 30,
-    progressColor: "warning",
-    imgSrc: "/images/logos/sketch.png",
-  },
+    img: "/images/logos/react.png",
+  }
 ];
 
 const ActiveProjects = () => {
@@ -65,13 +47,12 @@ const ActiveProjects = () => {
       <CardContent className="flex flex-col gap-4">
         {data.map((item, index) => (
           <div key={index} className="flex items-center gap-4">
-            <img src={item.imgSrc} alt={item.title} width={32} />
+            <img src={item.img} alt={item.title} width={32} />
             <div className="flex flex-wrap justify-between items-center gap-x-4 gap-y-1 is-full">
               <div className="flex flex-col">
                 <Typography className="font-medium" color="text.primary">
                   {item.title}
                 </Typography>
-                <Typography variant="body2">{item.subtitle}</Typography>
               </div>
               <div className="flex justify-between items-center is-32">
                 <LinearProgress
