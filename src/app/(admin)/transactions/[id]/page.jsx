@@ -5,23 +5,23 @@ import { authOptions } from "@/libs/auth";
 
 import pageApiHelper from "@/utils/pageApiHelper";
 
-import BookingInfo from "@/views/apps/bookings/details/BookingDetail";
+import TransactionInfo from "@/views/apps/transactions/details/Detail";
 import NotFound from "@/components/NotFound";
 
-const getBookingData = async (id) => {
+const getTransactionData = async (id) => {
   // Vars
   const session = await getServerSession(authOptions);
 
   if (session.accessToken) {
     try {
-      // Fetching the booking data
+      // Fetching the transaction data
       const result = await pageApiHelper.get(
-        `bookings/${id}`,
+        `transactions/${id}`,
         {},
         session.accessToken,
       );
 
-      //console.log("Bookings Data:", result);
+      //console.log("Transactions Data:", result);
 
       if (result.success && result?.data?.data) {
         return result.data.data;
@@ -29,7 +29,6 @@ const getBookingData = async (id) => {
 
       return null;
     } catch (error) {
-      // console.error('Error fetching booking data:', error);
       return null;
     }
   }
@@ -38,25 +37,25 @@ const getBookingData = async (id) => {
 };
 
 export const metadata = {
-  title: "Booking Detail's - AskValor",
+  title: "Transaction Detail's - AskValor",
 };
 
 const DetailApp = async ({ params }) => {
   const { id } = await params;
-  const result = await getBookingData(id);
+  const result = await getTransactionData(id);
 
-  if (!result || !result.booking || !result.booking.id) {
+  if (!result || !result.transaction || !result.transaction.id) {
     return (
       <NotFound
-        title="Booking Not Found"
-        message="Sorry, we could not find the booking you requested."
-        buttonLabel="Back to booking List"
-        redirectPath="/bookings"
+        title="Transaction Not Found"
+        message="Sorry, we could not find the transaction you requested."
+        buttonLabel="Back to transaction List"
+        redirectPath="/transactions"
       />
     );
   }
 
-  return <BookingInfo booking={result.booking} />;
+  return <TransactionInfo transaction={result.transaction} />;
 };
 
 export default DetailApp;

@@ -48,7 +48,7 @@ import CustomTextField from "@core/components/mui/TextField";
 import LoaderIcon from "@/components/common/Loader";
 
 // Util Imports
-import { bookingStatusLabel, bookingStatusColor } from "@/utils/helpers";
+import { getCurrency, transactionStatusLabel, transactionStatusColor } from "@/utils/helpers";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
@@ -72,10 +72,10 @@ const columnHelper = createColumnHelper();
 
 
 const ListTable = ({ tableData }) => {
-  //console.log("Table Data:", tableData);
+  console.log("Table Data:", tableData);
 
   // States
-  const dataObj = tableData?.bookings || [];
+  const dataObj = tableData?.transactions || [];
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState(...[dataObj]);
   const [filteredData, setFilteredData] = useState(data);
@@ -99,13 +99,13 @@ const ListTable = ({ tableData }) => {
             <Tooltip title="Detail">
               <IconButton
                 onClick={() => {
-                  const path = `/bookings/${row.original.id}`;
+                  const path = `/transactions/${row.original.id}`;
 
-                  setLoadingId(`bookings-${row.original.id}`);
+                  setLoadingId(`transactions-${row.original.id}`);
                   router.push(path);
                 }}
               >
-                {loadingId === `bookings-${row.original.id}` ? (
+                {loadingId === `transactions-${row.original.id}` ? (
                   <LoaderIcon size={17} topColor="border-t-yellow-500" />
                 ) : (
                   <i className="tabler-eye text-secondary" />
@@ -120,68 +120,58 @@ const ListTable = ({ tableData }) => {
         header: "ID",
         cell: ({ row }) => <Typography>{row.original.id}</Typography>,
       },
-      {
-        header: "Client Name",
-        cell: ({ row }) => <Typography>{row.original.user.name}</Typography>,
-      },
-      {
-        header: "Expert Name",
-        cell: ({ row }) => <Typography>{row.original.expert.name}</Typography>,
-      },
-      {
-        header: "Time (min)",
-        cell: ({ row }) => <Typography>{row.original.timeMin} mins</Typography>,
-      },
-      {
-        header: "Fee",
-        cell: ({ row }) => <Typography>{row.original.fee}</Typography>,
-      },
-      {
-        header: "Service Charge",
-        cell: ({ row }) => (
-          <Typography className="text-center w-full block">
-            {row.original.serviceCharge}
-          </Typography>
-        ),
-      },
-      {
-        header: "discount",
-        cell: ({ row }) => (
-          <Typography className="text-center w-full block">
-            {row.original.discount}
-          </Typography>
-        ),
-      },
-      {
-        header: "total",
-        cell: ({ row }) => (
-          <Typography className="text-center w-full block">
-            {row.original.total}
-          </Typography>
-        ),
-      },
-      {
-        header: "Start At",
-        cell: ({ row }) => (
-          <Typography className="text-center w-full block">
-            {formattedDate(row.original.startAt)}
-          </Typography>
-        ),
-      },
       columnHelper.accessor("status", {
         header: "Status",
         cell: ({ row }) => (
           <div className="flex items-center gap-3 text-center">
             <Chip
               variant="tonal"
-              label={bookingStatusLabel(row.original.status)}
+              label={transactionStatusLabel(row.original.status)}
               size="small"
-              color={bookingStatusColor(row.original.status)}
+              color={transactionStatusColor(row.original.status)}
               className="capitalize"
             />
           </div>
         ),
       }),
+      {
+        header: "Amount",
+        cell: ({ row }) => <Typography>{getCurrency} {row.original.amount}</Typography>,
+      },
+      {
+        header: "Transaction ID",
+        cell: ({ row }) => (
+          <Typography className="text-center w-full block">
+            {row.original.transactionId}
+          </Typography>
+        ),
+      },
+      {
+        header: "Payment Method",
+        cell: ({ row }) =>
+        (<div className="text-center">
+          <Chip
+            variant="tonal"
+            label={row.original.paymentMethod}
+            size="small"
+            color='primary'
+            className="capitalize"
+          />
+        </div>
+        ),
+      },
+      {
+        header: "Client Name",
+        cell: ({ row }) => <Typography className="text-wrap w-[200px]">{row.original.user.name}</Typography>,
+      },
+      {
+        header: "Expert Name",
+        cell: ({ row }) => <Typography className="text-wrap w-[200px]">{row.original.expert.name}</Typography>,
+      },
+      {
+        header: "Payment for (min)",
+        cell: ({ row }) => <Typography>{row.original.booking.timeMin} mins</Typography>,
+      },
       columnHelper.accessor("createdAt", {
         header: "Created At",
         cell: ({ row }) => (
@@ -230,7 +220,7 @@ const ListTable = ({ tableData }) => {
   return (
     <>
       <Card>
-        <CardHeader title="Booking List" className="pbe-4" />
+        <CardHeader title="Transaction List" className="pbe-4" />
         <TableFilters setData={setFilteredData} tableData={data} />
         <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
           <CustomTextField

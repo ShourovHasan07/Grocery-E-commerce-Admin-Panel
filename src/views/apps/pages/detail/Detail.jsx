@@ -49,7 +49,14 @@ const Detail = ({ page }) => {
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-1/5">Image</th>
                   <td className="border px-4 py-2 w-4/5">
-                    {page.image && <Image src={page.image} height={200} />}
+                    {page.image && (
+                      <Image
+                        src={page.image}
+                        height={200}
+                        width={200}
+                        alt={page.title || "Page image"}
+                      />
+                    )}
                   </td>
                 </tr>
                 <tr className="text-left">

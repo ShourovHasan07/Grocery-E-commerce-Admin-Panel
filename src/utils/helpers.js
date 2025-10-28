@@ -146,6 +146,33 @@ export const bookingStatusColor = (status) => {
   }
 };
 
+//pending, confirmed, ongoing, completed, cancelled,
+export const transactionStatusLabel = (status) => {
+  switch (status) {
+    case "failed":
+      return "Failed";
+    case "paid":
+      return "Paid";
+    case "pending":
+      return "Pending";
+    default:
+      return String(status);
+  }
+};
+
+export const transactionStatusColor = (status) => {
+  switch (status) {
+    case "failed":
+      return "error";
+    case "paid":
+      return "success";
+    case "pending":
+      return "warning";
+    default:
+      return "default";
+  }
+};
+
 // 👉 Popular Status
 export const popularStatusLabel = (popular) => {
   switch (popular) {
@@ -175,3 +202,5 @@ export const timeFormat = (time24h) => {
 
   return `${hours}:${minutes} ${modifier}`;
 };
+
+export const getCurrency = '£';

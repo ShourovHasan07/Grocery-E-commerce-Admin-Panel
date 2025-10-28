@@ -33,7 +33,7 @@ import { useSettings } from "@core/hooks/useSettings";
 import "./styles.css";
 
 // Data Imports
-import data from "@/data/searchData";
+const data = [];
 
 // Transform the data to group items by their sections
 const transformedData = data.reduce((acc, item) => {
@@ -64,7 +64,7 @@ const SearchItem = ({
   value,
   currentPath,
   url,
-  onSelect = () => {},
+  onSelect = () => { },
 }) => {
   return (
     <CommandItem

@@ -22,4 +22,19 @@ const BOOKING_STATUS = [
   },
 ];
 
-export { BOOKING_STATUS };
+const TRANSACTION_STATUS = [
+  {
+    key: "pending",
+    value: "Pending",
+  },
+  {
+    key: "paid",
+    value: "Paid",
+  },
+  {
+    key: "failed",
+    value: "Failed",
+  }
+];
+
+export { BOOKING_STATUS, TRANSACTION_STATUS };
