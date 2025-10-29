@@ -19,31 +19,27 @@ const TableFilters = ({ setData, tableData }) => {
   const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
+    const end = endDate ? new Date(new Date(endDate).getTime() + 24 * 60 * 60 * 1000 - 1) : null;
 
-    // date issu 
+    const filteredData = tableData?.filter((item) => {
+      const bookingStart = new Date(item.startAt);
 
-    const end = endDate ? new Date(new Date(endDate).getTime() + 24*60*60*1000 - 1) : null;
+      // Filter by name
+      if (search && !item.user.name.toLowerCase().includes(search.toLowerCase())) return false;
 
+      // Filter by status
+      if (status && status !== "" && item.status !== status) return false;
 
-  const filteredData = tableData?.filter((item) => {
-    const bookingStart = new Date(item.startAt);
-
-    // Filter by name
-    if (search && !item.user.name.toLowerCase().includes(search.toLowerCase())) return false;
-
-    // Filter by status
-    if (status && status !== "" && item.status !== status) return false;
-
-    // Filter by Start and End Dates 
-    if (startDate && bookingStart < new Date(startDate)) return false;
-    if (end && bookingStart > end) return false; 
+      // Filter by Start and End Dates
+      if (startDate && bookingStart < new Date(startDate)) return false;
+      if (end && bookingStart > end) return false;
 
 
-    return true;
-  });
+      return true;
+    });
 
-  setData(filteredData || []);
-}, [search, status, startDate, endDate, tableData, setData]);
+    setData(filteredData || []);
+  }, [search, status, startDate, endDate, tableData, setData]);
 
   return (
     <CardContent>
@@ -63,7 +59,6 @@ const TableFilters = ({ setData, tableData }) => {
         <Grid size={{ xs: 12, sm: 3 }}>
           <CustomTextField
             label="Status"
-           
             select
             fullWidth
             value={status}
@@ -78,22 +73,16 @@ const TableFilters = ({ setData, tableData }) => {
           </CustomTextField>
         </Grid>
 
-        
+
         {/* Start Date */}
         <Grid size={{ xs: 12, sm: 3 }}>
           <AppReactDatepicker
             selected={startDate}
             onChange={(date) => setStartDate(date)}
-         
             customInput={<CustomTextField label="Start Date" placeholder="Select start date & time" fullWidth />}
             dateFormat="dd-MM-yyyy"
-
-
-              placeholderText="Select start date "
-
-
-
-          /> 
+            placeholderText="Select start date "
+          />
         </Grid>
 
         {/* End Date */}
@@ -102,9 +91,8 @@ const TableFilters = ({ setData, tableData }) => {
             selected={endDate}
             onChange={(date) => setEndDate(date)}
             customInput={<CustomTextField label="End Date" fullWidth />}
-            dateFormat=" dd-MM-yyyy"
-            placeholderText="Select End  date "
-
+            dateFormat="dd-MM-yyyy"
+            placeholderText="Select End date"
           />
         </Grid>
       </Grid>

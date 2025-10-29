@@ -3,10 +3,7 @@
 // React Imports
 import { useState, useMemo } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-
-import { useSession } from "next-auth/react";
 
 // MUI Imports
 import Card from "@mui/material/Card";
@@ -84,11 +81,6 @@ const ListTable = ({ tableData }) => {
   // loader state
   const [loadingId, setLoadingId] = useState(null);
   const router = useRouter();
-
-
-  //session
-  const { data: session } = useSession();
-  const token = session?.accessToken;
 
   const columns = useMemo(
     () => [

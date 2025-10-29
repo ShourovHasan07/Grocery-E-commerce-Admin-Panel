@@ -8,16 +8,18 @@ import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 import Chip from "@mui/material/Chip";
+import Skeleton from "@mui/material/Skeleton";
 import { useTheme } from "@mui/material/styles";
 
 // Styled Component Imports
 const AppReactApexCharts = dynamic(
   () => import("@/libs/styles/AppReactApexCharts"),
+  { ssr: false }
 );
 
 const series = [{ data: [32, 52, 72, 94, 116, 94, 72] }];
 
-const BarChartRevenueGrowth = () => {
+const BarChartRevenueGrowth = ({ loading, data }) => {
   // Hook
   const theme = useTheme();
 
@@ -28,6 +30,8 @@ const BarChartRevenueGrowth = () => {
     chart: {
       parentHeightOffset: 0,
       toolbar: { show: false },
+      width: "100%",
+      height: "100%",
     },
     plotOptions: {
       bar: {
@@ -122,17 +126,41 @@ const BarChartRevenueGrowth = () => {
             <Typography>This Monthly</Typography>
           </div>
           <div className="flex flex-col gap-y-2 items-start">
-            <Typography variant="h3">843</Typography>
-            <Chip variant="tonal" size="small" color="success" label="+15.2%" />
+            {loading ? (
+              <div className="mt-8">
+                <Skeleton variant="text" width={80} height={42} />
+                <Skeleton variant="rounded" width={40} height={18} />
+              </div>
+            ) : (
+              <>
+                <Typography variant="h3">{data?.count || 0}</Typography>
+                <Chip variant="tonal" size="small" color="success" label={data?.percentage || "0%"} />
+              </>
+            )}
           </div>
         </div>
-        <AppReactApexCharts
-          type="bar"
-          width={170}
-          height={150}
-          series={series}
-          options={options}
-        />
+        {loading ? (
+          <div className="mt-4 flex gap-3 items-baseline">
+            <Skeleton variant="rectangular" className="rounded" width={10} height={80} />
+            <Skeleton variant="rectangular" className="rounded" width={10} height={90} />
+            <Skeleton variant="rectangular" className="rounded" width={10} height={100} />
+            <Skeleton variant="rectangular" className="rounded" width={10} height={110} />
+            <Skeleton variant="rectangular" className="rounded" width={10} height={130} />
+            <Skeleton variant="rectangular" className="rounded" width={10} height={110} />
+            <Skeleton variant="rectangular" className="rounded" width={10} height={100} />
+            <Skeleton variant="rectangular" className="rounded" width={10} height={85} />
+          </div>
+        ) : (
+          <div style={{ width: 170, height: 150, minWidth: 170, minHeight: 150 }}>
+            <AppReactApexCharts
+              type="bar"
+              width="100%"
+              height="100%"
+              series={series}
+              options={options}
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   );

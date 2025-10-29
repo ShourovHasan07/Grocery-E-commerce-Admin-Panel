@@ -21,54 +21,7 @@ import tableStyles from "@core/styles/table.module.css";
 import { getCurrency, transactionStatusLabel, transactionStatusColor, getCardBrandImage } from "@/utils/helpers";
 import { formattedDate } from "@/utils/formatters";
 
-// Vars
-const data = [
-  {
-    amount: 28,
-    status: "paid",
-    cardType: "Credit",
-    cardNumber: "*4230",
-    imgName: "visa",
-    date: `17 Mar ${new Date().getFullYear()}`,
-  },
-  {
-    amount: 23,
-    status: "failed",
-    cardType: "Credit",
-    cardNumber: "*5578",
-    imgName: "mastercard",
-    date: `12 Feb ${new Date().getFullYear()}`,
-  },
-  {
-    amount: 12,
-    cardType: "ATM",
-    status: "paid",
-    cardNumber: "*4567",
-    imgName: "american-express",
-    date: `28 Feb ${new Date().getFullYear()}`,
-  },
-  {
-    amount: 42,
-    status: "pending",
-    cardType: "Credit",
-    cardNumber: "*5699",
-    imgName: "visa",
-    date: `08 Jan ${new Date().getFullYear()}`,
-  },
-  {
-    amount: 38,
-    status: "failed",
-    cardType: "Credit",
-    cardNumber: "*2451",
-    imgName: "visa",
-    date: `19 Oct ${new Date().getFullYear()}`,
-  }
-];
-
-
-
-
-const LastTransaction = ({ title }) => {
+const LastDisbursement = ({ title }) => {
   // Hooks
   const { mode } = useColorScheme();
 
@@ -83,7 +36,7 @@ const LastTransaction = ({ title }) => {
       if (token) {
         try {
           const result = await pageApiHelper.get(
-            "dashboard/latest-transactions",
+            "dashboard/latest-disbursements",
             {},
             token,
           );
@@ -151,11 +104,11 @@ const LastTransaction = ({ title }) => {
                 </td>
                 <td className="pli-2 plb-3">
                   <div className="flex flex-col gap-1">
-                    <small title={trans?.user?.name || "N/A"}>
-                      {trans?.user?.name
-                        ? (trans.user.name.length > 25
-                          ? `${trans.user.name.substring(0, 25)}...`
-                          : trans.user.name)
+                    <small>
+                      {trans?.expert?.name
+                        ? (trans.expert.name.length > 25
+                          ? `${trans.expert.name.substring(0, 25)}...`
+                          : trans.expert.name)
                         : "N/A"
                       }
                     </small>
@@ -185,4 +138,4 @@ const LastTransaction = ({ title }) => {
   );
 };
 
-export default LastTransaction;
+export default LastDisbursement;

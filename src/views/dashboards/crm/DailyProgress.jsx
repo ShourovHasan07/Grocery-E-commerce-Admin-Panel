@@ -1,8 +1,12 @@
 "use client";
 
+import { useState, useEffect } from "react";
+
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
+
+import { useSession } from "next-auth/react";
 
 import {
   BarChart,
@@ -15,32 +19,40 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const generateLast7DaysData = () => {
-  const data = [];
-  const today = new Date();
-
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date(today);
-
-    date.setDate(today.getDate() - i);
-
-    const dayName = date.toLocaleDateString("en-US", {
-      day: "numeric",
-      month: "short",
-    });
-
-    // Generate random income between 150 and 500
-    const income = Math.floor(Math.random() * (500 - 150 + 1)) + 150;
-
-    data.push({ name: dayName, income });
-  }
-
-  return data;
-};
-
-const data = generateLast7DaysData();
+import pageApiHelper from "@/utils/pageApiHelper";
 
 export default function DailyProgress() {
+
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+  const [loading, setLoading] = useState(true);
+  const [performance, setPerformance] = useState(null);
+
+  useEffect(() => {
+    const fetch7DaysData = async () => {
+      if (token) {
+        try {
+          const result = await pageApiHelper.get(
+            "dashboard/performance-ratio",
+            {},
+            token,
+          );
+
+          if (result.success && result?.data?.data) {
+            setPerformance(result.data.data);
+          }
+        } catch (error) {
+          // console.log("Error fetching booking stats:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetch7DaysData();
+  }, [token]);
+
+
   return (
     <Card className="bs-full p-6">
       <h3 className="text-lg font-semibold text-[#2c2c2c]">
@@ -49,9 +61,9 @@ export default function DailyProgress() {
       <p className="text-gray-500 text-sm mb-4">Last 7 days performance</p>
 
       <ResponsiveContainer width="100%" height="85%" debounce="1">
-        <BarChart data={data} barSize={20}>
+        <BarChart data={performance} barSize={20}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
+          <XAxis dataKey="label" />
           <YAxis />
           <Tooltip
             itemStyle={{ color: "#000" }}
@@ -61,7 +73,7 @@ export default function DailyProgress() {
 
           {/* Bar with hover opacity change */}
           <Bar
-            dataKey="income"
+            dataKey="count"
             fill="#8884d8"
             radius={[6, 6, 0, 0]}
             activeBar={{

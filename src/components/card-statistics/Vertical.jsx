@@ -6,6 +6,7 @@ import Chip from "@mui/material/Chip";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
+import Skeleton from "@mui/material/Skeleton";
 
 // Third-party Imports
 import classnames from "classnames";
@@ -26,7 +27,8 @@ const CardStatsVertical = (props) => {
     chipText,
     chipColor,
     chipVariant,
-    qty,
+    loading,
+    data,
     url,
   } = props;
 
@@ -42,7 +44,13 @@ const CardStatsVertical = (props) => {
           >
             <i className={classnames(avatarIcon, "text-[28px]")} />
           </CustomAvatar>
-          <Typography variant="h4" color="text.primary">{qty}</Typography>
+          {loading ? (
+            <Skeleton variant="rounded" width={30} height={30} />
+          ) : (
+            <Typography variant="h4" color="text.primary">{data?.count || 0}</Typography>
+          )}
+
+
         </div>
 
         <div className="flex flex-col gap-y-1">
@@ -52,12 +60,20 @@ const CardStatsVertical = (props) => {
         </div>
 
         <div className="flex justify-between w-full items-center gap-2">
-          <Chip
-            label={chipText}
-            color={chipColor}
-            variant={chipVariant}
-            size="small"
-          />
+          {chipText && (
+            <>
+              {loading ? (
+                <Skeleton variant="rounded" width={40} height={24} />
+              ) : (
+                <Chip
+                  label={data?.percentage || 0}
+                  color={chipColor}
+                  variant={chipVariant}
+                  size="small"
+                />
+              )}
+            </>
+          )}
 
           {url && <Button
             size="small"

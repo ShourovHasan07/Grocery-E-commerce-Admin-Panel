@@ -204,3 +204,58 @@ export const timeFormat = (time24h) => {
 };
 
 export const getCurrency = '£';
+
+// 👉 Get Card Brand Image
+export const getCardBrandImage = (cardBrand) => {
+  const defaultImage = '/images/logos/default-card.png';
+
+  if (!cardBrand) return {
+    primary: defaultImage,
+    fallback: defaultImage
+  };
+
+  // Normalize the card brand name to lowercase
+  const normalizedBrand = cardBrand.toLowerCase().trim();
+
+  // Map common card brand variations to their image file names
+  const cardBrandMap = {
+    'visa': 'visa',
+    'mastercard': 'mastercard',
+    'master card': 'mastercard',
+    'mc': 'mastercard',
+    'american express': 'american-express',
+    'americanexpress': 'american-express',
+    'amex': 'american-express',
+    'discover': 'discover',
+    'jcb': 'jcb',
+    'diners club': 'diners-club',
+    'dinersclub': 'diners-club',
+    'diners': 'diners-club',
+    'unionpay': 'unionpay',
+    'union pay': 'unionpay',
+    'maestro': 'maestro',
+    'paypal': 'paypal',
+    'apple pay': 'apple-pay',
+    'applepay': 'apple-pay',
+    'google pay': 'google-pay',
+    'googlepay': 'google-pay',
+    'samsung pay': 'samsung-pay',
+    'samsungpay': 'samsung-pay'
+  };
+
+  // Get the mapped image name or use the original brand name as fallback
+  const imageName = cardBrandMap[normalizedBrand] || normalizedBrand.replace(/\s+/g, '-');
+
+  return {
+    primary: `/images/logos/${imageName}.png`,
+    fallback: defaultImage
+  };
+};
+
+// 👉 Get Card Brand Image with Fallback (Legacy - returns string)
+export const getCardBrandImagePath = (cardBrand) => {
+  const result = getCardBrandImage(cardBrand);
+
+
+  return result.primary;
+};
