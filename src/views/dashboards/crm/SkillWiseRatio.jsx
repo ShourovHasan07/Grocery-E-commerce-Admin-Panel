@@ -1,32 +1,77 @@
 "use client";
+import { useState, useEffect } from "react";
+
 
 // Next Imports
 import dynamic from "next/dynamic";
+
+import { useSession } from "next-auth/react";
 
 // MUI Imports
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import { useTheme } from "@mui/material/styles";
+import Skeleton from "@mui/material/Skeleton";
+
+import pageApiHelper from "@/utils/pageApiHelper";
 
 // Styled Component Imports
 const AppReactApexCharts = dynamic(
   () => import("@/libs/styles/AppReactApexCharts"),
+  { ssr: false }
 );
 
-const deliveryExceptionsChartSeries = [13, 25, 22, 40];
-
-const DeliveryExceptions = () => {
+const SkillWiseRatio = () => {
   // Hooks
   const theme = useTheme();
 
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+  const [loading, setLoading] = useState(true);
+  const [series, setSeries] = useState([]);
+  const [labels, setLabels] = useState([]);
+  const [coverage, setCoverage] = useState(0);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (token) {
+        try {
+          const result = await pageApiHelper.get(
+            "dashboard/skill-wise-ratio",
+            {},
+            token,
+          );
+
+          if (result.success && result?.data?.data) {
+            const data = result.data.data;
+
+
+            // Ensure we have valid arrays and data
+            if (data?.series && Array.isArray(data.series) && data.series.length > 0 &&
+              data?.labels && Array.isArray(data.labels) && data.labels.length > 0) {
+              setSeries(data.series);
+              setLabels(data.labels);
+              setCoverage(data.coverage || 0);
+            }
+          }
+        } catch (error) {
+          // console.log("Error fetching booking stats:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, [token])
+
   const options = {
-    labels: [
-      "Business model",
-      "Growth Hacking",
-      "Legal Compliance",
-      "MVP Strategy",
-    ],
+    chart: {
+      width: "100%",
+      height: "100%",
+    },
+    labels: labels,
     stroke: {
       width: 0,
     },
@@ -88,7 +133,7 @@ const DeliveryExceptions = () => {
               label: "AVG. Bookings",
               color: "var(--mui-palette-text-secondary)",
               formatter() {
-                return "90%";
+                return `${coverage}%`;
               },
             },
           },
@@ -104,16 +149,21 @@ const DeliveryExceptions = () => {
         subheader="Spending on various skills"
       />
       <CardContent>
-        <AppReactApexCharts
-          type="donut"
-          height={370}
-          width="100%"
-          series={deliveryExceptionsChartSeries}
-          options={options}
-        />
+        {loading ? (
+          <div style={{ width: '100%', height: 370, minWidth: 300, minHeight: 370, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Skeleton variant="circular" width={200} height={200} />
+          </div>) : (
+          <AppReactApexCharts
+            type="donut"
+            height={370}
+            width="100%"
+            series={series}
+            options={options}
+          />
+        )}
       </CardContent>
     </Card>
   );
 };
 
-export default DeliveryExceptions;
+export default SkillWiseRatio;

@@ -21,6 +21,8 @@ import tableStyles from "@core/styles/table.module.css";
 import { getCurrency, transactionStatusLabel, transactionStatusColor, getCardBrandImage } from "@/utils/helpers";
 import { formattedDate } from "@/utils/formatters";
 
+import TransactionSkeleton from "./TransactionSkeleton";
+
 const LastDisbursement = ({ title }) => {
   // Hooks
   const { mode } = useColorScheme();
@@ -56,7 +58,7 @@ const LastDisbursement = ({ title }) => {
   }, [token]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <TransactionSkeleton title={title} />;
   }
 
   return (
@@ -75,7 +77,7 @@ const LastDisbursement = ({ title }) => {
             </tr>
           </thead>
           <tbody>
-            {transactions.map((trans, index) => (
+            {transactions?.map((trans, index) => (
               <tr key={index} className="border-0">
                 <td className="pis-6 pli-2 plb-3">
                   <div className="flex items-center gap-4">
@@ -127,7 +129,7 @@ const LastDisbursement = ({ title }) => {
                   />
                 </td>
                 <td className="pli-2 plb-3 pie-6 text-right">
-                  <Typography color="text.primary">{getCurrency} {trans.amount}</Typography>
+                  <Typography color="text.primary">{getCurrency}{trans.amount}</Typography>
                 </td>
               </tr>
             ))}
