@@ -1,16 +1,20 @@
+"use client";
+
 // MUI Imports
 import { useTheme } from "@mui/material/styles";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
+import Skeleton from "@mui/material/Skeleton";
 
 // Third-party Imports
 import PerfectScrollbar from "react-perfect-scrollbar";
 
 // Component Imports
-import { Menu, SubMenu, MenuItem, MenuSection } from "@menu/vertical-menu";
-import CustomChip from "@core/components/mui/Chip";
+import { Menu, SubMenu, MenuItem } from "@menu/vertical-menu";
 
-// import { GenerateVerticalMenu } from '@components/GenerateMenu'
 // Hook Imports
 import useVerticalNav from "@menu/hooks/useVerticalNav";
+import { useAbility, useAbilityLoading } from '@/contexts/AbilityContext';
 
 // Styled Component Imports
 import StyledVerticalNavExpandIcon from "@menu/styles/vertical/StyledVerticalNavExpandIcon";
@@ -18,6 +22,7 @@ import StyledVerticalNavExpandIcon from "@menu/styles/vertical/StyledVerticalNav
 // Style Imports
 import menuItemStyles from "@core/styles/vertical/menuItemStyles";
 import menuSectionStyles from "@core/styles/vertical/menuSectionStyles";
+import VerticalMenuSkeleton from './VerticalMenuSkeleton';
 
 const RenderExpandIcon = ({ open, transitionDuration }) => (
   <StyledVerticalNavExpandIcon
@@ -29,18 +34,15 @@ const RenderExpandIcon = ({ open, transitionDuration }) => (
 );
 
 const VerticalMenu = ({ scrollMenu }) => {
-  // Hooks
+  const ability = useAbility();
+  const isLoading = useAbilityLoading();
   const theme = useTheme();
   const verticalNavOptions = useVerticalNav();
 
-  // Vars
   const { isBreakpointReached, transitionDuration } = verticalNavOptions;
-
   const ScrollWrapper = isBreakpointReached ? "div" : PerfectScrollbar;
 
   return (
-    // eslint-disable-next-line lines-around-comment
-    /* Custom scrollbar instead of browser scroll, remove if you want browser scroll only */
     <ScrollWrapper
       {...(isBreakpointReached
         ? {
@@ -52,8 +54,6 @@ const VerticalMenu = ({ scrollMenu }) => {
           onScrollY: (container) => scrollMenu(container, true),
         })}
     >
-      {/* Incase you also want to scroll NavHeader to scroll with Vertical Menu, remove NavHeader from above and paste it below this comment */}
-      {/* Vertical Menu */}
       <Menu
         popoutMenuOffset={{ mainAxis: 23 }}
         menuItemStyles={menuItemStyles(verticalNavOptions, theme)}
@@ -71,68 +71,104 @@ const VerticalMenu = ({ scrollMenu }) => {
         <MenuItem href="/dashboard" icon={<i className="tabler-smart-home" />}>
           Dashboard
         </MenuItem>
+        {isLoading ? (
+          <VerticalMenuSkeleton />
+        ) : (
+          <>
+            {/* Roles */}
+            {(ability.can('create', 'Role') || ability.can('read', 'Role')) && (
+              <SubMenu label="Roles" icon={<i className="tabler-shield" />}>
+                {ability.can('create', 'Role') && (
+                  <MenuItem href="/roles/create">New Role</MenuItem>
+                )}
+                {ability.can('read', 'Role') && (
+                  <MenuItem href="/roles">Role List</MenuItem>
+                )}
+              </SubMenu>
+            )}
 
-        <SubMenu label="Roles" icon={<i className="tabler-shield" />}>
-          <MenuItem href="/roles/create">New Role</MenuItem>
-          <MenuItem href="/roles">Role List</MenuItem>
-        </SubMenu>
+            {/* Admins */}
+            {(ability.can('create', 'Admin') || ability.can('read', 'Admin')) && (
+              <SubMenu label="Admins" icon={<i className="tabler-users" />}>
+                {ability.can('create', 'Admin') && (
+                  <MenuItem href="/admins/create">New Admin</MenuItem>
+                )}
+                {ability.can('read', 'Admin') && (
+                  <MenuItem href="/admins">Admin List</MenuItem>
+                )}
+              </SubMenu>
+            )}
 
-        <SubMenu label="Admins" icon={<i className="tabler-users" />}>
-          <MenuItem href="/admins/create">New Admin</MenuItem>
-          <MenuItem href="/admins">Admin List</MenuItem>
-        </SubMenu>
+            {/* Categories */}
+            {ability.can('read', 'Category') && (
+              <MenuItem href="/categories" icon={<i className="tabler-apps" />}>
+                Categories
+              </MenuItem>
+            )}
 
-        <MenuItem href="/categories" icon={<i className="tabler-apps" />}>
-          Categories
-        </MenuItem>
+            {/* Achievements */}
+            {ability.can('read', 'Achievement') && (
+              <MenuItem href="/achievements" icon={<i className="tabler-award" />}>
+                Achievements
+              </MenuItem>
+            )}
 
-        <MenuItem href="/achievements" icon={<i className="tabler-award" />}>
-          Achievements
-        </MenuItem>
+            {/* Languages */}
+            {ability.can('read', 'Language') && (
+              <MenuItem href="/languages" icon={<i className="tabler-abc" />}>
+                Languages
+              </MenuItem>
+            )}
 
-        <MenuItem href="/languages" icon={<i className="tabler-abc" />}>
-          Languages
-        </MenuItem>
+            {/* Experts */}
+            {(ability.can('create', 'Expert') || ability.can('read', 'Expert')) && (
+              <SubMenu label="Experts" icon={<i className="tabler-users" />}>
+                {ability.can('create', 'Expert') && (
+                  <MenuItem href="/experts/create">New Expert</MenuItem>
+                )}
+                {ability.can('read', 'Expert') && (
+                  <MenuItem href="/experts">Expert List</MenuItem>
+                )}
+              </SubMenu>
+            )}
 
-        <SubMenu label="Experts" icon={<i className="tabler-users" />}>
-          <MenuItem href="/experts/create">New Expert</MenuItem>
-          <MenuItem href="/experts">Expert List</MenuItem>
-        </SubMenu>
+            {/* Client/Users */}
+            {ability.can('read', 'User') && (
+              <MenuItem href="/users" icon={<i className="tabler-user" />}>
+                Client
+              </MenuItem>
+            )}
 
-        <MenuItem href="/users" icon={<i className="tabler-user" />}>
-          Client
-        </MenuItem>
+            {/* Bookings */}
+            {ability.can('read', 'Booking') && (
+              <MenuItem href="/bookings" icon={<i className="tabler-brand-booking" />}>
+                Bookings
+              </MenuItem>
+            )}
 
-        <MenuItem
-          href="/bookings"
-          icon={<i className="tabler-brand-booking" />}
-        >
-          Bookings
-        </MenuItem>
+            {/* Transactions */}
+            {ability.can('read', 'Transaction') && (
+              <MenuItem href="/transactions" icon={<i className="tabler-currency-dollar" />}>
+                Transactions
+              </MenuItem>
+            )}
 
-        <MenuItem
-          href="/transactions"
-          icon={<i className="tabler-currency-dollar" />}
-        >
-          Transactions
-        </MenuItem>
+            {/* Pages */}
+            {(ability.can('create', 'Page') || ability.can('read', 'Page')) && (
+              <SubMenu label="Pages" icon={<i className="tabler-brand-pagekit" />}>
+                {ability.can('create', 'Page') && (
+                  <MenuItem href="/pages/create">New Page</MenuItem>
+                )}
+                {ability.can('read', 'Page') && (
+                  <MenuItem href="/pages">Page List</MenuItem>
+                )}
+              </SubMenu>
+            )}
 
-        <SubMenu label="Pages" icon={<i className="tabler-brand-pagekit" />}>
-          <MenuItem href="/pages/create">New Page</MenuItem>
-          <MenuItem href="/pages">Page List</MenuItem>
-        </SubMenu>
-
-
-
-
-
-
-
-
-
-
-
-
+            <SubMenu label="Pages" icon={<i className="tabler-brand-pagekit" />}>
+              <MenuItem href="/pages/create">New Page</MenuItem>
+              <MenuItem href="/pages">Page List</MenuItem>
+            </SubMenu>
 
 
 
@@ -142,18 +178,32 @@ const VerticalMenu = ({ scrollMenu }) => {
 
 
 
-        <MenuItem href="/menus" icon={<i className="tabler-menu-2" />}>
-          Menus
-        </MenuItem>
 
-        <SubMenu label="Contact Us" icon={<i className="tabler-message-user" />}>
-          <MenuItem href="/contacts">Contact List</MenuItem>
-          <MenuItem href="/contacts/subjects">Contact Subjects</MenuItem>
-        </SubMenu>
 
-        <MenuItem href="/site-settings" icon={<i className="tabler-settings" />}>
-          Site Settings
-        </MenuItem>
+
+
+
+
+
+
+
+
+
+
+            <MenuItem href="/menus" icon={<i className="tabler-menu-2" />}>
+              Menus
+            </MenuItem>
+
+            <SubMenu label="Contact Us" icon={<i className="tabler-message-user" />}>
+              <MenuItem href="/contacts">Contact List</MenuItem>
+              <MenuItem href="/contacts/subjects">Contact Subjects</MenuItem>
+            </SubMenu>
+
+            <MenuItem href="/site-settings" icon={<i className="tabler-settings" />}>
+              Site Settings
+            </MenuItem>
+          </>
+        )}
       </Menu>
     </ScrollWrapper>
   );
