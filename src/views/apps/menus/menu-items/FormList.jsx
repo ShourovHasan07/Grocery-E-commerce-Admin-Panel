@@ -1,0 +1,373 @@
+"use client";
+
+// React Imports
+import { useState } from "react";
+
+import { useParams } from "next/navigation";
+
+import Link from "next/link";
+
+import { useSession } from "next-auth/react";
+
+// MUI Imports
+import Card from "@mui/material/Card";
+import Grid from "@mui/material/Grid2";
+import Button from "@mui/material/Button";
+import CardHeader from "@mui/material/CardHeader";
+import CardContent from "@mui/material/CardContent";
+import MenuItem from "@mui/material/MenuItem";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import IconButton from "@mui/material/IconButton";
+import Chip from "@mui/material/Chip";
+
+// Third-party Imports
+import { toast } from "react-toastify";
+import { Controller, useForm } from "react-hook-form";
+
+// Components Imports
+import { z } from "zod";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import ConfirmDialog from "@components/dialogs/ConfirmDialog";
+
+import CustomTextField from "@core/components/mui/TextField";
+
+import pageApiHelper from "@/utils/pageApiHelper";
+
+import { formattedDate } from "@/utils/formatters";
+import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
+
+const schema = z.object({
+  title: z
+    .string({ message: "This field is required" })
+    .min(1, "This field is required")
+    .min(3, "Name must be at least 3 characters long"),
+  pageId: z
+    .number({ message: "This field is required" })
+    .int("Must be an integer")
+    .min(1, "Please select a page"),
+  status: z.boolean().default(true),
+});
+
+const FormList = ({ menuItems, pages }) => {
+  const params = useParams();
+  const id = params.id;
+
+  // States
+  const [items, setItems] = useState(menuItems);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [dialogOpen, setDialogOpen] = useState({
+    open: false,
+    id: null,
+  });
+
+  const {
+    control,
+    reset: resetForm,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      title: "",
+      pageId: 0,
+      status: true,
+    },
+  });
+
+  // form submission
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+
+  const onSubmit = async (formData) => {
+    setIsSubmitting(true);
+
+    try {
+      const form = new FormData();
+
+      form.append("title", formData.title.trim());
+      form.append("pageId", formData.pageId.toString());
+      form.append("status", formData.status.toString());
+
+      const res = await pageApiHelper.post(
+        `menus/${id}/menu-items`,
+        form,
+        token,
+      );
+
+      const response = res?.data;
+      const innerData = response?.data;
+
+      if (!res?.success) {
+        if (res?.status === 400) {
+          let errors = innerData?.errors || [];
+
+          if (errors) {
+            Object.keys(errors).forEach((key) => {
+              setError(key, {
+                type: "server",
+                message: errors[key],
+              });
+            });
+
+            toast.error(response?.message || "Something went wrong");
+          }
+        } else if (res?.status === 404) {
+          toast.error(res?.data?.error || "Sorry! Item not found");
+        } else {
+          toast.error(res?.data?.error || "Sorry! Error occurred");
+        }
+
+        return;
+      }
+
+      if (response?.success && innerData?.items) {
+        setItems(innerData.items);
+
+        resetForm({
+          title: "",
+          pageId: 0,
+          status: true,
+        });
+
+        toast.success("Menu Item Added successfully");
+      }
+    } catch (error) {
+      toast.error(error.message || "Something went wrong");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (itemId) => {
+    try {
+      const form = new FormData();
+
+      const res = await pageApiHelper.delete(
+        `menus/${id}/menu-items/${itemId}`,
+        token
+      );
+
+      // Update the data state after successful deletion
+      if (res?.success && res?.data?.success) {
+        setItems((prevData) =>
+          items.filter((item) => item.id !== itemId),
+        );
+
+        setDialogOpen((prevState) => ({
+          ...prevState,
+          open: !prevState.open,
+        }));
+
+        toast.success("Deleted successfully");
+
+        return;
+      }
+
+      toast.error(
+        res?.data?.error ||
+        "Something went wrong while deleting the achievement",
+      );
+    } catch (error) {
+      // Show error in toast
+      toast.error(error.message);
+    }
+  };
+
+  return (
+    <>
+      <Card className="mb-4">
+        <CardHeader title="New Menu Info" />
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Grid container spacing={{ md: 4 }}>
+              <Grid size={{ md: 6 }}>
+                <Controller
+                  name="title"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      className="mb-4"
+                      label="Title"
+                      placeholder="title"
+                      {...(errors.title && {
+                        error: true,
+                        helperText: errors.title.message,
+                      })}
+                    />
+                  )}
+                />
+                <Controller
+                  name="pageId"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      select
+                      fullWidth
+                      className="mb-4"
+                      label="Page"
+                      {...(errors.pageId && {
+                        error: true,
+                        helperText: errors.pageId.message,
+                      })}
+                    >
+                      <MenuItem value={0}>
+                        Select Page
+                      </MenuItem>
+                      {pages?.map((page) => (
+                        <MenuItem key={page.id} value={page.id}>
+                          {page.title}
+                        </MenuItem>
+                      ))}
+                    </CustomTextField>
+                  )}
+                />
+
+                <Controller
+                  name="status"
+                  control={control}
+                  render={({ field }) => {
+                    return (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={Boolean(field.value)}
+                            onChange={(e) => field.onChange(e.target.checked)}
+                          />
+                        }
+                        label="Active"
+                      />
+                    );
+                  }}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12 }} className="flex gap-4">
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={isSubmitting}
+                  endIcon={
+                    isSubmitting ? (
+                      <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
+                    ) : null
+                  }
+                >
+                  Submit
+                </Button>
+
+                <Button
+                  variant="tonal"
+                  color="error"
+                  component={Link}
+                  href={"/menus"}
+                >
+                  Cancel
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-4">
+        <CardHeader title="Menu Item List" />
+        <CardContent>
+          <Grid size={{ xs: 12 }}>
+            <div className="w-full overflow-x-auto">
+              <table className="w-full table-auto border-collapse">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="border px-4 py-2">Action</th>
+                    <th className="border px-4 py-2">#</th>
+                    <th className="border px-4 py-2">Title</th>
+                    <th className="border px-4 py-2">Page</th>
+                    <th className="border px-4 py-2">Status</th>
+                    <th className="border px-4 py-2">Created At</th>
+                    <th className="border px-4 py-2">Updated At</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items &&
+                    items.map((item, index) => (
+                      <tr key={index}>
+                        <td className="border px-4 py-2 text-center">
+                          <IconButton>
+                            <Link
+                              href={`/menus/${id}/menu-items/${item.id}`}
+                              className="flex"
+                            >
+                              <i className="tabler-edit text-primary" />
+                            </Link>
+                          </IconButton>
+
+                          <IconButton
+                            onClick={() =>
+                              setDialogOpen((prevState) => ({
+                                ...prevState,
+                                open: !prevState.open,
+                                id: item.id,
+                              }))
+                            }
+                          >
+                            <i className="tabler-trash text-error" />
+                          </IconButton>
+                        </td>
+                        <td className="border px-4 py-2">{index + 1}</td>
+                        <td className="border px-4 py-2">
+                          {item.title}
+                        </td>
+                        <td className="border px-4 py-2">
+                          {item?.page?.title || 'N/A'}
+                        </td>
+                        <td className="border px-4 py-2 text-center">
+                          <Chip
+                            variant="tonal"
+                            label={activeStatusLabel(item.status)}
+                            size="small"
+                            color={activeStatusColor(item.status)}
+                            className="capitalize"
+                          />
+                        </td>
+                        <td className="border px-4 py-2">
+                          {formattedDate(item.createdAt)}
+                        </td>
+                        <td className="border px-4 py-2">
+                          {formattedDate(item.updatedAt)}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </Grid>
+        </CardContent>
+
+        <ConfirmDialog
+          dialogData={dialogOpen}
+          handleCloseDialog={() =>
+            setDialogOpen((prevState) => ({
+              ...prevState,
+              open: !prevState.open,
+              id: null,
+            }))
+          }
+          handleDelete={() => {
+            handleDelete(dialogOpen.id);
+          }}
+        />
+      </Card>
+    </>
+  );
+};
+
+export default FormList;

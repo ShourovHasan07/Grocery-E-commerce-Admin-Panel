@@ -121,6 +121,30 @@ const VerticalMenu = ({ scrollMenu }) => {
           <MenuItem href="/pages/create">New Page</MenuItem>
           <MenuItem href="/pages">Page List</MenuItem>
         </SubMenu>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <MenuItem href="/menus" icon={<i className="tabler-menu" />}>
+          Menus
+        </MenuItem>
       </Menu>
     </ScrollWrapper>
   );
