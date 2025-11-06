@@ -86,7 +86,7 @@ const ListTable = ({ tableData }) => {
 
   // loader state
   const [loadingId, setLoadingId] = useState(null);
-   const router = useRouter();
+  const router = useRouter();
 
 
 
@@ -96,7 +96,7 @@ const ListTable = ({ tableData }) => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-             <Tooltip title="Detail">
+            <Tooltip title="Detail">
               <IconButton
                 onClick={() => {
                   setLoadingId(`detail-${row.original.id}`);
@@ -144,7 +144,7 @@ const ListTable = ({ tableData }) => {
               </Tooltip>
             )}
 
-           
+
 
             {row.original.type !== "predefine" && (
               <Tooltip title="Delete" arrow placement="top">
@@ -195,7 +195,20 @@ const ListTable = ({ tableData }) => {
           </div>
         ),
       }),
-
+      columnHelper.accessor("type", {
+        header: "Type",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-3 text-center">
+            <Chip
+              variant="tonal"
+              label={row.original.type}
+              size="small"
+              color={row.original.type === "predefine" ? "info" : "primary"}
+              className="capitalize"
+            />
+          </div>
+        ),
+      }),
       columnHelper.accessor("createdAt", {
         header: "Created At",
         cell: ({ row }) => (
@@ -210,7 +223,7 @@ const ListTable = ({ tableData }) => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, filteredData,loadingId],
+    [data, filteredData, loadingId],
   );
 
   const table = useReactTable({
