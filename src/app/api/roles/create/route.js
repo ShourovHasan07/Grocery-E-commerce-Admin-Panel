@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-
 import routeApiHelper from "@/utils/routeApiHelper";
 
 export async function POST(request) {
@@ -12,37 +11,47 @@ export async function POST(request) {
         data: null,
         message: "Authorization header is missing",
       },
-      { status: 401 },
+      { status: 401 }
     );
   }
 
   try {
-    const incomingFormData = await request.formData();
+    const contentType = request.headers.get("content-type");
 
-    const outgoingFormData = new FormData();
-
-    for (const [key, value] of incomingFormData.entries()) {
-      outgoingFormData.append(key, value);
-    }
-
+    let payload = null;
     let headerConfig = {};
 
-    if (incomingFormData.has("image")) {
+    // ✅ JSON Request Fix
+    if (contentType.includes("application/json")) {
+      payload = await request.json();
       headerConfig = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "application/json" },
+      };
+    }
+    // ✅ form-data Fix (existing code kept)
+    else {
+      const incomingFormData = await request.formData();
+      const outgoingFormData = new FormData();
+
+      for (const [key, value] of incomingFormData.entries()) {
+        outgoingFormData.append(key, value);
+      }
+
+      payload = outgoingFormData;
+
+      headerConfig = {
+        headers: { "Content-Type": "multipart/form-data" },
       };
     }
 
+    // ✅ API Call
     const result = await routeApiHelper.post(
       "roles",
-      outgoingFormData,
+      payload,
       token,
-      headerConfig,
+      headerConfig
     );
 
-    // console.log("resData:", result);
     if (result.success) {
       return NextResponse.json(
         {
@@ -50,7 +59,7 @@ export async function POST(request) {
           data: result.data,
           message: "roles created successfully",
         },
-        { status: 200 },
+        { status: 200 }
       );
     }
 
@@ -60,7 +69,7 @@ export async function POST(request) {
         data: result.data,
         message: result.message || "roles creation failed",
       },
-      { status: result.status || 400 },
+      { status: result.status || 400 }
     );
   } catch (error) {
     return NextResponse.json(
@@ -69,7 +78,7 @@ export async function POST(request) {
         message: "Internal server error",
         error: error.message,
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

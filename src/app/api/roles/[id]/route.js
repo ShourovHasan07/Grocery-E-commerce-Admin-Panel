@@ -61,81 +61,50 @@ export async function PUT(request, { params }) {
 
   if (!token) {
     return NextResponse.json(
-      {
-        success: false,
-        data: null,
-        message: "Authorization header is missing",
-      },
-      { status: 401 },
+      { success: false, message: "Authorization header is missing" },
+      { status: 401 }
     );
   }
 
   try {
-    const { id } = await params;
+    const { id } = params;
 
     if (!id || !/^\d+$/.test(id)) {
       return NextResponse.json(
-        { success: false, message: "Invalid category ID" },
-        { status: 400 },
+        { success: false, message: "Invalid role ID" },
+        { status: 400 }
       );
     }
 
-    const incomingFormData = await request.formData();
+    // JSON parse 
+    const body = await request.json();
 
-    const outgoingFormData = new FormData();
-
-    for (const [key, value] of incomingFormData.entries()) {
-      outgoingFormData.append(key, value);
-    }
-
-    let headerConfig = {};
-
-    if (incomingFormData.has("image")) {
-      headerConfig = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      };
-    }
-
-    // Call backend API
     const response = await routeApiHelper.put(
       `roles/${id}`,
-      outgoingFormData,
+      body,
       token,
-      headerConfig,
+      { headers: { "Content-Type": "application/json" } }
     );
 
     if (!response.success) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "Backend update failed",
-          data: response.data,
-        },
-        { status: response.status || 500 },
+        { success: false, message: "Backend update failed", data: response.data },
+        { status: response.status || 500 }
       );
     }
 
     return NextResponse.json(
-      {
-        success: true,
-        data: response.data,
-        message: "roles updated successfully",
-      },
-      { status: 200 },
+      { success: true, data: response.data, message: "Role updated  successfully" },
+      { status: 200 }
     );
   } catch (error) {
     return NextResponse.json(
-      {
-        success: false,
-        message: "Internal server error",
-        error: error?.message,
-      },
-      { status: 500 },
+      { success: false, message: "Internal server error", error: error.message },
+      { status: 500 }
     );
   }
 }
+
 
 //Delete Category
 export async function DELETE(request, { params }) {
