@@ -193,6 +193,26 @@ export const popularStatusColor = (popular) => {
   }
 };
 
+// 👉 Contact Status
+export const contactStatusLabel = (popular) => {
+  switch (popular) {
+    case true:
+      return "Solved";
+    default:
+      return "Pending";
+  }
+};
+
+// 👉 Contact Color
+export const contactStatusColor = (popular) => {
+  switch (popular) {
+    case true:
+      return "success";
+    default:
+      return "warning";
+  }
+};
+
 // 👉 Format Time
 export const timeFormat = (time24h) => {
   let [hours, minutes] = time24h.split(":");
