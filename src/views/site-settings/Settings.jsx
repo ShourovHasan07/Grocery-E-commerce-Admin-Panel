@@ -183,8 +183,8 @@ const Settings = () => {
 
         if (setting?.type === 'image' && formData[key] instanceof File) {
           form.append(key, formData[key]);
-        } else if (formData[key]) {
-          form.append(key, formData[key].toString().trim());
+        } else {
+          form.append(key, formData[key] !== null && formData[key] !== undefined ? formData[key].toString().trim() : '');
         }
       });
 
