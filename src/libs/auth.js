@@ -35,6 +35,7 @@ export const authOptions = {
               email: data.user.email,
               name: data.user.name,
               image: data.user?.image || "/images/avatars/1.png",
+              permissions: data.user?.permissions || [],
               accessToken: data.token,
 
               // refreshToken: data.refreshToken,
@@ -65,6 +66,7 @@ export const authOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.accessToken = user.accessToken;
+        token.permissions = user.permissions;
         token.userId = user.id;
       }
 
@@ -73,6 +75,7 @@ export const authOptions = {
 
     async session({ session, token }) {
       session.accessToken = token.accessToken;
+      session.permissions = token.permissions;
       session.userId = token.userId;
 
       return session;
