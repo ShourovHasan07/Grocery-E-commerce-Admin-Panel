@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+
 import { useSession } from "next-auth/react";
 
 // MUI Imports
@@ -22,14 +24,13 @@ import { Controller, useForm } from "react-hook-form";
 // Components Imports
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import CustomTextField from "@core/components/mui/TextField";
 
 import pageApiHelper from "@/utils/pageApiHelper";
 
 //  Validation Schema
 const schema = z.object({
-
-
   displayName: z
     .string()
     .min(1, "This field is required")
@@ -38,30 +39,7 @@ const schema = z.object({
   permissions: z.array(z.number()).default([]),
 });
 
-
-
-
-
-
-
-
-// const permissionGroups = {
-//   Role: { id: 1, permissions: [{ id: 1, name: "Roles - Read" }, { id: 2, name: "Roles - Create" }, { id: 3, name: "Roles - Update" }, { id: 4, name: "Roles - Delete" }] },
-//   Admin: { id: 2, permissions: [{ id: 5, name: "Admins - Read" }, { id: 6, name: "Admins - Create" }, { id: 7, name: "Admins - Update" }, { id: 8, name: "Admins - Delete" }] },
-//   Category: { id: 3, permissions: [{ id: 9, name: "Categories - Read" }, { id: 10, name: "Categories - Create" }, { id: 11, name: "Categories - Update" }, { id: 12, name: "Categories - Delete" }] },
-//   Achievement: { id: 4, permissions: [{ id: 13, name: "Achievements - Read" }, { id: 14, name: "Achievements - Create" }, { id: 15, name: "Achievements - Update" }, { id: 16, name: "Achievements - Delete" }] },
-//   Language: { id: 5, permissions: [{ id: 17, name: "Languages - Read" }, { id: 18, name: "Languages - Create" }, { id: 19, name: "Languages - Update" }, { id: 20, name: "Languages - Delete" }] },
-//   Expert: { id: 6, permissions: [{ id: 21, name: "Experts - Read" }, { id: 22, name: "Experts - Create" }, { id: 23, name: "Experts - Update" }, { id: 24, name: "Experts - Delete" }] },
-//   User: { id: 7, permissions: [{ id: 25, name: "Users - Read" }, { id: 26, name: "Users - Create" }, { id: 27, name: "Users - Update" }, { id: 28, name: "Users - Delete" }] },
-//   Bookings: { id: 8, permissions: [{ id: 29, name: "Bookings - Read" }, { id: 30, name: "Bookings - Create" }, { id: 31, name: "Bookings - Update" }, { id: 32, name: "Bookings - Delete" }] },
-//   Transaction: { id: 9, permissions: [{ id: 33, name: "Transaction - Read" }, { id: 34, name: "Transaction - Create" }, { id: 35, name: "Transaction - Update" }, { id: 36, name: "Transaction - Delete" }] },
-//   Pages: { id: 10, permissions: [{ id: 37, name: "Pages - Read" }, { id: 38, name: "Pages - Create" }, { id: 39, name: "Pages - Update" }, { id: 40, name: "Pages - Delete" }] },
-// };
-
 const CreateForm = () => {
-
-
-
   const [permissionGroups, setPermissionGroups] = useState({});
 
 
@@ -89,13 +67,11 @@ const CreateForm = () => {
 
   const selectedPermissions = watch("permissions");
 
-
-
-
   // Global Select All
   const handleSelectAll = (checked) => {
     if (checked) {
       const allPerms = Object.values(permissionGroups).flatMap((g) => g.permissions.map((p) => p.id));
+
       setValue("permissions", allPerms);
     } else {
       setValue("permissions", []);
@@ -105,6 +81,7 @@ const CreateForm = () => {
   // Select All for each group
   const handleSelectAllGroup = (groupKey, checked) => {
     const groupPermissions = permissionGroups[groupKey].permissions.map((p) => p.id);
+
     if (checked) {
       setValue("permissions", [...new Set([...selectedPermissions, ...groupPermissions])]);
     } else {
@@ -146,6 +123,7 @@ const CreateForm = () => {
 
         if (res?.success && res.data?.data?.subjects) {
           const groups = {};
+
           res.data.data.subjects.forEach((subject) => {
             groups[subject.name] = {
               id: subject.id,
@@ -155,7 +133,7 @@ const CreateForm = () => {
           setPermissionGroups(groups);
         }
       } catch (error) {
-        console.error("Failed to fetch permissions", error);
+        // console.error("Failed to fetch permissions", error);
       }
     };
 
@@ -169,7 +147,7 @@ const CreateForm = () => {
       <CardHeader title="New Role Info" />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={{ md: 6 }}>
+          <Grid container spacing={{ md: 4 }}>
             <Grid size={{ md: 6 }}>
               <Controller
                 name="displayName"
@@ -199,18 +177,11 @@ const CreateForm = () => {
               />
             </Grid>
 
-
-
-
-
-            <Grid size={{ xs: 12 }} sx={{ mt: 3 }}>
-
+            <Grid size={{ xs: 12 }}>
               <div>
-
                 <Typography variant="h6" sx={{ mb: 1 }}>
                   Permissions
                 </Typography>
-
 
                 <FormControlLabel
                   control={
@@ -229,19 +200,12 @@ const CreateForm = () => {
                   }
                   label="Select All (All Modules)"
                 />
-
-
               </div>
 
-
-
-
               {Object.entries(permissionGroups).map(([groupKey, group]) => (
-                <div key={groupKey} style={{ marginBottom: "24px" }}>
-
-
-                  <div className="flex items-center  gap-8 mb-2">
-                    <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                <div key={groupKey} className="mb-3 flex flex-col border px-4 py-2 rounded-md mt-2">
+                  <div className="flex items-center gap-4">
+                    <Typography variant="h6">
                       {groupKey}
                     </Typography>
 
@@ -256,13 +220,10 @@ const CreateForm = () => {
                           onChange={(e) => handleSelectAllGroup(groupKey, e.target.checked)}
                         />
                       }
-                      label={`Select All ${groupKey}`}
+                      label={`Select All`}
+                      className="me-0"
                     />
                   </div>
-
-
-
-
 
                   <Grid container spacing={2}>
                     {group.permissions.map((perm) => (
@@ -316,4 +277,4 @@ const CreateForm = () => {
   );
 };
 
-export default CreateForm; 
+export default CreateForm;

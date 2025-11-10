@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import pageApiHelper from "@/utils/pageApiHelper";
+
 
 import { useSession } from "next-auth/react";
 
@@ -24,6 +25,8 @@ import { Controller, useForm } from "react-hook-form";
 // Components Imports
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+import pageApiHelper from "@/utils/pageApiHelper";
 import CustomTextField from "@core/components/mui/TextField";
 
 // ✅ Validation Schema
@@ -70,8 +73,10 @@ const UpdateForm = ({ role }) => {
           { pageSize: 200 },
           token
         );
+
         if (res?.success && res.data?.data?.subjects) {
           const groups = {};
+
           res.data.data.subjects.forEach((subject) => {
             groups[subject.name] = {
               id: subject.id,
@@ -84,7 +89,7 @@ const UpdateForm = ({ role }) => {
           setPermissionGroups(groups);
         }
       } catch (error) {
-        console.error("Failed to fetch permissions", error);
+        // console.error("Failed to fetch permissions", error);
       }
     };
 
@@ -95,6 +100,7 @@ const UpdateForm = ({ role }) => {
   useEffect(() => {
     if (Object.keys(permissionGroups).length > 0 && role) {
       const rolePermissionIds = role.permissions.map((p) => p.id);
+
       reset({
         displayName: role.displayName,
         status: role.status,
@@ -109,6 +115,7 @@ const UpdateForm = ({ role }) => {
       const allPerms = Object.values(permissionGroups).flatMap((g) =>
         g.permissions.map((p) => p.id)
       );
+
       setValue("permissions", allPerms);
     } else {
       setValue("permissions", []);
@@ -119,6 +126,7 @@ const UpdateForm = ({ role }) => {
     const groupPermissions = permissionGroups[groupKey].permissions.map(
       (p) => p.id
     );
+
     if (checked) {
       setValue(
         "permissions",
@@ -135,6 +143,7 @@ const UpdateForm = ({ role }) => {
   // Submit Handler
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
+
     try {
       const payload = {
         displayName: formData.displayName.trim(),
@@ -169,7 +178,7 @@ const UpdateForm = ({ role }) => {
       <CardHeader title="Update Role Info" />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={{ md: 6 }}>
+          <Grid container spacing={{ md: 4 }}>
             <Grid size={{ md: 6 }}>
               <Controller
                 name="displayName"
@@ -198,7 +207,7 @@ const UpdateForm = ({ role }) => {
               />
             </Grid>
 
-            <Grid size={{ xs: 12 }} sx={{ mt: 3 }}>
+            <Grid size={{ xs: 12 }}>
               <Typography variant="h6" sx={{ mb: 1 }}>
                 Permissions
               </Typography>
@@ -226,9 +235,9 @@ const UpdateForm = ({ role }) => {
               />
 
               {Object.entries(permissionGroups).map(([groupKey, group]) => (
-                <div key={groupKey} style={{ marginBottom: 24 }}>
-                  <div className="flex items-center  gap-8 mb-2">
-                    <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                <div key={groupKey} className="mb-3 flex flex-col border px-4 py-2 rounded-md mt-2">
+                  <div className="flex items-center gap-4">
+                    <Typography variant="h6">
                       {groupKey}
                     </Typography>
 
@@ -243,7 +252,8 @@ const UpdateForm = ({ role }) => {
                           onChange={(e) => handleSelectAllGroup(groupKey, e.target.checked)}
                         />
                       }
-                      label={`Select All ${groupKey}`}
+                      label={`Select All`}
+                      className="me-0"
                     />
                   </div>
 
