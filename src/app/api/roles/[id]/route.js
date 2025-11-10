@@ -67,7 +67,7 @@ export async function PUT(request, { params }) {
   }
 
   try {
-    const { id } = params;
+    const { id } = await params;
 
     if (!id || !/^\d+$/.test(id)) {
       return NextResponse.json(
@@ -76,7 +76,7 @@ export async function PUT(request, { params }) {
       );
     }
 
-    // JSON parse 
+    // JSON parse
     const body = await request.json();
 
     const response = await routeApiHelper.put(

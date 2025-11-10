@@ -162,18 +162,24 @@ const VerticalMenu = ({ scrollMenu }) => {
               </SubMenu>
             )}
 
-            <MenuItem href="/menus" icon={<i className="tabler-menu-2" />}>
-              Menus
-            </MenuItem>
+            {ability.can('menu-manage', 'Menu') && (
+              <MenuItem href="/menus" icon={<i className="tabler-menu-2" />}>
+                Menus
+              </MenuItem>
+            )}
 
-            <SubMenu label="Contact Us" icon={<i className="tabler-message-user" />}>
-              <MenuItem href="/contacts">Contact List</MenuItem>
-              <MenuItem href="/contacts/subjects">Contact Subjects</MenuItem>
-            </SubMenu>
+            {ability.can('contact-manage', 'Contact') && (
+              <SubMenu label="Contact Us" icon={<i className="tabler-message-user" />}>
+                <MenuItem href="/contacts">Contact List</MenuItem>
+                <MenuItem href="/contacts/subjects">Contact Subjects</MenuItem>
+              </SubMenu>
+            )}
 
-            <MenuItem href="/site-settings" icon={<i className="tabler-settings" />}>
-              Site Settings
-            </MenuItem>
+            {ability.can('setting-manage', 'Setting') && (
+              <MenuItem href="/site-settings" icon={<i className="tabler-settings" />}>
+                Site Settings
+              </MenuItem>
+            )}
           </>
         )}
       </Menu>

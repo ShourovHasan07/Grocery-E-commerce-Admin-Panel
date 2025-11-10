@@ -119,18 +119,10 @@ const CreateForm = () => {
       try {
         const res = await pageApiHelper.get("roles/subjects-with-permissions", { pageSize: 200 }, token);
 
-        //console.log("Permissions API Response:", res);
+        // console.log("Permissions API Response:", res);
 
         if (res?.success && res.data?.data?.subjects) {
-          const groups = {};
-
-          res.data.data.subjects.forEach((subject) => {
-            groups[subject.name] = {
-              id: subject.id,
-              permissions: subject.permissions.map((p) => ({ id: p.id, name: `${subject.name} - ${p.name}` })),
-            };
-          });
-          setPermissionGroups(groups);
+          setPermissionGroups(res.data?.data?.subjects);
         }
       } catch (error) {
         // console.error("Failed to fetch permissions", error);
@@ -203,10 +195,10 @@ const CreateForm = () => {
               </div>
 
               {Object.entries(permissionGroups).map(([groupKey, group]) => (
-                <div key={groupKey} className="mb-3 flex flex-col border px-4 py-2 rounded-md mt-2">
+                <div key={group.id} className="mb-3 flex flex-col border px-4 py-2 rounded-md mt-2">
                   <div className="flex items-center gap-4">
                     <Typography variant="h6">
-                      {groupKey}
+                      {group.name}
                     </Typography>
 
                     <FormControlLabel
@@ -227,7 +219,7 @@ const CreateForm = () => {
 
                   <Grid container spacing={2}>
                     {group.permissions.map((perm) => (
-                      <Grid item xs={12} sm={6} md={3} key={perm.id}>
+                      <Grid size={{ xs: 12, sm: 6, md: 3 }} key={perm.id}>
                         <FormControlLabel
                           control={
                             <Checkbox
@@ -260,10 +252,6 @@ const CreateForm = () => {
                 disabled={isSubmitting}
               >
                 Submit
-              </Button>
-
-              <Button variant="tonal" color="secondary" type="reset" onClick={reset}>
-                Reset
               </Button>
 
               <Button variant="tonal" color="error" component={Link} href={"/roles"}>

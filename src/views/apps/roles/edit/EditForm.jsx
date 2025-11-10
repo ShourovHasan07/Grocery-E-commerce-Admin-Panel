@@ -59,7 +59,13 @@ const UpdateForm = ({ role }) => {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { displayName: "", status: true, permissions: [] },
+    defaultValues: {
+      ...role && {
+        displayName: role.displayName,
+        status: role.status,
+        permissions: role.permissions.map((p) => p.id),
+      },
+    },
   });
 
   const selectedPermissions = watch("permissions");
@@ -75,18 +81,7 @@ const UpdateForm = ({ role }) => {
         );
 
         if (res?.success && res.data?.data?.subjects) {
-          const groups = {};
-
-          res.data.data.subjects.forEach((subject) => {
-            groups[subject.name] = {
-              id: subject.id,
-              permissions: subject.permissions.map((p) => ({
-                id: p.id,
-                name: `${subject.name} - ${p.name}`,
-              })),
-            };
-          });
-          setPermissionGroups(groups);
+          setPermissionGroups(res.data?.data?.subjects);
         }
       } catch (error) {
         // console.error("Failed to fetch permissions", error);
@@ -95,19 +90,6 @@ const UpdateForm = ({ role }) => {
 
     if (token) fetchPermissions();
   }, [token]);
-
-  // Prefill form when role and permissions are loaded
-  useEffect(() => {
-    if (Object.keys(permissionGroups).length > 0 && role) {
-      const rolePermissionIds = role.permissions.map((p) => p.id);
-
-      reset({
-        displayName: role.displayName,
-        status: role.status,
-        permissions: rolePermissionIds,
-      });
-    }
-  }, [permissionGroups, role, reset]);
 
   // Select All Handlers
   const handleSelectAll = (checked) => {
@@ -152,7 +134,7 @@ const UpdateForm = ({ role }) => {
       };
 
       const res = await pageApiHelper.put(
-        `roles/${role?.id}`,
+        `roles/${id}`,
         payload,
         token,
         {
@@ -235,10 +217,10 @@ const UpdateForm = ({ role }) => {
               />
 
               {Object.entries(permissionGroups).map(([groupKey, group]) => (
-                <div key={groupKey} className="mb-3 flex flex-col border px-4 py-2 rounded-md mt-2">
+                <div key={group.id} className="mb-3 flex flex-col border px-4 py-2 rounded-md mt-2">
                   <div className="flex items-center gap-4">
                     <Typography variant="h6">
-                      {groupKey}
+                      {group.name}
                     </Typography>
 
                     <FormControlLabel
@@ -259,7 +241,7 @@ const UpdateForm = ({ role }) => {
 
                   <Grid container spacing={2}>
                     {group.permissions?.map((perm) => (
-                      <Grid item xs={12} sm={6} md={3} key={perm.id}>
+                      <Grid size={{ xs: 12, sm: 6, md: 3 }} key={perm.id}>
                         <FormControlLabel
                           control={
                             <Checkbox
@@ -296,20 +278,6 @@ const UpdateForm = ({ role }) => {
                 disabled={isSubmitting}
               >
                 Update
-              </Button>
-              <Button
-                variant="tonal"
-                color="secondary"
-                type="button"
-                onClick={() =>
-                  reset({
-                    displayName: role.displayName,
-                    status: role.status,
-                    permissions: role.permissions.map((p) => p.id),
-                  })
-                }
-              >
-                Reset
               </Button>
               <Button
                 variant="tonal"
