@@ -150,6 +150,10 @@ const VerticalMenu = ({ scrollMenu }) => {
           <MenuItem href="/contacts">Contact List</MenuItem>
           <MenuItem href="/contacts/subjects">Contact Subjects</MenuItem>
         </SubMenu>
+
+        <MenuItem href="/site-settings" icon={<i className="tabler-settings" />}>
+          Site Settings
+        </MenuItem>
       </Menu>
     </ScrollWrapper>
   );
