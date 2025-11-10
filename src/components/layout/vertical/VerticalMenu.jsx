@@ -162,31 +162,6 @@ const VerticalMenu = ({ scrollMenu }) => {
               </SubMenu>
             )}
 
-            <SubMenu label="Pages" icon={<i className="tabler-brand-pagekit" />}>
-              <MenuItem href="/pages/create">New Page</MenuItem>
-              <MenuItem href="/pages">Page List</MenuItem>
-            </SubMenu>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             <MenuItem href="/menus" icon={<i className="tabler-menu-2" />}>
               Menus
             </MenuItem>
