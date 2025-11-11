@@ -112,7 +112,7 @@ const NavbarContent = () => {
       </div>
       <div className="flex items-center">
         <ModeDropdown />
-        <NotificationsDropdown notifications={notifications} />
+        {/* <NotificationsDropdown notifications={notifications} /> */}
         <UserDropdown />
       </div>
     </div>
