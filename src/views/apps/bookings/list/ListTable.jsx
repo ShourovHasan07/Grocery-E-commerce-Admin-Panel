@@ -53,6 +53,9 @@ import { bookingStatusLabel, bookingStatusColor } from "@/utils/helpers";
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
 
+import { useAbility,  } from '@/contexts/AbilityContext';
+import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
   const itemRank = rankItem(row.getValue(columnId), value);
@@ -73,7 +76,7 @@ const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
   //console.log("Table Data:", tableData);
-
+  const ability = useAbility(); 
   // States
   const dataObj = tableData?.bookings || [];
   const [rowSelection, setRowSelection] = useState({});
@@ -96,7 +99,9 @@ const ListTable = ({ tableData }) => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-            <Tooltip title="Detail">
+
+            {ability.can('read', 'Booking') && (
+                <Tooltip title="Detail">
               <IconButton
                 onClick={() => {
                   const path = `/bookings/${row.original.id}`;
@@ -112,6 +117,11 @@ const ListTable = ({ tableData }) => {
                 )}
               </IconButton>
             </Tooltip>
+
+            )}
+
+
+          
           </div>
         ),
         enableSorting: false,
@@ -229,6 +239,9 @@ const ListTable = ({ tableData }) => {
 
   return (
     <>
+
+
+     <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Booking">
       <Card>
         <CardHeader title="Booking List" className="pbe-4" />
         <TableFilters setData={setFilteredData} tableData={data} />
@@ -330,6 +343,8 @@ const ListTable = ({ tableData }) => {
           }}
         />
       </Card>
+
+      </ProtectedRouteURL>
     </>
   );
 };

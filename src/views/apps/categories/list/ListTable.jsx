@@ -39,6 +39,8 @@ import { getInitials } from "@/utils/getInitials";
 import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 import AddDrawer from "./AddDrawer";
 
+import { useAbility, useAbilityLoading } from '@/contexts/AbilityContext';
+
 // Third-party Imports
 
 import pageApiHelper from "@/utils/pageApiHelper";
@@ -61,6 +63,10 @@ import {
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
+import VerticalMenuSkeleton from "@/components/layout/vertical/VerticalMenuSkeleton";
+import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+//import VerticalMenuSkeleton from './VerticalMenuSkeleton';
+
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -79,6 +85,16 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
+
+  const ability = useAbility();
+  const isAbilityLoading = useAbilityLoading();
+
+
+
+  //const isAbilityLoading = useAbilityLoading();
+
+
+
   // States
   const dataObj = tableData?.categories || [];
   const [data, setData] = useState(...[dataObj]);
@@ -137,30 +153,35 @@ const ListTable = ({ tableData }) => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-            <IconButton
-              onClick={() =>
-                setAddDrawerOpen((prevState) => ({
-                  ...prevState,
-                  open: !prevState.open,
-                  type: "edit",
-                  data: row.original,
-                }))
-              }
-            >
-              <i className="tabler-edit text-textPrimary" />
-            </IconButton>
+            {ability.can('update', 'Category') && (
+              <IconButton
+                onClick={() =>
+                  setAddDrawerOpen((prevState) => ({
+                    ...prevState,
+                    open: !prevState.open,
+                    type: "edit",
+                    data: row.original,
+                  }))
+                }
+              >
+                <i className="tabler-edit text-textPrimary" />
+              </IconButton>
+            )}
 
-            <IconButton
-              onClick={() =>
-                setDialogOpen((prevState) => ({
-                  ...prevState,
-                  open: !prevState.open,
-                  data: row.original,
-                }))
-              }
-            >
-              <i className="tabler-trash text-textSecondary" />
-            </IconButton>
+            {ability.can('delete', 'Category') && (
+              <IconButton
+                onClick={() =>
+                  setDialogOpen((prevState) => ({
+                    ...prevState,
+                    open: !prevState.open,
+                    data: row.original,
+                  }))
+                }
+              >
+                <i className="tabler-trash text-textSecondary" />
+              </IconButton>
+            )}
+
           </div>
         ),
         enableSorting: false,
@@ -269,7 +290,19 @@ const ListTable = ({ tableData }) => {
 
   return (
     <>
-      <Card>
+
+     <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Category">
+
+
+
+
+       {isAbilityLoading ? (
+      <VerticalMenuSkeleton />
+    ) : (
+
+      <div>
+
+        <Card>
         <CardHeader title="Category List" className="pbe-4" />
         <TableFilters setData={setFilteredData} tableData={data} />
         <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
@@ -284,21 +317,24 @@ const ListTable = ({ tableData }) => {
             <MenuItem value="50">50</MenuItem>
           </CustomTextField>
           <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
-            <Button
-              variant="contained"
-              startIcon={<i className="tabler-plus" />}
-              onClick={() =>
-                setAddDrawerOpen((prevState) => ({
-                  ...prevState,
-                  open: !prevState.open,
-                  type: "create",
-                  data: {},
-                }))
-              }
-              className="max-sm:is-full"
-            >
-              Add New Category
-            </Button>
+            {ability?.can('create', 'Category') && (
+              <Button
+                variant="contained"
+                startIcon={<i className="tabler-plus" />}
+                onClick={() =>
+                  setAddDrawerOpen((prevState) => ({
+                    ...prevState,
+                    open: !prevState.open,
+                    type: "create",
+                    data: {},
+                  }))
+                }
+                className="max-sm:is-full"
+              >
+                Add New Category
+              </Button>
+            )}
+
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -413,6 +449,21 @@ const ListTable = ({ tableData }) => {
           handleDelete(dialogOpen.data.id);
         }}
       />
+      </div>
+
+
+
+
+
+      
+     
+    )}
+
+    </ProtectedRouteURL>
+
+
+
+      
     </>
   );
 };

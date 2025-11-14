@@ -5,6 +5,8 @@ import { authOptions } from "@/libs/auth";
 
 import pageApiHelper from "@/utils/pageApiHelper";
 import PagesList from "@/views/apps/pages/list";
+import { defineAbilitiesFor } from "@/configs/acl";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Pages - AskValor",
@@ -12,6 +14,9 @@ export const metadata = {
 
 const getData = async () => {
   const session = await getServerSession(authOptions);
+    const ability = defineAbilitiesFor(session);
+
+   
 
   if (session?.accessToken) {
     try {

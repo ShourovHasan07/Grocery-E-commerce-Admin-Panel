@@ -49,6 +49,7 @@ import { getCurrency, transactionStatusLabel, transactionStatusColor } from "@/u
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
+import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -161,9 +162,15 @@ const ListTable = ({ tableData }) => {
         cell: ({ row }) => <Typography className="text-wrap w-[200px]">{row.original.expert.name}</Typography>,
       },
       {
-        header: "Payment for (min)",
-        cell: ({ row }) => <Typography>{row.original.booking.timeMin} mins</Typography>,
-      },
+  header: "Payment for (min)",
+  cell: ({ row }) => (
+    <Typography>
+      {row.original?.booking?.timeMin
+        ? `${row.original.booking.timeMin} mins`
+        : "N/A"}
+    </Typography>
+  ),
+},
       columnHelper.accessor("createdAt", {
         header: "Created At",
         cell: ({ row }) => (
@@ -211,6 +218,12 @@ const ListTable = ({ tableData }) => {
 
   return (
     <>
+
+       <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Transaction">
+
+      
+
+
       <Card>
         <CardHeader title="Transaction List" className="pbe-4" />
         <TableFilters setData={setFilteredData} tableData={data} />
@@ -312,6 +325,8 @@ const ListTable = ({ tableData }) => {
           }}
         />
       </Card>
+
+      </ProtectedRouteURL>
     </>
   );
 };

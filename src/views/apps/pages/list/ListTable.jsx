@@ -54,6 +54,9 @@ import pageApiHelper from "@/utils/pageApiHelper";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
+import { useAbility, useAbilityLoading } from '@/contexts/AbilityContext';
+import VerticalMenuSkeleton from "@/components/layout/vertical/VerticalMenuSkeleton";
+import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -72,6 +75,14 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
+
+
+    const ability = useAbility(); 
+           const isAbilityLoading = useAbilityLoading();
+
+
+
+
   const dataObj = tableData?.pages || [];
 
   const [rowSelection, setRowSelection] = useState({});
@@ -96,7 +107,10 @@ const ListTable = ({ tableData }) => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-            <Tooltip title="Detail">
+
+            {ability?.can('read', 'page') && (
+
+               <Tooltip title="Detail">
               <IconButton
                 onClick={() => {
                   setLoadingId(`detail-${row.original.id}`);
@@ -111,7 +125,15 @@ const ListTable = ({ tableData }) => {
               </IconButton>
             </Tooltip>
 
-            <Tooltip title="Edit">
+
+
+            )}
+
+
+
+            {ability?.can('update', 'page') && (
+
+               <Tooltip title="Edit">
               <IconButton
                 onClick={() => {
                   setLoadingId(`edit-${row.original.id}`);
@@ -125,6 +147,14 @@ const ListTable = ({ tableData }) => {
                 )}
               </IconButton>
             </Tooltip>
+
+
+            )}
+
+
+           
+
+           
 
 
             {row.original.url === "about-us" && (
@@ -291,7 +321,19 @@ const ListTable = ({ tableData }) => {
 
   return (
     <>
-      <Card>
+
+         <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Page">
+
+    
+          {isAbilityLoading ? (
+                      <VerticalMenuSkeleton />
+                    ) : (
+
+
+
+                      <div>
+
+                        <Card>
         <CardHeader title="Page List" className="pbe-4" />
         <TableFilters setData={setFilteredData} tableData={data} />
         <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
@@ -405,6 +447,24 @@ const ListTable = ({ tableData }) => {
           }}
         />
       </Card>
+
+
+
+
+
+
+                      </div>
+
+
+
+
+                     )}
+
+
+     </ProtectedRouteURL>
+
+
+      
     </>
   );
 };

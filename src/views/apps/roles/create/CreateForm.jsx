@@ -28,6 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CustomTextField from "@core/components/mui/TextField";
 
 import pageApiHelper from "@/utils/pageApiHelper";
+import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
 
 //  Validation Schema
 const schema = z.object({
@@ -135,133 +136,139 @@ const CreateForm = () => {
 
 
   return (
-    <Card>
-      <CardHeader title="New Role Info" />
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={{ md: 4 }}>
-            <Grid size={{ md: 6 }}>
-              <Controller
-                name="displayName"
-                control={control}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    className="mb-4"
-                    label="Name"
-                    placeholder="Role name"
-                    error={!!errors.displayName}
-                    helperText={errors.displayName?.message}
-                  />
-                )}
-              />
 
-              <Controller
-                name="status"
-                control={control}
-                render={({ field }) => (
-                  <FormControlLabel
-                    control={<Checkbox {...field} checked={field.value} />}
-                    label="Active"
-                  />
-                )}
-              />
-            </Grid>
 
-            <Grid size={{ xs: 12 }}>
-              <div>
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                  Permissions
-                </Typography>
+    <ProtectedRouteURL actions={["create"]} subject="Role">
 
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={
-                        selectedPermissions.length ===
-                        Object.values(permissionGroups).flatMap((g) => g.permissions).length
-                      }
-                      indeterminate={
-                        selectedPermissions.length > 0 &&
-                        selectedPermissions.length <
-                        Object.values(permissionGroups).flatMap((g) => g.permissions).length
-                      }
-                      onChange={(e) => handleSelectAll(e.target.checked)}
+      <Card>
+        <CardHeader title="New Role Info" />
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Grid container spacing={{ md: 4 }}>
+              <Grid size={{ md: 6 }}>
+                <Controller
+                  name="displayName"
+                  control={control}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      className="mb-4"
+                      label="Name"
+                      placeholder="Role name"
+                      error={!!errors.displayName}
+                      helperText={errors.displayName?.message}
                     />
-                  }
-                  label="Select All (All Modules)"
+                  )}
                 />
-              </div>
 
-              {Object.entries(permissionGroups).map(([groupKey, group]) => (
-                <div key={group.id} className="mb-3 flex flex-col border px-4 py-2 rounded-md mt-2">
-                  <div className="flex items-center gap-4">
-                    <Typography variant="h6">
-                      {group.name}
-                    </Typography>
-
+                <Controller
+                  name="status"
+                  control={control}
+                  render={({ field }) => (
                     <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={group.permissions.every((p) => selectedPermissions.includes(p.id))}
-                          indeterminate={
-                            group.permissions.some((p) => selectedPermissions.includes(p.id)) &&
-                            !group.permissions.every((p) => selectedPermissions.includes(p.id))
-                          }
-                          onChange={(e) => handleSelectAllGroup(groupKey, e.target.checked)}
-                        />
-                      }
-                      label={`Select All`}
-                      className="me-0"
+                      control={<Checkbox {...field} checked={field.value} />}
+                      label="Active"
                     />
-                  </div>
+                  )}
+                />
+              </Grid>
 
-                  <Grid container spacing={2}>
-                    {group.permissions.map((perm) => (
-                      <Grid size={{ xs: 12, sm: 6, md: 3 }} key={perm.id}>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              checked={selectedPermissions.includes(perm.id)}
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  setValue("permissions", [...selectedPermissions, perm.id]);
-                                } else {
-                                  setValue(
-                                    "permissions",
-                                    selectedPermissions.filter((id) => id !== perm.id)
-                                  );
-                                }
-                              }}
-                            />
-                          }
-                          label={perm.name}
-                        />
-                      </Grid>
-                    ))}
-                  </Grid>
+              <Grid size={{ xs: 12 }}>
+                <div>
+                  <Typography variant="h6" sx={{ mb: 1 }}>
+                    Permissions
+                  </Typography>
+
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={
+                          selectedPermissions.length ===
+                          Object.values(permissionGroups).flatMap((g) => g.permissions).length
+                        }
+                        indeterminate={
+                          selectedPermissions.length > 0 &&
+                          selectedPermissions.length <
+                          Object.values(permissionGroups).flatMap((g) => g.permissions).length
+                        }
+                        onChange={(e) => handleSelectAll(e.target.checked)}
+                      />
+                    }
+                    label="Select All (All Modules)"
+                  />
                 </div>
-              ))}
-            </Grid>
 
-            <Grid size={{ xs: 12 }} className="flex gap-4 mt-4">
-              <Button
-                variant="contained"
-                type="submit"
-                disabled={isSubmitting}
-              >
-                Submit
-              </Button>
+                {Object.entries(permissionGroups).map(([groupKey, group]) => (
+                  <div key={group.id} className="mb-3 flex flex-col border px-4 py-2 rounded-md mt-2">
+                    <div className="flex items-center gap-4">
+                      <Typography variant="h6">
+                        {group.name}
+                      </Typography>
 
-              <Button variant="tonal" color="error" component={Link} href={"/roles"}>
-                Cancel
-              </Button>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={group.permissions.every((p) => selectedPermissions.includes(p.id))}
+                            indeterminate={
+                              group.permissions.some((p) => selectedPermissions.includes(p.id)) &&
+                              !group.permissions.every((p) => selectedPermissions.includes(p.id))
+                            }
+                            onChange={(e) => handleSelectAllGroup(groupKey, e.target.checked)}
+                          />
+                        }
+                        label={`Select All`}
+                        className="me-0"
+                      />
+                    </div>
+
+                    <Grid container spacing={2}>
+                      {group.permissions.map((perm) => (
+                        <Grid size={{ xs: 12, sm: 6, md: 3 }} key={perm.id}>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={selectedPermissions.includes(perm.id)}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setValue("permissions", [...selectedPermissions, perm.id]);
+                                  } else {
+                                    setValue(
+                                      "permissions",
+                                      selectedPermissions.filter((id) => id !== perm.id)
+                                    );
+                                  }
+                                }}
+                              />
+                            }
+                            label={perm.name}
+                          />
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </div>
+                ))}
+              </Grid>
+
+              <Grid size={{ xs: 12 }} className="flex gap-4 mt-4">
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  Submit
+                </Button>
+
+                <Button variant="tonal" color="error" component={Link} href={"/roles"}>
+                  Cancel
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
+
+    </ProtectedRouteURL>
   );
 };
 

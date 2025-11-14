@@ -30,6 +30,7 @@ import TinyMCE from "@components/TinyMCE";
 import CustomTextField from "@core/components/mui/TextField";
 
 import pageApiHelper from "@/utils/pageApiHelper";
+import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
 
 // Zod Imports
 const schema = z.object({
@@ -73,6 +74,7 @@ const schema = z.object({
 });
 
 const CreateForm = () => {
+  
   // States
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -222,6 +224,11 @@ const CreateForm = () => {
   };
 
   return (
+   
+
+    <ProtectedRouteURL actions={["create"]} subject="Page">
+
+    
     <Card>
       <CardHeader title="New Page Info" />
       <CardContent>
@@ -492,6 +499,8 @@ const CreateForm = () => {
         </form>
       </CardContent>
     </Card>
+
+    </ProtectedRouteURL>
   );
 };
 
