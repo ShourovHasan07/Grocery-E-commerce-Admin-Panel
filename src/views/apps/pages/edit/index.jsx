@@ -9,7 +9,7 @@ const PageEdit = ({ pageData }) => {
     <Grid container>
       <Grid size={{ xs: 12 }}>
         {pageData.type === "rte" && <EditForm page={pageData} />}
-        {pageData.type === "predefine" && pageData.url === "about-us" && (
+        {pageData.type === "predefine" && pageData.key === "about_us" && (
           <AboutEditForm page={pageData} />
         )}
       </Grid>
