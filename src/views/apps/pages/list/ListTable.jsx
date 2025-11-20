@@ -55,8 +55,8 @@ import pageApiHelper from "@/utils/pageApiHelper";
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
 import { useAbility, useAbilityLoading } from '@/contexts/AbilityContext';
-import VerticalMenuSkeleton from "@/components/layout/vertical/VerticalMenuSkeleton";
-import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+import LayoutLoader from "@/components/common/LayoutLoader";
+import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -76,12 +76,8 @@ const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
 
-
-    const ability = useAbility(); 
-           const isAbilityLoading = useAbilityLoading();
-
-
-
+  const ability = useAbility();
+  const isAbilityLoading = useAbilityLoading();
 
   const dataObj = tableData?.pages || [];
 
@@ -99,54 +95,45 @@ const ListTable = ({ tableData }) => {
   const [loadingId, setLoadingId] = useState(null);
   const router = useRouter();
 
-
-
   const columns = useMemo(
     () => [
       columnHelper.accessor("action", {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-
             {ability?.can('read', 'page') && (
-
-               <Tooltip title="Detail">
-              <IconButton
-                onClick={() => {
-                  setLoadingId(`detail-${row.original.id}`);
-                  router.push(`/pages/${row.original.id}`);
-                }}
-              >
-                {loadingId === `detail-${row.original.id}` ? (
-                  <LoaderIcon size={17} topColor="border-t-yellow-500" />
-                ) : (
-                  <i className="tabler-eye text-secondary" />
-                )}
-              </IconButton>
-            </Tooltip>
-
-
-
+              <Tooltip title="Detail">
+                <IconButton
+                  onClick={() => {
+                    setLoadingId(`detail-${row.original.id}`);
+                    router.push(`/pages/${row.original.id}`);
+                  }}
+                >
+                  {loadingId === `detail-${row.original.id}` ? (
+                    <LoaderIcon size={17} topColor="border-t-yellow-500" />
+                  ) : (
+                    <i className="tabler-eye text-secondary" />
+                  )}
+                </IconButton>
+              </Tooltip>
             )}
 
-
-
             {ability?.can('update', 'page') && (
-
-               <Tooltip title="Edit">
-              <IconButton
-                onClick={() => {
-                  setLoadingId(`edit-${row.original.id}`);
-                  router.push(`/pages/${row.original.id}/edit`);
-                }}
-              >
-                {loadingId === `edit-${row.original.id}` ? (
-                  <LoaderIcon size={17} topColor="border-t-blue-500" />
-                ) : (
-                  <i className="tabler-edit text-primary" />
-                )}
-              </IconButton>
-            </Tooltip>
+              <Tooltip title="Edit">
+                <IconButton
+                  onClick={() => {
+                    setLoadingId(`edit-${row.original.id}`);
+                    router.push(`/pages/${row.original.id}/edit`);
+                  }}
+                >
+                  {loadingId === `edit-${row.original.id}` ? (
+                    <LoaderIcon size={17} topColor="border-t-blue-500" />
+                  ) : (
+                    <i className="tabler-edit text-primary" />
+                  )}
+                </IconButton>
+              </Tooltip>
+            )}
 
 
             {row.original.key === "about_us" && (
@@ -165,8 +152,6 @@ const ListTable = ({ tableData }) => {
                 </IconButton>
               </Tooltip>
             )}
-
-
 
             {row.original.type !== "predefine" && (
               <Tooltip title="Delete" arrow placement="top">
@@ -312,152 +297,126 @@ const ListTable = ({ tableData }) => {
   };
 
   return (
-    <>
+    <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Page">
+      {isAbilityLoading ? (
+        <LayoutLoader />
+      ) : (
+        <Card>
+          <CardHeader title="Page List" className="pbe-4" />
+          <TableFilters setData={setFilteredData} tableData={data} />
+          <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
+            <CustomTextField
+              select
+              value={table.getState().pagination.pageSize}
+              onChange={(e) => table.setPageSize(Number(e.target.value))}
+              className="max-sm:is-full sm:is-[70px]"
+            >
+              <MenuItem value="10">10</MenuItem>
+              <MenuItem value="25">25</MenuItem>
+              <MenuItem value="50">50</MenuItem>
+            </CustomTextField>
+          </div>
+          <div className="overflow-x-auto">
+            <table className={tableStyles.table}>
+              <thead>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <th key={header.id}>
+                        {header.isPlaceholder ? null : (
+                          <>
+                            <div
+                              className={classnames({
+                                "flex items-center": header.column.getIsSorted(),
+                                "cursor-pointer select-none":
+                                  header.column.getCanSort(),
+                              })}
+                              onClick={header.column.getToggleSortingHandler()}
+                            >
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                              {{
+                                asc: <i className="tabler-chevron-up text-xl" />,
+                                desc: (
+                                  <i className="tabler-chevron-down text-xl" />
+                                ),
+                              }[header.column.getIsSorted()] ?? null}
+                            </div>
+                          </>
+                        )}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              {table.getFilteredRowModel().rows.length === 0 ? (
+                <tbody>
+                  <tr>
+                    <td
+                      colSpan={table.getVisibleFlatColumns().length}
+                      className="text-center"
+                    >
+                      No data available
+                    </td>
+                  </tr>
+                </tbody>
+              ) : (
+                <tbody>
+                  {table
+                    .getRowModel()
+                    .rows.slice(0, table.getState().pagination.pageSize)
+                    .map((row) => {
+                      return (
+                        <tr
+                          key={row.id}
+                          className={classnames({
+                            selected: row.getIsSelected(),
+                          })}
+                        >
+                          {row.getVisibleCells().map((cell) => (
+                            <td key={cell.id}>
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext(),
+                              )}
+                            </td>
+                          ))}
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              )}
+            </table>
+          </div>
 
-         <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Page">
+          <TablePagination
+            component={() => <TablePaginationComponent table={table} />}
+            count={table.getFilteredRowModel().rows.length}
+            rowsPerPage={table.getState().pagination.pageSize}
+            page={table.getState().pagination.pageIndex}
+            onPageChange={(_, page) => {
+              table.setPageIndex(page);
+            }}
+          />
 
-    
-          {isAbilityLoading ? (
-                      <VerticalMenuSkeleton />
-                    ) : (
-
-
-
-                      <div>
-
-                        <Card>
-        <CardHeader title="Page List" className="pbe-4" />
-        <TableFilters setData={setFilteredData} tableData={data} />
-        <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
-          <CustomTextField
-            select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => table.setPageSize(Number(e.target.value))}
-            className="max-sm:is-full sm:is-[70px]"
-          >
-            <MenuItem value="10">10</MenuItem>
-            <MenuItem value="25">25</MenuItem>
-            <MenuItem value="50">50</MenuItem>
-          </CustomTextField>
-        </div>
-        <div className="overflow-x-auto">
-          <table className={tableStyles.table}>
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th key={header.id}>
-                      {header.isPlaceholder ? null : (
-                        <>
-                          <div
-                            className={classnames({
-                              "flex items-center": header.column.getIsSorted(),
-                              "cursor-pointer select-none":
-                                header.column.getCanSort(),
-                            })}
-                            onClick={header.column.getToggleSortingHandler()}
-                          >
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                            {{
-                              asc: <i className="tabler-chevron-up text-xl" />,
-                              desc: (
-                                <i className="tabler-chevron-down text-xl" />
-                              ),
-                            }[header.column.getIsSorted()] ?? null}
-                          </div>
-                        </>
-                      )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            {table.getFilteredRowModel().rows.length === 0 ? (
-              <tbody>
-                <tr>
-                  <td
-                    colSpan={table.getVisibleFlatColumns().length}
-                    className="text-center"
-                  >
-                    No data available
-                  </td>
-                </tr>
-              </tbody>
-            ) : (
-              <tbody>
-                {table
-                  .getRowModel()
-                  .rows.slice(0, table.getState().pagination.pageSize)
-                  .map((row) => {
-                    return (
-                      <tr
-                        key={row.id}
-                        className={classnames({
-                          selected: row.getIsSelected(),
-                        })}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <td key={cell.id}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            )}
-          </table>
-        </div>
-
-        <TablePagination
-          component={() => <TablePaginationComponent table={table} />}
-          count={table.getFilteredRowModel().rows.length}
-          rowsPerPage={table.getState().pagination.pageSize}
-          page={table.getState().pagination.pageIndex}
-          onPageChange={(_, page) => {
-            table.setPageIndex(page);
-          }}
-        />
-
-        <ConfirmDialog
-          dialogData={dialogOpen}
-          handleCloseDialog={() =>
-            setDialogOpen((prevState) => ({
-              ...prevState,
-              open: !prevState.open,
-              id: null,
-            }))
-          }
-          handleDelete={() => {
-            handleDelete(dialogOpen.id);
-          }}
-        />
-      </Card>
-
-
-
-
-
-
-                      </div>
-
-
-
-
-                     )}
-
-
-     </ProtectedRouteURL>
-
-
-      
-    </>
+          <ConfirmDialog
+            dialogData={dialogOpen}
+            handleCloseDialog={() =>
+              setDialogOpen((prevState) => ({
+                ...prevState,
+                open: !prevState.open,
+                id: null,
+              }))
+            }
+            handleDelete={() => {
+              handleDelete(dialogOpen.id);
+            }}
+          />
+        </Card>
+      )}
+    </ProtectedRouteURL>
   );
 };
 

@@ -27,7 +27,7 @@ import pageApiHelper from "@/utils/pageApiHelper";
 
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
-import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
 
 // Vars
 const initialData = {
@@ -241,153 +241,149 @@ const AddDrawer = (props) => {
 
   return (
 
-
     <ProtectedRouteURL actions={["create"]} subject="Category">
-
-
-
-    <Drawer
-      open={drawerData.open}
-      anchor="right"
-      variant="temporary"
-      onClose={handleReset}
-      ModalProps={{ keepMounted: true }}
-      sx={{ "& .MuiDrawer-paper": { width: { xs: 300, sm: 400 } } }}
-    >
-      <div className="flex items-center justify-between plb-5 pli-6">
-        <Typography variant="h5">
-          {setType == "edit" ? "Edit Category" : "Add New Category"}
-        </Typography>
-        <IconButton size="small" onClick={handleReset}>
-          <i className="tabler-x text-2xl text-textPrimary" />
-        </IconButton>
-      </div>
-      <Divider />
-      <div>
-        <form
-          onSubmit={handleSubmit((data) => onSubmit(data))}
-          className="flex flex-col gap-3 p-6"
-        >
-          <Controller
-            name="name"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <CustomTextField
-                {...field}
-                fullWidth
-                label="Name"
-                placeholder="Category name"
-                {...(errors.name && {
-                  error: true,
-                  helperText: errors.name?.message || "This field is required.",
-                })}
-              />
-            )}
-          />
-
-          <Controller
-            name="image"
-            control={control}
-            render={({ field: { onChange, value, ...field } }) => (
-              <div className="space-y-2">
+      <Drawer
+        open={drawerData.open}
+        anchor="right"
+        variant="temporary"
+        onClose={handleReset}
+        ModalProps={{ keepMounted: true }}
+        sx={{ "& .MuiDrawer-paper": { width: { xs: 300, sm: 400 } } }}
+      >
+        <div className="flex items-center justify-between plb-5 pli-6">
+          <Typography variant="h5">
+            {setType == "edit" ? "Edit Category" : "Add New Category"}
+          </Typography>
+          <IconButton size="small" onClick={handleReset}>
+            <i className="tabler-x text-2xl text-textPrimary" />
+          </IconButton>
+        </div>
+        <Divider />
+        <div>
+          <form
+            onSubmit={handleSubmit((data) => onSubmit(data))}
+            className="flex flex-col gap-3 p-6"
+          >
+            <Controller
+              name="name"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
                 <CustomTextField
                   {...field}
-                  type="file"
                   fullWidth
-                  label="Upload Image"
-                  variant="outlined"
-                  size="small"
-                  inputRef={fileInputRef}
-                  inputProps={{
-                    accept: "image/*",
-                    onChange: (e) =>
-                      handleImageChange(e.target.files, onChange),
-                  }}
-                  error={!!errors.image}
-                  helperText={errors.image?.message}
+                  label="Name"
+                  placeholder="Category name"
+                  {...(errors.name && {
+                    error: true,
+                    helperText: errors.name?.message || "This field is required.",
+                  })}
                 />
-                {imagePreview && (
-                  <div className="mt-2">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="max-h-[100px] rounded-md"
-                    />
-                  </div>
-                )}
-              </div>
-            )}
-          />
+              )}
+            />
 
-          <Grid container spacing={4}>
-            <Grid size={{ xs: 6 }}>
-              <Controller
-                name="isPopular"
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          color="success"
-                          checked={Boolean(field.value)}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                        />
-                      }
-                      label="Popular"
-                    />
-                  );
-                }}
-              />
-            </Grid>
-            <Grid size={{ xs: 6 }}>
-              <Controller
-                name="active"
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={Boolean(field.value)}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                        />
-                      }
-                      label="Active"
-                    />
-                  );
-                }}
-              />
-            </Grid>
-          </Grid>
+            <Controller
+              name="image"
+              control={control}
+              render={({ field: { onChange, value, ...field } }) => (
+                <div className="space-y-2">
+                  <CustomTextField
+                    {...field}
+                    type="file"
+                    fullWidth
+                    label="Upload Image"
+                    variant="outlined"
+                    size="small"
+                    inputRef={fileInputRef}
+                    inputProps={{
+                      accept: "image/*",
+                      onChange: (e) =>
+                        handleImageChange(e.target.files, onChange),
+                    }}
+                    error={!!errors.image}
+                    helperText={errors.image?.message}
+                  />
+                  {imagePreview && (
+                    <div className="mt-2">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="max-h-[100px] rounded-md"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            />
 
-          <div className="flex items-center gap-4">
-            <Button
-              variant="contained"
-              type="submit"
-              disabled={isSubmitting}
-              endIcon={
-                isSubmitting ? (
-                  <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
-                ) : null
-              }
-            >
-              Submit
-            </Button>
-            <Button
-              variant="tonal"
-              color="error"
-              type="reset"
-              onClick={handleReset}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-          </div>
-        </form>
-      </div>
-    </Drawer>
+            <Grid container spacing={4}>
+              <Grid size={{ xs: 6 }}>
+                <Controller
+                  name="isPopular"
+                  control={control}
+                  render={({ field }) => {
+                    return (
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            color="success"
+                            checked={Boolean(field.value)}
+                            onChange={(e) => field.onChange(e.target.checked)}
+                          />
+                        }
+                        label="Popular"
+                      />
+                    );
+                  }}
+                />
+              </Grid>
+              <Grid size={{ xs: 6 }}>
+                <Controller
+                  name="active"
+                  control={control}
+                  render={({ field }) => {
+                    return (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={Boolean(field.value)}
+                            onChange={(e) => field.onChange(e.target.checked)}
+                          />
+                        }
+                        label="Active"
+                      />
+                    );
+                  }}
+                />
+              </Grid>
+            </Grid>
+
+            <div className="flex items-center gap-4">
+              <Button
+                variant="contained"
+                type="submit"
+                disabled={isSubmitting}
+                endIcon={
+                  isSubmitting ? (
+                    <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
+                  ) : null
+                }
+              >
+                Submit
+              </Button>
+              <Button
+                variant="tonal"
+                color="error"
+                type="reset"
+                onClick={handleReset}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </div>
+      </Drawer>
 
     </ProtectedRouteURL>
   );

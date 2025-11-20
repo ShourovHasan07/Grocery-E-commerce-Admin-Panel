@@ -28,7 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CustomTextField from "@core/components/mui/TextField";
 
 import pageApiHelper from "@/utils/pageApiHelper";
-import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
 
 //  Validation Schema
 const schema = z.object({
@@ -133,11 +133,7 @@ const CreateForm = () => {
     if (token) fetchPermissions();
   }, [token]);
 
-
-
   return (
-
-
     <ProtectedRouteURL actions={["create"]} subject="Role">
 
       <Card>

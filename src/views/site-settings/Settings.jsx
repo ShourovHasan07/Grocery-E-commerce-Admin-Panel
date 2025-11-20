@@ -32,7 +32,7 @@ import CustomTextField from "@core/components/mui/TextField";
 import CustomAutocomplete from "@core/components/mui/Autocomplete";
 
 import pageApiHelper from "@/utils/pageApiHelper";
-import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
 
 
 const Settings = () => {
@@ -221,55 +221,48 @@ const Settings = () => {
   };
 
   return (
+    <ProtectedRouteURL
+      actions={['setting-manage']}
+      subject="Miscellaneous"
+    >
+      <Card>
+        <CardHeader title="Site Settings Info" />
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Grid container spacing={{ md: 6 }}>
+              <Grid size={{ md: 12 }}>
+                {loading ? (
+                  <>
+                    <Skeleton variant="rounded" height={56} className="mb-4" />
+                    <Skeleton variant="rounded" height={56} className="mb-4" />
+                    <Skeleton variant="rounded" height={56} className="mb-4" />
+                    <Skeleton variant="rounded" height={56} className="mb-4" />
+                    <Skeleton variant="rounded" height={56} className="mb-4" />
+                    <Skeleton variant="rounded" height={180} className="mb-4" />
+                  </>
+                ) : (
+                  sortedSettings.map((setting) => renderField(setting))
+                )}
+              </Grid>
 
-
-    <ProtectedRouteURL 
-  actions={['setting-manage']} 
-  subject="Miscellaneous"
->
-  
-
-
-
-
-    <Card>
-      <CardHeader title="Site Settings Info" />
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={{ md: 6 }}>
-            <Grid size={{ md: 12 }}>
-              {loading ? (
-                <>
-                  <Skeleton variant="rounded" height={56} className="mb-4" />
-                  <Skeleton variant="rounded" height={56} className="mb-4" />
-                  <Skeleton variant="rounded" height={56} className="mb-4" />
-                  <Skeleton variant="rounded" height={56} className="mb-4" />
-                  <Skeleton variant="rounded" height={56} className="mb-4" />
-                  <Skeleton variant="rounded" height={180} className="mb-4" />
-                </>
-              ) : (
-                sortedSettings.map((setting) => renderField(setting))
-              )}
+              <Grid size={{ xs: 12 }} className="flex gap-4">
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={isSubmitting || loading}
+                  endIcon={
+                    isSubmitting ? (
+                      <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
+                    ) : null
+                  }
+                >
+                  Submit
+                </Button>
+              </Grid>
             </Grid>
-
-            <Grid size={{ xs: 12 }} className="flex gap-4">
-              <Button
-                variant="contained"
-                type="submit"
-                disabled={isSubmitting || loading}
-                endIcon={
-                  isSubmitting ? (
-                    <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
-                  ) : null
-                }
-              >
-                Submit
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
 
     </ProtectedRouteURL>
   );

@@ -55,7 +55,7 @@ import {
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
-import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -88,11 +88,6 @@ const ListTable = ({ tableData }) => {
   // loader state
   const [loadingId, setLoadingId] = useState(null);
   const router = useRouter();
-
-
-  //session
-  const { data: session } = useSession();
-  const token = session?.accessToken;
 
   const columns = useMemo(
     () => [
@@ -206,19 +201,10 @@ const ListTable = ({ tableData }) => {
   });
 
   return (
-    <>
-
-
-     <ProtectedRouteURL 
-  actions={['menu-manage']} 
-  subject="Miscellaneous"
->
-  
-
-
-
-
-
+    <ProtectedRouteURL
+      actions={['menu-manage']}
+      subject="Miscellaneous"
+    >
       <Card>
         <CardHeader title="Menu List" className="pbe-4" />
         <div className="overflow-x-auto">
@@ -307,10 +293,7 @@ const ListTable = ({ tableData }) => {
         />
       </Card>
 
-      </ProtectedRouteURL>
-
-
-    </>
+    </ProtectedRouteURL>
   );
 };
 

@@ -30,7 +30,7 @@ import TinyMCE from "@components/TinyMCE";
 import CustomTextField from "@core/components/mui/TextField";
 
 import pageApiHelper from "@/utils/pageApiHelper";
-import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
 
 // Zod Imports
 const schema = z.object({
@@ -74,7 +74,7 @@ const schema = z.object({
 });
 
 const CreateForm = () => {
-  
+
   // States
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -224,281 +224,281 @@ const CreateForm = () => {
   };
 
   return (
-   
+
 
     <ProtectedRouteURL actions={["create"]} subject="Page">
 
-    
-    <Card>
-      <CardHeader title="New Page Info" />
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={{ md: 6 }}>
-            <Grid size={{ md: 6 }}>
-              <Controller
-                name="title"
-                control={control}
-                rules={{ required: false }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    className="mb-4"
-                    label="Title"
-                    placeholder="Title"
-                    {...(errors.title && {
-                      error: true,
-                      helperText: errors.title.message,
-                    })}
-                  />
-                )}
-              />
-              <Controller
-                name="url"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    className="mb-4"
-                    label="Slug Url"
-                    placeholder="Slug url"
-                    {...(errors.url && {
-                      error: true,
-                      helperText: errors.url.message,
-                    })}
-                  />
-                )}
-              />
 
-              <Controller
-                name="image"
-                control={control}
-                render={({ field: { onChange, value, ...field } }) => (
-                  <div className="space-y-2">
+      <Card>
+        <CardHeader title="New Page Info" />
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Grid container spacing={{ md: 6 }}>
+              <Grid size={{ md: 6 }}>
+                <Controller
+                  name="title"
+                  control={control}
+                  rules={{ required: false }}
+                  render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      type="file"
                       fullWidth
                       className="mb-4"
-                      label="Banner Image"
-                      variant="outlined"
-                      size="small"
-                      inputRef={fileInputRef}
-                      inputProps={{
-                        accept: "image/*",
-                        onChange: (e) =>
-                          handleImageChange(e.target.files, onChange),
-                      }}
-                      error={!!errors.image}
-                      helperText={errors.image?.message}
+                      label="Title"
+                      placeholder="Title"
+                      {...(errors.title && {
+                        error: true,
+                        helperText: errors.title.message,
+                      })}
                     />
-                    {imagePreview && (
-                      <div className="mt-2">
-                        <img
-                          src={imagePreview}
-                          alt="Preview"
-                          className="max-h-[50px] rounded-md"
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
-              />
-
-              <Controller
-                name="meta_title"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    type="meta_title"
-                    className="mb-4"
-                    label="Meta Title"
-                    placeholder="Meta title"
-                    {...(errors.meta_title && {
-                      error: true,
-                      helperText: errors.meta_title.message,
-                    })}
-                  />
-                )}
-              />
-            </Grid>
-
-            <Grid size={{ md: 6 }}>
-              <Controller
-                name="meta_keywords"
-                control={control}
-                rules={{ required: false }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    multiline
-                    minRows={2}
-                    className="mb-4"
-                    label="Meta Keywords"
-                    placeholder="Meta keywords"
-                    {...(errors.meta_keywords && {
-                      error: true,
-                      helperText: errors.meta_keywords.message,
-                    })}
-                  />
-                )}
-              />
-
-              <Controller
-                name="meta_description"
-                control={control}
-                rules={{ required: false }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    multiline
-                    minRows={2}
-                    className="mb-2"
-                    label="Meta Description"
-                    placeholder="Meta description"
-                    {...(errors.meta_description && {
-                      error: true,
-                      helperText: errors.meta_description.message,
-                    })}
-                  />
-                )}
-              />
-
-              <Controller
-                name="meta_og_image"
-                control={control}
-                render={({ field: { onChange, value, ...field } }) => (
-                  <div className="space-y-2">
+                  )}
+                />
+                <Controller
+                  name="url"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      type="file"
                       fullWidth
                       className="mb-4"
-                      label="Meta OG Image"
-                      variant="outlined"
-                      size="small"
-                      inputRef={fileInputRefOg}
-                      inputProps={{
-                        accept: "image/*",
-                        onChange: (e) =>
-                          handleImageChangeOg(e.target.files, onChange),
+                      label="Slug Url"
+                      placeholder="Slug url"
+                      {...(errors.url && {
+                        error: true,
+                        helperText: errors.url.message,
+                      })}
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="image"
+                  control={control}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <div className="space-y-2">
+                      <CustomTextField
+                        {...field}
+                        type="file"
+                        fullWidth
+                        className="mb-4"
+                        label="Banner Image"
+                        variant="outlined"
+                        size="small"
+                        inputRef={fileInputRef}
+                        inputProps={{
+                          accept: "image/*",
+                          onChange: (e) =>
+                            handleImageChange(e.target.files, onChange),
+                        }}
+                        error={!!errors.image}
+                        helperText={errors.image?.message}
+                      />
+                      {imagePreview && (
+                        <div className="mt-2">
+                          <img
+                            src={imagePreview}
+                            alt="Preview"
+                            className="max-h-[50px] rounded-md"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                />
+
+                <Controller
+                  name="meta_title"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      type="meta_title"
+                      className="mb-4"
+                      label="Meta Title"
+                      placeholder="Meta title"
+                      {...(errors.meta_title && {
+                        error: true,
+                        helperText: errors.meta_title.message,
+                      })}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid size={{ md: 6 }}>
+                <Controller
+                  name="meta_keywords"
+                  control={control}
+                  rules={{ required: false }}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      multiline
+                      minRows={2}
+                      className="mb-4"
+                      label="Meta Keywords"
+                      placeholder="Meta keywords"
+                      {...(errors.meta_keywords && {
+                        error: true,
+                        helperText: errors.meta_keywords.message,
+                      })}
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="meta_description"
+                  control={control}
+                  rules={{ required: false }}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      multiline
+                      minRows={2}
+                      className="mb-2"
+                      label="Meta Description"
+                      placeholder="Meta description"
+                      {...(errors.meta_description && {
+                        error: true,
+                        helperText: errors.meta_description.message,
+                      })}
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="meta_og_image"
+                  control={control}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <div className="space-y-2">
+                      <CustomTextField
+                        {...field}
+                        type="file"
+                        fullWidth
+                        className="mb-4"
+                        label="Meta OG Image"
+                        variant="outlined"
+                        size="small"
+                        inputRef={fileInputRefOg}
+                        inputProps={{
+                          accept: "image/*",
+                          onChange: (e) =>
+                            handleImageChangeOg(e.target.files, onChange),
+                        }}
+                        error={!!errors.meta_og_image}
+                        helperText={errors.meta_og_image?.message}
+                      />
+                      {imagePreviewOg && (
+                        <div className="mt-2">
+                          <img
+                            src={imagePreviewOg}
+                            alt="Preview"
+                            className="max-h-[50px] rounded-md"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                />
+
+                <Controller
+                  name="status"
+                  control={control}
+                  render={({ field }) => {
+                    return (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={Boolean(field.value)}
+                            onChange={(e) => field.onChange(e.target.checked)}
+                          />
+                        }
+                        label="Active"
+                      />
+                    );
+                  }}
+                />
+              </Grid>
+
+              <Grid className="w-full">
+                <label>Detail</label>
+                <Controller
+                  name="detail"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <TinyMCE
+                      value={field.value}
+                      onEditorChange={(content) => field.onChange(content)}
+                      init={{
+                        height: 500,
+                        menubar: false,
+                        plugins: [
+                          "advlist",
+                          "anchor",
+                          "autolink",
+                          "image",
+                          "link",
+                          "lists",
+                          "searchreplace",
+                          "table",
+                          "wordcount",
+                        ],
+                        toolbar:
+                          "undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright | bullist numlist outdent indent | removeformat",
                       }}
-                      error={!!errors.meta_og_image}
-                      helperText={errors.meta_og_image?.message}
                     />
-                    {imagePreviewOg && (
-                      <div className="mt-2">
-                        <img
-                          src={imagePreviewOg}
-                          alt="Preview"
-                          className="max-h-[50px] rounded-md"
-                        />
-                      </div>
-                    )}
-                  </div>
+                  )}
+                />
+                {errors.detail && (
+                  <p className="text-[#ff4c51] mt-[2px] text-[13px]">
+                    {errors.detail.message}
+                  </p>
                 )}
-              />
+              </Grid>
 
-              <Controller
-                name="status"
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={Boolean(field.value)}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                        />
-                      }
-                      label="Active"
-                    />
-                  );
-                }}
-              />
+              <Grid size={{ xs: 12 }} className="flex gap-4">
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={isSubmitting}
+                  endIcon={
+                    isSubmitting ? (
+                      <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
+                    ) : null
+                  }
+                >
+                  Submit
+                </Button>
+
+                <Button
+                  variant="tonal"
+                  color="secondary"
+                  type="reset"
+                  onClick={handleReset}
+                  disabled={isSubmitting}
+                >
+                  Reset
+                </Button>
+
+                <Button
+                  variant="tonal"
+                  color="error"
+                  component={Link}
+                  href={"/pages"}
+                >
+                  Cancel
+                </Button>
+              </Grid>
             </Grid>
-
-            <Grid className="w-full">
-              <label>Detail</label>
-              <Controller
-                name="detail"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <TinyMCE
-                    value={field.value}
-                    onEditorChange={(content) => field.onChange(content)}
-                    init={{
-                      height: 500,
-                      menubar: false,
-                      plugins: [
-                        "advlist",
-                        "anchor",
-                        "autolink",
-                        "image",
-                        "link",
-                        "lists",
-                        "searchreplace",
-                        "table",
-                        "wordcount",
-                      ],
-                      toolbar:
-                        "undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright | bullist numlist outdent indent | removeformat",
-                    }}
-                  />
-                )}
-              />
-              {errors.detail && (
-                <p className="text-[#ff4c51] mt-[2px] text-[13px]">
-                  {errors.detail.message}
-                </p>
-              )}
-            </Grid>
-
-            <Grid size={{ xs: 12 }} className="flex gap-4">
-              <Button
-                variant="contained"
-                type="submit"
-                disabled={isSubmitting}
-                endIcon={
-                  isSubmitting ? (
-                    <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
-                  ) : null
-                }
-              >
-                Submit
-              </Button>
-
-              <Button
-                variant="tonal"
-                color="secondary"
-                type="reset"
-                onClick={handleReset}
-                disabled={isSubmitting}
-              >
-                Reset
-              </Button>
-
-              <Button
-                variant="tonal"
-                color="error"
-                component={Link}
-                href={"/pages"}
-              >
-                Cancel
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
 
     </ProtectedRouteURL>
   );

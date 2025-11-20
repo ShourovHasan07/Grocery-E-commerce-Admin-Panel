@@ -53,8 +53,8 @@ import { bookingStatusLabel, bookingStatusColor } from "@/utils/helpers";
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
 
-import { useAbility,  } from '@/contexts/AbilityContext';
-import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+import { useAbility } from '@/contexts/AbilityContext';
+import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -76,7 +76,8 @@ const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
   //console.log("Table Data:", tableData);
-  const ability = useAbility(); 
+  const ability = useAbility();
+
   // States
   const dataObj = tableData?.bookings || [];
   const [rowSelection, setRowSelection] = useState({});
@@ -99,29 +100,24 @@ const ListTable = ({ tableData }) => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-
             {ability.can('read', 'Booking') && (
-                <Tooltip title="Detail">
-              <IconButton
-                onClick={() => {
-                  const path = `/bookings/${row.original.id}`;
+              <Tooltip title="Detail">
+                <IconButton
+                  onClick={() => {
+                    const path = `/bookings/${row.original.id}`;
 
-                  setLoadingId(`bookings-${row.original.id}`);
-                  router.push(path);
-                }}
-              >
-                {loadingId === `bookings-${row.original.id}` ? (
-                  <LoaderIcon size={17} topColor="border-t-yellow-500" />
-                ) : (
-                  <i className="tabler-eye text-secondary" />
-                )}
-              </IconButton>
-            </Tooltip>
-
+                    setLoadingId(`bookings-${row.original.id}`);
+                    router.push(path);
+                  }}
+                >
+                  {loadingId === `bookings-${row.original.id}` ? (
+                    <LoaderIcon size={17} topColor="border-t-yellow-500" />
+                  ) : (
+                    <i className="tabler-eye text-secondary" />
+                  )}
+                </IconButton>
+              </Tooltip>
             )}
-
-
-          
           </div>
         ),
         enableSorting: false,
@@ -238,10 +234,7 @@ const ListTable = ({ tableData }) => {
   });
 
   return (
-    <>
-
-
-     <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Booking">
+    <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Booking">
       <Card>
         <CardHeader title="Booking List" className="pbe-4" />
         <TableFilters setData={setFilteredData} tableData={data} />
@@ -344,8 +337,7 @@ const ListTable = ({ tableData }) => {
         />
       </Card>
 
-      </ProtectedRouteURL>
-    </>
+    </ProtectedRouteURL>
   );
 };
 

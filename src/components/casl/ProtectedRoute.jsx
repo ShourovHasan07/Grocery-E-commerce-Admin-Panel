@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
-import { useAbility, useAbilityLoading } from '@/contexts/AbilityContext';
+
 import { useRouter } from 'next/navigation';
-import Loader from '@/components/common/Loader';
+
+import { useAbility, useAbilityLoading } from '@/contexts/AbilityContext';
+import LayoutLoader from "@/components/common/LayoutLoader";
 
 const ProtectedRouteURL = ({ actions = [], subject, children }) => {
   const ability = useAbility();
@@ -23,7 +25,7 @@ const ProtectedRouteURL = ({ actions = [], subject, children }) => {
   }, [isLoading, hasPermission, router]);
 
   //  Full screen loading
-  if (isLoading) return <Loader fullPage />;
+  if (isLoading) return <LayoutLoader />;
 
   //  No permission = don't render children
   if (!hasPermission) return null;

@@ -1,4 +1,6 @@
 // Component Imports
+import { redirect } from "next/navigation";
+
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/libs/auth";
@@ -6,7 +8,6 @@ import { authOptions } from "@/libs/auth";
 import pageApiHelper from "@/utils/pageApiHelper";
 import PagesList from "@/views/apps/pages/list";
 import { defineAbilitiesFor } from "@/configs/acl";
-import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Pages - AskValor",

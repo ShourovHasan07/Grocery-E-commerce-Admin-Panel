@@ -57,7 +57,7 @@ import CustomTextField from "@core/components/mui/TextField";
 import CustomAvatar from "@core/components/mui/Avatar";
 import LoaderIcon from "@/components/common/Loader";
 
-import { useAbility,useAbilityLoading  } from '@/contexts/AbilityContext';
+import { useAbility, useAbilityLoading } from '@/contexts/AbilityContext';
 
 
 // Util Imports
@@ -65,8 +65,8 @@ import { getInitials } from "@/utils/getInitials";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
-import VerticalMenuSkeleton from "@/components/layout/vertical/VerticalMenuSkeleton";
-import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+import LayoutLoader from "@/components/common/LayoutLoader";
+import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
 
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
@@ -88,7 +88,7 @@ const columnHelper = createColumnHelper();
 const ListTable = ({ tableData }) => {
 
 
- const ability = useAbility(); 
+  const ability = useAbility();
   const isAbilityLoading = useAbilityLoading();
 
   // States
@@ -117,8 +117,7 @@ const ListTable = ({ tableData }) => {
       columnHelper.accessor("action", {
         header: "Action",
         cell: ({ row }) => (
-          <div>
-
+          <>
             {ability.can('update', 'Role') && (<Tooltip title="Edit" arrow placement="top">
               <IconButton
                 onClick={() => {
@@ -135,32 +134,25 @@ const ListTable = ({ tableData }) => {
                 )}
               </IconButton>
             </Tooltip>
-
-
-
-)}
-
+            )}
 
             {ability.can('delete', 'Role') && (
-   <Tooltip title="Delete" arrow placement="top">
-              <IconButton
-                onClick={() =>
-                  setDialogOpen((prevState) => ({
-                    ...prevState,
-                    open: !prevState.open,
-                    id: row.original.id,
-                  }))
-                }
-              >
-                <i className="tabler-trash text-error" />
-              </IconButton>
-            </Tooltip>
-)}
-    
-     </div>
+              <Tooltip title="Delete" arrow placement="top">
+                <IconButton
+                  onClick={() =>
+                    setDialogOpen((prevState) => ({
+                      ...prevState,
+                      open: !prevState.open,
+                      id: row.original.id,
+                    }))
+                  }
+                >
+                  <i className="tabler-trash text-error" />
+                </IconButton>
+              </Tooltip>
+            )}
+          </>
         ),
-
-
         enableSorting: false,
       }),
       {
@@ -200,7 +192,7 @@ const ListTable = ({ tableData }) => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, filteredData,loadingId],
+    [data, filteredData, loadingId],
   );
 
   const table = useReactTable({
@@ -266,162 +258,141 @@ const ListTable = ({ tableData }) => {
   };
 
   return (
-    <>  <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Role">
+    <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Role">
 
-
-         {isAbilityLoading ? (
-              <VerticalMenuSkeleton />
-            ) : (
-
-
-              <div>
-
-                <Card>
-        <CardHeader title="Role List" className="pbe-4" />
-        <TableFilters setData={setFilteredData} tableData={data} />
-        <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
-          <CustomTextField
-            select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => table.setPageSize(Number(e.target.value))}
-            className="max-sm:is-full sm:is-[70px]"
-          >
-            <MenuItem value="10">10</MenuItem>
-            <MenuItem value="25">25</MenuItem>
-            <MenuItem value="50">50</MenuItem>
-          </CustomTextField>
-          <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
-           {ability.can('create', 'Role') && ( 
-             <Button
-              variant="contained"
-              component={Link}
-              startIcon={<i className="tabler-plus" />}
-              href={"/roles/create"}
-              className="max-sm:is-full"
-            >
-              Add New Role
-            </Button>
-           )}
-          </div>
-        </div>
-        <div className="overflow-x-auto">
-          <table className={tableStyles.table}>
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th key={header.id}>
-                      {header.isPlaceholder ? null : (
-                        <>
-                          <div
-                            className={classnames({
-                              "flex items-center": header.column.getIsSorted(),
-                              "cursor-pointer select-none":
-                                header.column.getCanSort(),
-                            })}
-                            onClick={header.column.getToggleSortingHandler()}
-                          >
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                            {{
-                              asc: <i className="tabler-chevron-up text-xl" />,
-                              desc: (
-                                <i className="tabler-chevron-down text-xl" />
-                              ),
-                            }[header.column.getIsSorted()] ?? null}
-                          </div>
-                        </>
-                      )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            {table.getFilteredRowModel().rows.length === 0 ? (
-              <tbody>
-                <tr>
-                  <td
-                    colSpan={table.getVisibleFlatColumns().length}
-                    className="text-center"
+      {isAbilityLoading ? (
+        <LayoutLoader />
+      ) : (
+        <>
+          <Card>
+            <CardHeader title="Role List" className="pbe-4" />
+            <TableFilters setData={setFilteredData} tableData={data} />
+            <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
+              <CustomTextField
+                select
+                value={table.getState().pagination.pageSize}
+                onChange={(e) => table.setPageSize(Number(e.target.value))}
+                className="max-sm:is-full sm:is-[70px]"
+              >
+                <MenuItem value="10">10</MenuItem>
+                <MenuItem value="25">25</MenuItem>
+                <MenuItem value="50">50</MenuItem>
+              </CustomTextField>
+              <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
+                {ability.can('create', 'Role') && (
+                  <Button
+                    variant="contained"
+                    component={Link}
+                    startIcon={<i className="tabler-plus" />}
+                    href={"/roles/create"}
+                    className="max-sm:is-full"
                   >
-                    No data available
-                  </td>
-                </tr>
-              </tbody>
-            ) : (
-              <tbody>
-                {table
-                  .getRowModel()
-                  .rows.slice(0, table.getState().pagination.pageSize)
-                  .map((row) => {
-                    return (
-                      <tr
-                        key={row.id}
-                        className={classnames({
-                          selected: row.getIsSelected(),
-                        })}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <td key={cell.id}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            )}
-          </table>
-        </div>
-        <TablePagination
-          component={() => <TablePaginationComponent table={table} />}
-          count={table.getFilteredRowModel().rows.length}
-          rowsPerPage={table.getState().pagination.pageSize}
-          page={table.getState().pagination.pageIndex}
-          onPageChange={(_, page) => {
-            table.setPageIndex(page);
-          }}
-        />
-      </Card>
-
-      <ConfirmDialog
-        dialogData={dialogOpen}
-        handleCloseDialog={() =>
-          setDialogOpen((prevState) => ({
-            ...prevState,
-            open: !prevState.open,
-            id: null,
-          }))
-        }
-        handleDelete={() => {
-          handleDelete(dialogOpen.id);
-        }}
-      />
-
-
-
-
+                    Add New Role
+                  </Button>
+                )}
               </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className={tableStyles.table}>
+                <thead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <tr key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <th key={header.id}>
+                          {header.isPlaceholder ? null : (
+                            <>
+                              <div
+                                className={classnames({
+                                  "flex items-center": header.column.getIsSorted(),
+                                  "cursor-pointer select-none":
+                                    header.column.getCanSort(),
+                                })}
+                                onClick={header.column.getToggleSortingHandler()}
+                              >
+                                {flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext(),
+                                )}
+                                {{
+                                  asc: <i className="tabler-chevron-up text-xl" />,
+                                  desc: (
+                                    <i className="tabler-chevron-down text-xl" />
+                                  ),
+                                }[header.column.getIsSorted()] ?? null}
+                              </div>
+                            </>
+                          )}
+                        </th>
+                      ))}
+                    </tr>
+                  ))}
+                </thead>
+                {table.getFilteredRowModel().rows.length === 0 ? (
+                  <tbody>
+                    <tr>
+                      <td
+                        colSpan={table.getVisibleFlatColumns().length}
+                        className="text-center"
+                      >
+                        No data available
+                      </td>
+                    </tr>
+                  </tbody>
+                ) : (
+                  <tbody>
+                    {table
+                      .getRowModel()
+                      .rows.slice(0, table.getState().pagination.pageSize)
+                      .map((row) => {
+                        return (
+                          <tr
+                            key={row.id}
+                            className={classnames({
+                              selected: row.getIsSelected(),
+                            })}
+                          >
+                            {row.getVisibleCells().map((cell) => (
+                              <td key={cell.id}>
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext(),
+                                )}
+                              </td>
+                            ))}
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                )}
+              </table>
+            </div>
+            <TablePagination
+              component={() => <TablePaginationComponent table={table} />}
+              count={table.getFilteredRowModel().rows.length}
+              rowsPerPage={table.getState().pagination.pageSize}
+              page={table.getState().pagination.pageIndex}
+              onPageChange={(_, page) => {
+                table.setPageIndex(page);
+              }}
+            />
+          </Card>
 
-
-
-
-            )}
-
-
-
-
-
-       </ProtectedRouteURL>
-
-
-      
-    </>
+          <ConfirmDialog
+            dialogData={dialogOpen}
+            handleCloseDialog={() =>
+              setDialogOpen((prevState) => ({
+                ...prevState,
+                open: !prevState.open,
+                id: null,
+              }))
+            }
+            handleDelete={() => {
+              handleDelete(dialogOpen.id);
+            }}
+          />
+        </>
+      )}
+    </ProtectedRouteURL>
   );
 };
 

@@ -26,7 +26,7 @@ import pageApiHelper from "@/utils/pageApiHelper";
 
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
-import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
 
 // Vars
 const initialData = {
@@ -176,106 +176,97 @@ const AddDrawer = (props) => {
   };
 
   return (
+    <ProtectedRouteURL actions={["create"]} subject="Language">
+      <Drawer
+        open={drawerData.open}
+        anchor="right"
+        variant="temporary"
+        onClose={handleReset}
+        ModalProps={{ keepMounted: true }}
+        sx={{ "& .MuiDrawer-paper": { width: { xs: 300, sm: 400 } } }}
+      >
+        <div className="flex items-center justify-between plb-5 pli-6">
+          <Typography variant="h5">
+            {setType == "edit" ? "Edit Language" : "Add New Language"}
+          </Typography>
+          <IconButton size="small" onClick={handleReset}>
+            <i className="tabler-x text-2xl text-textPrimary" />
+          </IconButton>
+        </div>
+        <Divider />
+        <div>
+          <form
+            onSubmit={handleSubmit((data) => onSubmit(data))}
+            className="flex flex-col gap-3 p-6"
+          >
+            <Controller
+              name="name"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <CustomTextField
+                  {...field}
+                  fullWidth
+                  label="Name"
+                  placeholder="Language name"
+                  {...(errors.name && {
+                    error: true,
+                    helperText: errors.name?.message || "This field is required.",
+                  })}
+                />
+              )}
+            />
 
-
-     <ProtectedRouteURL actions={["create"]} subject="Language">
-
-
-
-
-
-    <Drawer
-      open={drawerData.open}
-      anchor="right"
-      variant="temporary"
-      onClose={handleReset}
-      ModalProps={{ keepMounted: true }}
-      sx={{ "& .MuiDrawer-paper": { width: { xs: 300, sm: 400 } } }}
-    >
-      <div className="flex items-center justify-between plb-5 pli-6">
-        <Typography variant="h5">
-          {setType == "edit" ? "Edit Language" : "Add New Language"}
-        </Typography>
-        <IconButton size="small" onClick={handleReset}>
-          <i className="tabler-x text-2xl text-textPrimary" />
-        </IconButton>
-      </div>
-      <Divider />
-      <div>
-        <form
-          onSubmit={handleSubmit((data) => onSubmit(data))}
-          className="flex flex-col gap-3 p-6"
-        >
-          <Controller
-            name="name"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <CustomTextField
-                {...field}
-                fullWidth
-                label="Name"
-                placeholder="Language name"
-                {...(errors.name && {
-                  error: true,
-                  helperText: errors.name?.message || "This field is required.",
-                })}
-              />
-            )}
-          />
-
-          <Grid container spacing={4}>
-            <Grid size={{ xs: 6 }}>
-              <Controller
-                name="active"
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={Boolean(field.value)}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                        />
-                      }
-                      label="Active"
-                    />
-                  );
-                }}
-              />
+            <Grid container spacing={4}>
+              <Grid size={{ xs: 6 }}>
+                <Controller
+                  name="active"
+                  control={control}
+                  render={({ field }) => {
+                    return (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={Boolean(field.value)}
+                            onChange={(e) => field.onChange(e.target.checked)}
+                          />
+                        }
+                        label="Active"
+                      />
+                    );
+                  }}
+                />
+              </Grid>
             </Grid>
-          </Grid>
 
-          <div className="flex items-center gap-4">
-            <Button
-              variant="contained"
-              type="submit"
-              disabled={isSubmitting}
-              endIcon={
-                isSubmitting ? (
-                  <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
-                ) : null
-              }
-            >
-              Submit
-            </Button>
-            <Button
-              variant="tonal"
-              color="error"
-              type="reset"
-              onClick={handleReset}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-          </div>
-        </form>
-      </div>
-    </Drawer>
+            <div className="flex items-center gap-4">
+              <Button
+                variant="contained"
+                type="submit"
+                disabled={isSubmitting}
+                endIcon={
+                  isSubmitting ? (
+                    <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
+                  ) : null
+                }
+              >
+                Submit
+              </Button>
+              <Button
+                variant="tonal"
+                color="error"
+                type="reset"
+                onClick={handleReset}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </div>
+      </Drawer>
 
     </ProtectedRouteURL>
-
-
   );
 };
 

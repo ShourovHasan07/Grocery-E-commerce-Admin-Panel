@@ -49,7 +49,7 @@ import { getCurrency, transactionStatusLabel, transactionStatusColor } from "@/u
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
-import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -162,15 +162,15 @@ const ListTable = ({ tableData }) => {
         cell: ({ row }) => <Typography className="text-wrap w-[200px]">{row.original.expert.name}</Typography>,
       },
       {
-  header: "Payment for (min)",
-  cell: ({ row }) => (
-    <Typography>
-      {row.original?.booking?.timeMin
-        ? `${row.original.booking.timeMin} mins`
-        : "N/A"}
-    </Typography>
-  ),
-},
+        header: "Payment for (min)",
+        cell: ({ row }) => (
+          <Typography>
+            {row.original?.booking?.timeMin
+              ? `${row.original.booking.timeMin} mins`
+              : "N/A"}
+          </Typography>
+        ),
+      },
       columnHelper.accessor("createdAt", {
         header: "Created At",
         cell: ({ row }) => (
@@ -219,112 +219,112 @@ const ListTable = ({ tableData }) => {
   return (
     <>
 
-       <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Transaction">
-
-      
+      <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Transaction">
 
 
-      <Card>
-        <CardHeader title="Transaction List" className="pbe-4" />
-        <TableFilters setData={setFilteredData} tableData={data} />
-        <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
-          <CustomTextField
-            select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => table.setPageSize(Number(e.target.value))}
-            className="max-sm:is-full sm:is-[70px]"
-          >
-            <MenuItem value="10">10</MenuItem>
-            <MenuItem value="25">25</MenuItem>
-            <MenuItem value="50">50</MenuItem>
-          </CustomTextField>
-          <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4"></div>
-        </div>
-        <div className="overflow-x-auto">
-          <table className={tableStyles.table}>
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th key={header.id}>
-                      {header.isPlaceholder ? null : (
-                        <>
-                          <div
-                            className={classnames({
-                              "flex items-center": header.column.getIsSorted(),
-                              "cursor-pointer select-none":
-                                header.column.getCanSort(),
-                            })}
-                            onClick={header.column.getToggleSortingHandler()}
-                          >
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                            {{
-                              asc: <i className="tabler-chevron-up text-xl" />,
-                              desc: (
-                                <i className="tabler-chevron-down text-xl" />
-                              ),
-                            }[header.column.getIsSorted()] ?? null}
-                          </div>
-                        </>
-                      )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            {table.getFilteredRowModel().rows.length === 0 ? (
-              <tbody>
-                <tr>
-                  <td
-                    colSpan={table.getVisibleFlatColumns().length}
-                    className="text-center"
-                  >
-                    No data available
-                  </td>
-                </tr>
-              </tbody>
-            ) : (
-              <tbody>
-                {table
-                  .getRowModel()
-                  .rows.slice(0, table.getState().pagination.pageSize)
-                  .map((row) => {
-                    return (
-                      <tr
-                        key={row.id}
-                        className={classnames({
-                          selected: row.getIsSelected(),
-                        })}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <td key={cell.id}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            )}
-          </table>
-        </div>
 
-        <TablePagination
-          component={() => <TablePaginationComponent table={table} />}
-          count={table.getFilteredRowModel().rows.length}
-          rowsPerPage={table.getState().pagination.pageSize}
-          page={table.getState().pagination.pageIndex}
-          onPageChange={(_, page) => {
-            table.setPageIndex(page);
-          }}
-        />
-      </Card>
+
+        <Card>
+          <CardHeader title="Transaction List" className="pbe-4" />
+          <TableFilters setData={setFilteredData} tableData={data} />
+          <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
+            <CustomTextField
+              select
+              value={table.getState().pagination.pageSize}
+              onChange={(e) => table.setPageSize(Number(e.target.value))}
+              className="max-sm:is-full sm:is-[70px]"
+            >
+              <MenuItem value="10">10</MenuItem>
+              <MenuItem value="25">25</MenuItem>
+              <MenuItem value="50">50</MenuItem>
+            </CustomTextField>
+            <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4"></div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className={tableStyles.table}>
+              <thead>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <th key={header.id}>
+                        {header.isPlaceholder ? null : (
+                          <>
+                            <div
+                              className={classnames({
+                                "flex items-center": header.column.getIsSorted(),
+                                "cursor-pointer select-none":
+                                  header.column.getCanSort(),
+                              })}
+                              onClick={header.column.getToggleSortingHandler()}
+                            >
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                              {{
+                                asc: <i className="tabler-chevron-up text-xl" />,
+                                desc: (
+                                  <i className="tabler-chevron-down text-xl" />
+                                ),
+                              }[header.column.getIsSorted()] ?? null}
+                            </div>
+                          </>
+                        )}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              {table.getFilteredRowModel().rows.length === 0 ? (
+                <tbody>
+                  <tr>
+                    <td
+                      colSpan={table.getVisibleFlatColumns().length}
+                      className="text-center"
+                    >
+                      No data available
+                    </td>
+                  </tr>
+                </tbody>
+              ) : (
+                <tbody>
+                  {table
+                    .getRowModel()
+                    .rows.slice(0, table.getState().pagination.pageSize)
+                    .map((row) => {
+                      return (
+                        <tr
+                          key={row.id}
+                          className={classnames({
+                            selected: row.getIsSelected(),
+                          })}
+                        >
+                          {row.getVisibleCells().map((cell) => (
+                            <td key={cell.id}>
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext(),
+                              )}
+                            </td>
+                          ))}
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              )}
+            </table>
+          </div>
+
+          <TablePagination
+            component={() => <TablePaginationComponent table={table} />}
+            count={table.getFilteredRowModel().rows.length}
+            rowsPerPage={table.getState().pagination.pageSize}
+            page={table.getState().pagination.pageIndex}
+            onPageChange={(_, page) => {
+              table.setPageIndex(page);
+            }}
+          />
+        </Card>
 
       </ProtectedRouteURL>
     </>

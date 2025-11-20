@@ -33,7 +33,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CustomTextField from "@core/components/mui/TextField";
 
 import pageApiHelper from "@/utils/pageApiHelper";
-import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
 
 // Validation Schema
 const schema = z
@@ -127,230 +127,223 @@ const CreateForm = ({ tableData }) => {
   };
 
   return (
-
-
-      <ProtectedRouteURL actions={["create"]} subject="Admin">
-
-
-
-    <Card>
-      <CardHeader title="New Admin Info" />
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={{ md: 6 }}>
-            <Grid size={{ md: 6 }}>
-              <Controller
-                name="roleId"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    select
-                    fullWidth
-                    className="mb-4"
-                    label="Role"
-                    placeholder="Select Role"
-                    {...(errors.roleId && {
-                      error: true,
-                      helperText: errors.roleId.message,
-                    })}
-                  >
-                    {tableData?.map((createOption) => (
-                      <MenuItem key={createOption.id} value={createOption.id}>
-                        {createOption.displayName}
-                      </MenuItem>
-                    ))}
-                  </CustomTextField>
-                )}
-              />
-              <Controller
-                name="name"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    className="mb-4"
-                    label="Name"
-                    placeholder="Name"
-                    {...(errors.name && {
-                      error: true,
-                      helperText: errors.name.message,
-                    })}
-                  />
-                )}
-              />
-
-              <Controller
-                name="email"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    type="email"
-                    className="mb-4"
-                    label="Email"
-                    placeholder="Email"
-                    {...(errors.email && {
-                      error: true,
-                      helperText: errors.email.message,
-                    })}
-                  />
-                )}
-              />
-            </Grid>
-
-            <Grid size={{ md: 6 }}>
-              <Controller
-                name="phone"
-                control={control}
-                rules={{ required: false }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    className="mb-4"
-                    label="Phone"
-                    placeholder="Phone"
-                    {...(errors.phone && {
-                      error: true,
-                      helperText: errors.phone.message,
-                    })}
-                  />
-                )}
-              />
-
-              <Controller
-                name="password"
-                control={control}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    type={isPasswordShown ? "text" : "password"}
-                    label="Password"
-                    placeholder="Password"
-                    error={!!errors.password}
-                    helperText={errors.password?.message}
-                    className="mb-4"
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() => setIsPasswordShown((prev) => !prev)}
-                          >
-                            <i
-                              className={
-                                isPasswordShown
-                                  ? "tabler-eye"
-                                  : "tabler-eye-off"
-                              }
-                            />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                )}
-              />
-
-              <Controller
-                name="confirm_password"
-                control={control}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    type={isConfirmPasswordShown ? "text" : "password"}
-                    label="Confirm Password"
-                    placeholder="Confirm Password"
-                    error={!!errors.confirm_password}
-                    helperText={errors.confirm_password?.message}
-                    className="mb-4"
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() =>
-                              setIsConfirmPasswordShown((prev) => !prev)
-                            }
-                          >
-                            <i
-                              className={
-                                isConfirmPasswordShown
-                                  ? "tabler-eye"
-                                  : "tabler-eye-off"
-                              }
-                            />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                )}
-              />
-
-              <Controller
-                name="status"
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={Boolean(field.value)}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                        />
-                      }
-                      label="Active"
+    <ProtectedRouteURL actions={["create"]} subject="Admin">
+      <Card>
+        <CardHeader title="New Admin Info" />
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Grid container spacing={{ md: 6 }}>
+              <Grid size={{ md: 6 }}>
+                <Controller
+                  name="roleId"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      select
+                      fullWidth
+                      className="mb-4"
+                      label="Role"
+                      placeholder="Select Role"
+                      {...(errors.roleId && {
+                        error: true,
+                        helperText: errors.roleId.message,
+                      })}
+                    >
+                      {tableData?.map((createOption) => (
+                        <MenuItem key={createOption.id} value={createOption.id}>
+                          {createOption.displayName}
+                        </MenuItem>
+                      ))}
+                    </CustomTextField>
+                  )}
+                />
+                <Controller
+                  name="name"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      className="mb-4"
+                      label="Name"
+                      placeholder="Name"
+                      {...(errors.name && {
+                        error: true,
+                        helperText: errors.name.message,
+                      })}
                     />
-                  );
-                }}
-              />
+                  )}
+                />
+
+                <Controller
+                  name="email"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      type="email"
+                      className="mb-4"
+                      label="Email"
+                      placeholder="Email"
+                      {...(errors.email && {
+                        error: true,
+                        helperText: errors.email.message,
+                      })}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid size={{ md: 6 }}>
+                <Controller
+                  name="phone"
+                  control={control}
+                  rules={{ required: false }}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      className="mb-4"
+                      label="Phone"
+                      placeholder="Phone"
+                      {...(errors.phone && {
+                        error: true,
+                        helperText: errors.phone.message,
+                      })}
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="password"
+                  control={control}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      type={isPasswordShown ? "text" : "password"}
+                      label="Password"
+                      placeholder="Password"
+                      error={!!errors.password}
+                      helperText={errors.password?.message}
+                      className="mb-4"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() => setIsPasswordShown((prev) => !prev)}
+                            >
+                              <i
+                                className={
+                                  isPasswordShown
+                                    ? "tabler-eye"
+                                    : "tabler-eye-off"
+                                }
+                              />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="confirm_password"
+                  control={control}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      type={isConfirmPasswordShown ? "text" : "password"}
+                      label="Confirm Password"
+                      placeholder="Confirm Password"
+                      error={!!errors.confirm_password}
+                      helperText={errors.confirm_password?.message}
+                      className="mb-4"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() =>
+                                setIsConfirmPasswordShown((prev) => !prev)
+                              }
+                            >
+                              <i
+                                className={
+                                  isConfirmPasswordShown
+                                    ? "tabler-eye"
+                                    : "tabler-eye-off"
+                                }
+                              />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="status"
+                  control={control}
+                  render={({ field }) => {
+                    return (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={Boolean(field.value)}
+                            onChange={(e) => field.onChange(e.target.checked)}
+                          />
+                        }
+                        label="Active"
+                      />
+                    );
+                  }}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12 }} className="flex gap-4">
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={isSubmitting}
+                  endIcon={
+                    isSubmitting ? (
+                      <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
+                    ) : null
+                  }
+                >
+                  Submit
+                </Button>
+                <Button
+                  variant="tonal"
+                  color="secondary"
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => reset()}
+                >
+                  Reset
+                </Button>
+
+                <Button
+                  variant="tonal"
+                  color="error"
+                  component={Link}
+                  href={"/admins"}
+                >
+                  Cancel
+                </Button>
+              </Grid>
             </Grid>
-
-            <Grid size={{ xs: 12 }} className="flex gap-4">
-              <Button
-                variant="contained"
-                type="submit"
-                disabled={isSubmitting}
-                endIcon={
-                  isSubmitting ? (
-                    <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
-                  ) : null
-                }
-              >
-                Submit
-              </Button>
-              <Button
-                variant="tonal"
-                color="secondary"
-                type="button"
-                disabled={isSubmitting}
-                onClick={() => reset()}
-              >
-                Reset
-              </Button>
-
-              <Button
-                variant="tonal"
-                color="error"
-                component={Link}
-                href={"/admins"}
-              >
-                Cancel
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-      </CardContent>
-    </Card>
-
-
+          </form>
+        </CardContent>
+      </Card>
     </ProtectedRouteURL>
   );
 };

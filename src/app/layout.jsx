@@ -12,7 +12,7 @@ import "@/app/globals.css";
 
 // Generated Icon CSS Imports
 import "@assets/iconify-icons/generated-icons.css";
-import ClientProviders from "@/components/casl component/ClientProviders";
+import ClientProviders from "@/components/casl/ClientProviders";
 
 export const metadata = {
   title: "AskValor - Dashboard",
@@ -36,7 +36,7 @@ const RootLayout = async (props) => {
         <InitColorSchemeScript attribute="data" defaultMode={systemMode} />
 
 
-        
+
         <ClientProviders>
           {children}
         </ClientProviders>

@@ -65,8 +65,8 @@ import { getInitials } from "@/utils/getInitials";
 import tableStyles from "@core/styles/table.module.css";
 
 import { useAbility, useAbilityLoading } from '@/contexts/AbilityContext';
-import VerticalMenuSkeleton from "@/components/layout/vertical/VerticalMenuSkeleton";
-import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+import LayoutLoader from "@/components/common/LayoutLoader";
+import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
 
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
@@ -114,10 +114,7 @@ const ListTable = ({ tableData }) => {
         cell: ({ row }) => (
           <div className="text-wrap w-[160px]">
             {/* Detail */}
-
-
             {ability?.can('read', 'expert') && (
-
               <Tooltip title="Detail">
                 <IconButton
                   onClick={() => {
@@ -137,115 +134,102 @@ const ListTable = ({ tableData }) => {
 
             )}
 
-
-
-
-
-
-
-            {/* Review Rating */}
-            <Tooltip title="Review Rating" arrow placement="top">
-              <IconButton
-                onClick={() => {
-                  const path = `/experts/${row.original.id}/reviews`;
-
-                  setLoadingId(`rev-${row.original.id}`);
-                  router.push(path);
-                }}
-              >
-                {loadingId === `rev-${row.original.id}` ? (
-                  <LoaderIcon topColor="border-t-primary" />
-                ) : (
-                  <i className="tabler-brand-revolut text-primary" />
-                )}
-              </IconButton>
-            </Tooltip>
-
-            {/* Achievements */}
-            <Tooltip title="Achievements" arrow placement="top">
-              <IconButton
-                onClick={() => {
-                  const path = `/experts/${row.original.id}/achievements`;
-
-                  setLoadingId(`ach-${row.original.id}`);
-                  router.push(path);
-                }}
-              >
-                {loadingId === `ach-${row.original.id}` ? (
-                  <LoaderIcon topColor="border-t-success" />
-                ) : (
-                  <i className="tabler-award text-success" />
-                )}
-              </IconButton>
-            </Tooltip>
-
-            {/* Languages */}
-            <Tooltip title="Languages" arrow placement="top">
-              <IconButton
-                onClick={() => {
-                  const path = `/experts/${row.original.id}/languages`;
-
-                  setLoadingId(`lang-${row.original.id}`);
-                  router.push(path);
-                }}
-              >
-                {loadingId === `lang-${row.original.id}` ? (
-                  <LoaderIcon topColor="border-t-info" />
-                ) : (
-                  <i className="tabler-abc text-info" />
-                )}
-              </IconButton>
-            </Tooltip>
-
-            {/* Time Slots */}
-            <Tooltip title="Time Slots" arrow placement="top">
-              <IconButton
-                onClick={() => {
-                  const path = `/experts/${row.original.id}/time-slots`;
-
-                  setLoadingId(`time-${row.original.id}`);
-                  router.push(path);
-                }}
-              >
-                {loadingId === `time-${row.original.id}` ? (
-                  <LoaderIcon topColor="border-t-warning" />
-                ) : (
-                  <i className="tabler-clock text-warning" />
-                )}
-              </IconButton>
-            </Tooltip>
-
-            {/* Edit */}
-
-
             {ability?.can('update', 'expert') && (
+              <>
+                {/* Review Rating */}
+                <Tooltip title="Review Rating" arrow placement="top">
+                  <IconButton
+                    onClick={() => {
+                      const path = `/experts/${row.original.id}/reviews`;
 
-              <Tooltip title="Edit" arrow placement="top">
-                <IconButton
-                  onClick={() => {
-                    const path = `/experts/${row.original.id}/edit`;
+                      setLoadingId(`rev-${row.original.id}`);
+                      router.push(path);
+                    }}
+                  >
+                    {loadingId === `rev-${row.original.id}` ? (
+                      <LoaderIcon topColor="border-t-primary" />
+                    ) : (
+                      <i className="tabler-brand-revolut text-primary" />
+                    )}
+                  </IconButton>
+                </Tooltip>
 
-                    setLoadingId(`edit-${row.original.id}`);
-                    router.push(path);
-                  }}
-                >
-                  {loadingId === `edit-${row.original.id}` ? (
-                    <LoaderIcon topColor="border-t-primary" />
-                  ) : (
-                    <i className="tabler-edit text-primary" />
-                  )}
-                </IconButton>
-              </Tooltip>
+                {/* Achievements */}
+                <Tooltip title="Achievements" arrow placement="top">
+                  <IconButton
+                    onClick={() => {
+                      const path = `/experts/${row.original.id}/achievements`;
 
+                      setLoadingId(`ach-${row.original.id}`);
+                      router.push(path);
+                    }}
+                  >
+                    {loadingId === `ach-${row.original.id}` ? (
+                      <LoaderIcon topColor="border-t-success" />
+                    ) : (
+                      <i className="tabler-award text-success" />
+                    )}
+                  </IconButton>
+                </Tooltip>
+
+                {/* Languages */}
+                <Tooltip title="Languages" arrow placement="top">
+                  <IconButton
+                    onClick={() => {
+                      const path = `/experts/${row.original.id}/languages`;
+
+                      setLoadingId(`lang-${row.original.id}`);
+                      router.push(path);
+                    }}
+                  >
+                    {loadingId === `lang-${row.original.id}` ? (
+                      <LoaderIcon topColor="border-t-info" />
+                    ) : (
+                      <i className="tabler-abc text-info" />
+                    )}
+                  </IconButton>
+                </Tooltip>
+
+                {/* Time Slots */}
+                <Tooltip title="Time Slots" arrow placement="top">
+                  <IconButton
+                    onClick={() => {
+                      const path = `/experts/${row.original.id}/time-slots`;
+
+                      setLoadingId(`time-${row.original.id}`);
+                      router.push(path);
+                    }}
+                  >
+                    {loadingId === `time-${row.original.id}` ? (
+                      <LoaderIcon topColor="border-t-warning" />
+                    ) : (
+                      <i className="tabler-clock text-warning" />
+                    )}
+                  </IconButton>
+                </Tooltip>
+
+                {/* Edit */}
+                <Tooltip title="Edit" arrow placement="top">
+                  <IconButton
+                    onClick={() => {
+                      const path = `/experts/${row.original.id}/edit`;
+
+                      setLoadingId(`edit-${row.original.id}`);
+                      router.push(path);
+                    }}
+                  >
+                    {loadingId === `edit-${row.original.id}` ? (
+                      <LoaderIcon topColor="border-t-primary" />
+                    ) : (
+                      <i className="tabler-edit text-primary" />
+                    )}
+                  </IconButton>
+                </Tooltip>
+              </>
             )}
 
-
-
-
             {/* Delete */}
-
             {ability?.can('delete', 'expert') && (
-
               <Tooltip title="Delete" arrow placement="top">
                 <IconButton
                   onClick={() =>
@@ -259,16 +243,7 @@ const ListTable = ({ tableData }) => {
                   <i className="tabler-trash text-error" />
                 </IconButton>
               </Tooltip>
-
-
-
             )}
-
-
-
-
-
-
           </div>
         ),
         enableSorting: false,
@@ -436,174 +411,144 @@ const ListTable = ({ tableData }) => {
   };
 
   return (
-    <>
-      <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Expert">
+    <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Expert">
+
+      {isAbilityLoading ? (
+        <LayoutLoader />
+      ) : (
+        <>
+          <Card>
+            <CardHeader title="Expert List" className="pbe-4" />
+            <TableFilters setData={setFilteredData} tableData={data} />
+            <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
+              <CustomTextField
+                select
+                value={table.getState().pagination.pageSize}
+                onChange={(e) => table.setPageSize(Number(e.target.value))}
+                className="max-sm:is-full sm:is-[70px]"
+              >
+                <MenuItem value="10">10</MenuItem>
+                <MenuItem value="25">25</MenuItem>
+                <MenuItem value="50">50</MenuItem>
+              </CustomTextField>
+              <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
+
+                {ability?.can('create', 'expert') && (
 
 
-
-
-        {isAbilityLoading ? (
-          <VerticalMenuSkeleton />
-        ) : (
-
-
-          <div>
-
-            <Card>
-              <CardHeader title="Expert List" className="pbe-4" />
-              <TableFilters setData={setFilteredData} tableData={data} />
-              <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
-                <CustomTextField
-                  select
-                  value={table.getState().pagination.pageSize}
-                  onChange={(e) => table.setPageSize(Number(e.target.value))}
-                  className="max-sm:is-full sm:is-[70px]"
-                >
-                  <MenuItem value="10">10</MenuItem>
-                  <MenuItem value="25">25</MenuItem>
-                  <MenuItem value="50">50</MenuItem>
-                </CustomTextField>
-                <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
-
-                  {ability?.can('create', 'expert') && (
-
-
-                    <Button
-                      variant="contained"
-                      component={Link}
-                      startIcon={<i className="tabler-plus" />}
-                      href={"experts/create"}
-                      className="max-sm:is-full"
-                    >
-                      Add New Expert
-                    </Button>
-
-
-
-
-                  )}
-
-
-
-
-                </div>
+                  <Button
+                    variant="contained"
+                    component={Link}
+                    startIcon={<i className="tabler-plus" />}
+                    href={"experts/create"}
+                    className="max-sm:is-full"
+                  >
+                    Add New Expert
+                  </Button>
+                )}
               </div>
-              <div className="overflow-x-auto">
-                <table className={tableStyles.table}>
-                  <thead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                      <tr key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => (
-                          <th key={header.id}>
-                            {header.isPlaceholder ? null : (
-                              <>
-                                <div
-                                  className={classnames({
-                                    "flex items-center": header.column.getIsSorted(),
-                                    "cursor-pointer select-none":
-                                      header.column.getCanSort(),
-                                  })}
-                                  onClick={header.column.getToggleSortingHandler()}
-                                >
-                                  {flexRender(
-                                    header.column.columnDef.header,
-                                    header.getContext(),
-                                  )}
-                                  {{
-                                    asc: <i className="tabler-chevron-up text-xl" />,
-                                    desc: (
-                                      <i className="tabler-chevron-down text-xl" />
-                                    ),
-                                  }[header.column.getIsSorted()] ?? null}
-                                </div>
-                              </>
-                            )}
-                          </th>
-                        ))}
-                      </tr>
-                    ))}
-                  </thead>
-                  {table.getFilteredRowModel().rows.length === 0 ? (
-                    <tbody>
-                      <tr>
-                        <td
-                          colSpan={table.getVisibleFlatColumns().length}
-                          className="text-center"
-                        >
-                          No data available
-                        </td>
-                      </tr>
-                    </tbody>
-                  ) : (
-                    <tbody>
-                      {table
-                        .getRowModel()
-                        .rows.slice(0, table.getState().pagination.pageSize)
-                        .map((row) => {
-                          return (
-                            <tr
-                              key={row.id}
-                              className={classnames({
-                                selected: row.getIsSelected(),
-                              })}
-                            >
-                              {row.getVisibleCells().map((cell) => (
-                                <td key={cell.id}>
-                                  {flexRender(
-                                    cell.column.columnDef.cell,
-                                    cell.getContext(),
-                                  )}
-                                </td>
-                              ))}
-                            </tr>
-                          );
-                        })}
-                    </tbody>
-                  )}
-                </table>
-              </div>
-              <TablePagination
-                component={() => <TablePaginationComponent table={table} />}
-                count={table.getFilteredRowModel().rows.length}
-                rowsPerPage={table.getState().pagination.pageSize}
-                page={table.getState().pagination.pageIndex}
-                onPageChange={(_, page) => {
-                  table.setPageIndex(page);
-                }}
-              />
-            </Card>
-
-            <ConfirmDialog
-              dialogData={dialogOpen}
-              handleCloseDialog={() =>
-                setDialogOpen((prevState) => ({
-                  ...prevState,
-                  open: !prevState.open,
-                  id: null,
-                }))
-              }
-              handleDelete={() => {
-                handleDelete(dialogOpen.id);
+            </div>
+            <div className="overflow-x-auto">
+              <table className={tableStyles.table}>
+                <thead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <tr key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <th key={header.id}>
+                          {header.isPlaceholder ? null : (
+                            <>
+                              <div
+                                className={classnames({
+                                  "flex items-center": header.column.getIsSorted(),
+                                  "cursor-pointer select-none":
+                                    header.column.getCanSort(),
+                                })}
+                                onClick={header.column.getToggleSortingHandler()}
+                              >
+                                {flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext(),
+                                )}
+                                {{
+                                  asc: <i className="tabler-chevron-up text-xl" />,
+                                  desc: (
+                                    <i className="tabler-chevron-down text-xl" />
+                                  ),
+                                }[header.column.getIsSorted()] ?? null}
+                              </div>
+                            </>
+                          )}
+                        </th>
+                      ))}
+                    </tr>
+                  ))}
+                </thead>
+                {table.getFilteredRowModel().rows.length === 0 ? (
+                  <tbody>
+                    <tr>
+                      <td
+                        colSpan={table.getVisibleFlatColumns().length}
+                        className="text-center"
+                      >
+                        No data available
+                      </td>
+                    </tr>
+                  </tbody>
+                ) : (
+                  <tbody>
+                    {table
+                      .getRowModel()
+                      .rows.slice(0, table.getState().pagination.pageSize)
+                      .map((row) => {
+                        return (
+                          <tr
+                            key={row.id}
+                            className={classnames({
+                              selected: row.getIsSelected(),
+                            })}
+                          >
+                            {row.getVisibleCells().map((cell) => (
+                              <td key={cell.id}>
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext(),
+                                )}
+                              </td>
+                            ))}
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                )}
+              </table>
+            </div>
+            <TablePagination
+              component={() => <TablePaginationComponent table={table} />}
+              count={table.getFilteredRowModel().rows.length}
+              rowsPerPage={table.getState().pagination.pageSize}
+              page={table.getState().pagination.pageIndex}
+              onPageChange={(_, page) => {
+                table.setPageIndex(page);
               }}
             />
+          </Card>
 
-
-          </div>
-
-
-
-
-
-
-
-        )}
-
-
-
-
-      </ProtectedRouteURL>
-
-    </>
+          <ConfirmDialog
+            dialogData={dialogOpen}
+            handleCloseDialog={() =>
+              setDialogOpen((prevState) => ({
+                ...prevState,
+                open: !prevState.open,
+                id: null,
+              }))
+            }
+            handleDelete={() => {
+              handleDelete(dialogOpen.id);
+            }}
+          />
+        </>
+      )}
+    </ProtectedRouteURL>
   );
 };
 

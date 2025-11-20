@@ -38,7 +38,7 @@ const getData = async () => {
 
 const ListApp = async () => {
   const result = await getData();
-  const usersData = result.data;
+  const usersData = result?.data || [];
 
   return <UsersList tData={usersData} />;
 };

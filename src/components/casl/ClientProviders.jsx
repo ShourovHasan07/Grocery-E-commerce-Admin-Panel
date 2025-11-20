@@ -1,5 +1,6 @@
 'use client';
 import { SessionProvider } from "next-auth/react";
+
 import { AbilityProvider } from "@/contexts/AbilityContext";
 
 export default function ClientProviders({ children }) {
