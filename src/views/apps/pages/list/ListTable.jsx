@@ -149,15 +149,7 @@ const ListTable = ({ tableData }) => {
             </Tooltip>
 
 
-            )}
-
-
-           
-
-           
-
-
-            {row.original.url === "about-us" && (
+            {row.original.key === "about_us" && (
               <Tooltip title="Page Sections">
                 <IconButton
                   onClick={() => {
