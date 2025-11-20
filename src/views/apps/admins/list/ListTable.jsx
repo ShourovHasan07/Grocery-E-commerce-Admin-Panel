@@ -41,6 +41,7 @@ import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 
 import { formattedDate } from "@/utils/formatters";
+import { useAbility, useAbilityLoading } from '@/contexts/AbilityContext';
 
 // Component Imports
 import TableFilters from "./TableFilters";
@@ -61,6 +62,8 @@ import { activeStatusColor, activeStatusLabel } from "@/utils/helpers";
 
 
 import pageApiHelper from "@/utils/pageApiHelper";
+import VerticalMenuSkeleton from "@/components/layout/vertical/VerticalMenuSkeleton";
+import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -79,6 +82,13 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
+
+   const ability = useAbility(); 
+    const isAbilityLoading = useAbilityLoading();
+
+
+
+
   // States
   const dataObj = tableData?.admins || [];
   const [rowSelection, setRowSelection] = useState({});
@@ -112,7 +122,11 @@ const ListTable = ({ tableData }) => {
               </Link>
             </IconButton> */}
 
-            {/* Edit */}
+
+
+          {ability.can('update', 'Admin')&& ( 
+            
+            
             <IconButton
               onClick={() => {
                 const path = `/admins/${row.original.id}/edit`;
@@ -126,7 +140,14 @@ const ListTable = ({ tableData }) => {
               ) : (
                 <i className="tabler-edit text-textPrimary" />
               )}
-            </IconButton>
+            </IconButton>  ) }
+
+
+             
+
+
+
+           
 
             {/* Reset Password */}
             <IconButton
@@ -144,7 +165,8 @@ const ListTable = ({ tableData }) => {
               )}
             </IconButton>
 
-            <IconButton
+            {ability.can('delete', 'Admin') && (
+               <IconButton
               onClick={() =>
                 setDialogOpen((prevState) => ({
                   ...prevState,
@@ -155,6 +177,7 @@ const ListTable = ({ tableData }) => {
             >
               <i className="tabler-trash text-error" />
             </IconButton>
+            )}
           </div>
         ),
         enableSorting: false,
@@ -286,7 +309,20 @@ const ListTable = ({ tableData }) => {
 
   return (
     <>
-      <Card>
+
+
+
+    <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Admin">
+
+     {isAbilityLoading ? (
+              <VerticalMenuSkeleton />
+            ) : (
+
+              <div>
+
+
+
+                <Card>
         <CardHeader title="Admin List" className="pbe-4" />
         <TableFilters setData={setFilteredData} tableData={data} />
         <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
@@ -301,7 +337,7 @@ const ListTable = ({ tableData }) => {
             <MenuItem value="50">50</MenuItem>
           </CustomTextField>
           <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
-            <Button
+            {ability.can('create', 'Admin') && (<Button
               variant="contained"
               component={Link}
               startIcon={<i className="tabler-plus" />}
@@ -309,7 +345,7 @@ const ListTable = ({ tableData }) => {
               className="max-sm:is-full"
             >
               Add New Admin
-            </Button>
+            </Button>)}
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -410,6 +446,19 @@ const ListTable = ({ tableData }) => {
           handleDelete(dialogOpen.id);
         }}
       />
+
+
+
+
+
+              </div>
+
+
+
+            )}
+
+  </ProtectedRouteURL>
+      
     </>
   );
 };

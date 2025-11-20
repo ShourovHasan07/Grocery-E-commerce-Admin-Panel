@@ -245,6 +245,13 @@ const AddDrawer = (props) => {
   };
 
   return (
+
+
+     <ProtectedRouteURL actions={["create"]} subject="Achievement">
+
+
+
+
     <Drawer
       open={drawerData.open}
       anchor="right"
@@ -420,6 +427,10 @@ const AddDrawer = (props) => {
         </form>
       </div>
     </Drawer>
+
+
+   </ProtectedRouteURL>
+
   );
 };
 

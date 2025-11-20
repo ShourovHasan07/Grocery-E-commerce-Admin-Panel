@@ -32,6 +32,10 @@ const RenderExpandIcon = ({ open, transitionDuration }) => (
 
 const VerticalMenu = ({ scrollMenu }) => {
   const ability = useAbility();
+
+  console.log('Ability in VerticalMenu:', ability.rules);
+
+
   const isLoading = useAbilityLoading();
   const theme = useTheme();
   const verticalNavOptions = useVerticalNav();
@@ -162,20 +166,20 @@ const VerticalMenu = ({ scrollMenu }) => {
               </SubMenu>
             )}
 
-            {ability.can('menu-manage', 'Menu') && (
+            {ability.can('menu-manage', 'Miscellaneous') && (
               <MenuItem href="/menus" icon={<i className="tabler-menu-2" />}>
                 Menus
               </MenuItem>
             )}
 
-            {ability.can('contact-manage', 'Contact') && (
+            {ability.can('contact-manage', 'Miscellaneous') && (
               <SubMenu label="Contact Us" icon={<i className="tabler-message-user" />}>
                 <MenuItem href="/contacts">Contact List</MenuItem>
                 <MenuItem href="/contacts/subjects">Contact Subjects</MenuItem>
               </SubMenu>
             )}
 
-            {ability.can('setting-manage', 'Setting') && (
+            {ability.can('setting-manage', 'Miscellaneous') && (
               <MenuItem href="/site-settings" icon={<i className="tabler-settings" />}>
                 Site Settings
               </MenuItem>

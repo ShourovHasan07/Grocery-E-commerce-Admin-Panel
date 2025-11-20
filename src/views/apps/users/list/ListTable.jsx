@@ -50,6 +50,7 @@ import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
+import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -204,6 +205,11 @@ const ListTable = ({ tableData }) => {
 
   return (
     <>
+
+    <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="User">
+
+
+
       <Card>
         <CardHeader title="Client List" className="pbe-4" />
         <TableFilters setData={setFilteredData} tableData={data} />
@@ -304,6 +310,7 @@ const ListTable = ({ tableData }) => {
           }}
         />
       </Card>
+      </ProtectedRouteURL>
     </>
   );
 };

@@ -55,6 +55,12 @@ import { activeStatusLabel, activeStatusColor } from "@/utils/helpers";
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
 
+import { useAbility, useAbilityLoading } from '@/contexts/AbilityContext';
+import VerticalMenuSkeleton from "@/components/layout/vertical/VerticalMenuSkeleton";
+import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+
+
+
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
   const itemRank = rankItem(row.getValue(columnId), value);
@@ -72,6 +78,11 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
+
+   const ability = useAbility(); 
+      const isAbilityLoading = useAbilityLoading();
+
+
   // States
   const dataObj = tableData?.languages || [];
   const [rowSelection, setRowSelection] = useState({});
@@ -128,7 +139,10 @@ const ListTable = ({ tableData }) => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-            <IconButton
+
+            {ability.can ('update', 'Language') &&  (
+
+              <IconButton
               onClick={() =>
                 setAddDrawerOpen((prevState) => ({
                   ...prevState,
@@ -141,7 +155,15 @@ const ListTable = ({ tableData }) => {
               <i className="tabler-edit text-textPrimary" />
             </IconButton>
 
-            <IconButton
+            )}
+
+
+
+            {
+            ability.can ('delete', 'Language') &&  (
+
+
+               <IconButton
               onClick={() =>
                 setDialogOpen((prevState) => ({
                   ...prevState,
@@ -152,6 +174,15 @@ const ListTable = ({ tableData }) => {
             >
               <i className="tabler-trash text-textSecondary" />
             </IconButton>
+
+
+            )
+            }
+
+
+            
+
+           
           </div>
         ),
         enableSorting: false,
@@ -224,8 +255,17 @@ const ListTable = ({ tableData }) => {
   });
 
   return (
-    <>
-      <Card>
+    <>   <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Category"></ProtectedRouteURL>
+
+
+         {isAbilityLoading ? (
+                      <VerticalMenuSkeleton />
+                    ) : ( 
+
+                    <div>
+
+
+                       <Card>
         <CardHeader title="Language List" className="pbe-4" />
         <TableFilters setData={setFilteredData} tableData={data} />
         <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
@@ -240,7 +280,11 @@ const ListTable = ({ tableData }) => {
             <MenuItem value="50">50</MenuItem>
           </CustomTextField>
           <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
-            <Button
+
+
+            {ability.can ('create', 'Language') &&  (
+
+              <Button
               variant="contained"
               startIcon={<i className="tabler-plus" />}
               onClick={() =>
@@ -255,6 +299,8 @@ const ListTable = ({ tableData }) => {
             >
               Add New Language
             </Button>
+            )}
+            
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -369,6 +415,22 @@ const ListTable = ({ tableData }) => {
           handleDelete(dialogOpen.data.id);
         }}
       />
+
+
+
+                    </div>
+
+
+
+                    )}
+        
+
+     
+
+
+
+
+     
     </>
   );
 };

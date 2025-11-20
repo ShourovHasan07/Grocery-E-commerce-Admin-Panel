@@ -26,6 +26,7 @@ import pageApiHelper from "@/utils/pageApiHelper";
 
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
+import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
 
 // Vars
 const initialData = {
@@ -175,6 +176,14 @@ const AddDrawer = (props) => {
   };
 
   return (
+
+
+     <ProtectedRouteURL actions={["create"]} subject="Language">
+
+
+
+
+
     <Drawer
       open={drawerData.open}
       anchor="right"
@@ -263,6 +272,10 @@ const AddDrawer = (props) => {
         </form>
       </div>
     </Drawer>
+
+    </ProtectedRouteURL>
+
+
   );
 };
 

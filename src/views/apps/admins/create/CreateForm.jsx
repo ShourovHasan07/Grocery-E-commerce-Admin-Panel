@@ -33,6 +33,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CustomTextField from "@core/components/mui/TextField";
 
 import pageApiHelper from "@/utils/pageApiHelper";
+import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
 
 // Validation Schema
 const schema = z
@@ -126,6 +127,12 @@ const CreateForm = ({ tableData }) => {
   };
 
   return (
+
+
+      <ProtectedRouteURL actions={["create"]} subject="Admin">
+
+
+
     <Card>
       <CardHeader title="New Admin Info" />
       <CardContent>
@@ -342,6 +349,9 @@ const CreateForm = ({ tableData }) => {
         </form>
       </CardContent>
     </Card>
+
+
+    </ProtectedRouteURL>
   );
 };
 

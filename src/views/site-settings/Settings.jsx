@@ -32,6 +32,7 @@ import CustomTextField from "@core/components/mui/TextField";
 import CustomAutocomplete from "@core/components/mui/Autocomplete";
 
 import pageApiHelper from "@/utils/pageApiHelper";
+import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
 
 
 const Settings = () => {
@@ -220,6 +221,17 @@ const Settings = () => {
   };
 
   return (
+
+
+    <ProtectedRouteURL 
+  actions={['setting-manage']} 
+  subject="Miscellaneous"
+>
+  
+
+
+
+
     <Card>
       <CardHeader title="Site Settings Info" />
       <CardContent>
@@ -258,6 +270,8 @@ const Settings = () => {
         </form>
       </CardContent>
     </Card>
+
+    </ProtectedRouteURL>
   );
 };
 

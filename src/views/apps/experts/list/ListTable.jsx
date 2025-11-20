@@ -64,6 +64,11 @@ import { getInitials } from "@/utils/getInitials";
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
 
+import { useAbility, useAbilityLoading } from '@/contexts/AbilityContext';
+import VerticalMenuSkeleton from "@/components/layout/vertical/VerticalMenuSkeleton";
+import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
+
+
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
   const itemRank = rankItem(row.getValue(columnId), value);
@@ -80,6 +85,12 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const columnHelper = createColumnHelper();
 
 const ListTable = ({ tableData }) => {
+
+
+  const ability = useAbility();
+  const isAbilityLoading = useAbilityLoading();
+
+
   // States
   const dataObj = tableData?.experts || [];
 
@@ -103,22 +114,34 @@ const ListTable = ({ tableData }) => {
         cell: ({ row }) => (
           <div className="text-wrap w-[160px]">
             {/* Detail */}
-            <Tooltip title="Detail">
-              <IconButton
-                onClick={() => {
-                  const path = `/experts/${row.original.id}`;
 
-                  setLoadingId(`detail-${row.original.id}`);
-                  router.push(path);
-                }}
-              >
-                {loadingId === `detail-${row.original.id}` ? (
-                  <LoaderIcon />
-                ) : (
-                  <i className="tabler-eye text-secondary" />
-                )}
-              </IconButton>
-            </Tooltip>
+
+            {ability?.can('read', 'expert') && (
+
+              <Tooltip title="Detail">
+                <IconButton
+                  onClick={() => {
+                    const path = `/experts/${row.original.id}`;
+
+                    setLoadingId(`detail-${row.original.id}`);
+                    router.push(path);
+                  }}
+                >
+                  {loadingId === `detail-${row.original.id}` ? (
+                    <LoaderIcon />
+                  ) : (
+                    <i className="tabler-eye text-secondary" />
+                  )}
+                </IconButton>
+              </Tooltip>
+
+            )}
+
+
+
+
+
+
 
             {/* Review Rating */}
             <Tooltip title="Review Rating" arrow placement="top">
@@ -193,37 +216,59 @@ const ListTable = ({ tableData }) => {
             </Tooltip>
 
             {/* Edit */}
-            <Tooltip title="Edit" arrow placement="top">
-              <IconButton
-                onClick={() => {
-                  const path = `/experts/${row.original.id}/edit`;
 
-                  setLoadingId(`edit-${row.original.id}`);
-                  router.push(path);
-                }}
-              >
-                {loadingId === `edit-${row.original.id}` ? (
-                  <LoaderIcon topColor="border-t-primary" />
-                ) : (
-                  <i className="tabler-edit text-primary" />
-                )}
-              </IconButton>
-            </Tooltip>
+
+            {ability?.can('update', 'expert') && (
+
+              <Tooltip title="Edit" arrow placement="top">
+                <IconButton
+                  onClick={() => {
+                    const path = `/experts/${row.original.id}/edit`;
+
+                    setLoadingId(`edit-${row.original.id}`);
+                    router.push(path);
+                  }}
+                >
+                  {loadingId === `edit-${row.original.id}` ? (
+                    <LoaderIcon topColor="border-t-primary" />
+                  ) : (
+                    <i className="tabler-edit text-primary" />
+                  )}
+                </IconButton>
+              </Tooltip>
+
+            )}
+
+
+
 
             {/* Delete */}
-            <Tooltip title="Delete" arrow placement="top">
-              <IconButton
-                onClick={() =>
-                  setDialogOpen((prevState) => ({
-                    ...prevState,
-                    open: !prevState.open,
-                    id: row.original.id,
-                  }))
-                }
-              >
-                <i className="tabler-trash text-error" />
-              </IconButton>
-            </Tooltip>
+
+            {ability?.can('delete', 'expert') && (
+
+              <Tooltip title="Delete" arrow placement="top">
+                <IconButton
+                  onClick={() =>
+                    setDialogOpen((prevState) => ({
+                      ...prevState,
+                      open: !prevState.open,
+                      id: row.original.id,
+                    }))
+                  }
+                >
+                  <i className="tabler-trash text-error" />
+                </IconButton>
+              </Tooltip>
+
+
+
+            )}
+
+
+
+
+
+
           </div>
         ),
         enableSorting: false,
@@ -392,130 +437,172 @@ const ListTable = ({ tableData }) => {
 
   return (
     <>
-      <Card>
-        <CardHeader title="Expert List" className="pbe-4" />
-        <TableFilters setData={setFilteredData} tableData={data} />
-        <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
-          <CustomTextField
-            select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => table.setPageSize(Number(e.target.value))}
-            className="max-sm:is-full sm:is-[70px]"
-          >
-            <MenuItem value="10">10</MenuItem>
-            <MenuItem value="25">25</MenuItem>
-            <MenuItem value="50">50</MenuItem>
-          </CustomTextField>
-          <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
-            <Button
-              variant="contained"
-              component={Link}
-              startIcon={<i className="tabler-plus" />}
-              href={"experts/create"}
-              className="max-sm:is-full"
-            >
-              Add New Expert
-            </Button>
-          </div>
-        </div>
-        <div className="overflow-x-auto">
-          <table className={tableStyles.table}>
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th key={header.id}>
-                      {header.isPlaceholder ? null : (
-                        <>
-                          <div
-                            className={classnames({
-                              "flex items-center": header.column.getIsSorted(),
-                              "cursor-pointer select-none":
-                                header.column.getCanSort(),
-                            })}
-                            onClick={header.column.getToggleSortingHandler()}
-                          >
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
+      <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Expert">
+
+
+
+
+        {isAbilityLoading ? (
+          <VerticalMenuSkeleton />
+        ) : (
+
+
+          <div>
+
+            <Card>
+              <CardHeader title="Expert List" className="pbe-4" />
+              <TableFilters setData={setFilteredData} tableData={data} />
+              <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
+                <CustomTextField
+                  select
+                  value={table.getState().pagination.pageSize}
+                  onChange={(e) => table.setPageSize(Number(e.target.value))}
+                  className="max-sm:is-full sm:is-[70px]"
+                >
+                  <MenuItem value="10">10</MenuItem>
+                  <MenuItem value="25">25</MenuItem>
+                  <MenuItem value="50">50</MenuItem>
+                </CustomTextField>
+                <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
+
+                  {ability?.can('create', 'expert') && (
+
+
+                    <Button
+                      variant="contained"
+                      component={Link}
+                      startIcon={<i className="tabler-plus" />}
+                      href={"experts/create"}
+                      className="max-sm:is-full"
+                    >
+                      Add New Expert
+                    </Button>
+
+
+
+
+                  )}
+
+
+
+
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className={tableStyles.table}>
+                  <thead>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <tr key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => (
+                          <th key={header.id}>
+                            {header.isPlaceholder ? null : (
+                              <>
+                                <div
+                                  className={classnames({
+                                    "flex items-center": header.column.getIsSorted(),
+                                    "cursor-pointer select-none":
+                                      header.column.getCanSort(),
+                                  })}
+                                  onClick={header.column.getToggleSortingHandler()}
+                                >
+                                  {flexRender(
+                                    header.column.columnDef.header,
+                                    header.getContext(),
+                                  )}
+                                  {{
+                                    asc: <i className="tabler-chevron-up text-xl" />,
+                                    desc: (
+                                      <i className="tabler-chevron-down text-xl" />
+                                    ),
+                                  }[header.column.getIsSorted()] ?? null}
+                                </div>
+                              </>
                             )}
-                            {{
-                              asc: <i className="tabler-chevron-up text-xl" />,
-                              desc: (
-                                <i className="tabler-chevron-down text-xl" />
-                              ),
-                            }[header.column.getIsSorted()] ?? null}
-                          </div>
-                        </>
-                      )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            {table.getFilteredRowModel().rows.length === 0 ? (
-              <tbody>
-                <tr>
-                  <td
-                    colSpan={table.getVisibleFlatColumns().length}
-                    className="text-center"
-                  >
-                    No data available
-                  </td>
-                </tr>
-              </tbody>
-            ) : (
-              <tbody>
-                {table
-                  .getRowModel()
-                  .rows.slice(0, table.getState().pagination.pageSize)
-                  .map((row) => {
-                    return (
-                      <tr
-                        key={row.id}
-                        className={classnames({
-                          selected: row.getIsSelected(),
-                        })}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <td key={cell.id}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </td>
+                          </th>
                         ))}
                       </tr>
-                    );
-                  })}
-              </tbody>
-            )}
-          </table>
-        </div>
-        <TablePagination
-          component={() => <TablePaginationComponent table={table} />}
-          count={table.getFilteredRowModel().rows.length}
-          rowsPerPage={table.getState().pagination.pageSize}
-          page={table.getState().pagination.pageIndex}
-          onPageChange={(_, page) => {
-            table.setPageIndex(page);
-          }}
-        />
-      </Card>
+                    ))}
+                  </thead>
+                  {table.getFilteredRowModel().rows.length === 0 ? (
+                    <tbody>
+                      <tr>
+                        <td
+                          colSpan={table.getVisibleFlatColumns().length}
+                          className="text-center"
+                        >
+                          No data available
+                        </td>
+                      </tr>
+                    </tbody>
+                  ) : (
+                    <tbody>
+                      {table
+                        .getRowModel()
+                        .rows.slice(0, table.getState().pagination.pageSize)
+                        .map((row) => {
+                          return (
+                            <tr
+                              key={row.id}
+                              className={classnames({
+                                selected: row.getIsSelected(),
+                              })}
+                            >
+                              {row.getVisibleCells().map((cell) => (
+                                <td key={cell.id}>
+                                  {flexRender(
+                                    cell.column.columnDef.cell,
+                                    cell.getContext(),
+                                  )}
+                                </td>
+                              ))}
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  )}
+                </table>
+              </div>
+              <TablePagination
+                component={() => <TablePaginationComponent table={table} />}
+                count={table.getFilteredRowModel().rows.length}
+                rowsPerPage={table.getState().pagination.pageSize}
+                page={table.getState().pagination.pageIndex}
+                onPageChange={(_, page) => {
+                  table.setPageIndex(page);
+                }}
+              />
+            </Card>
 
-      <ConfirmDialog
-        dialogData={dialogOpen}
-        handleCloseDialog={() =>
-          setDialogOpen((prevState) => ({
-            ...prevState,
-            open: !prevState.open,
-            id: null,
-          }))
-        }
-        handleDelete={() => {
-          handleDelete(dialogOpen.id);
-        }}
-      />
+            <ConfirmDialog
+              dialogData={dialogOpen}
+              handleCloseDialog={() =>
+                setDialogOpen((prevState) => ({
+                  ...prevState,
+                  open: !prevState.open,
+                  id: null,
+                }))
+              }
+              handleDelete={() => {
+                handleDelete(dialogOpen.id);
+              }}
+            />
+
+
+          </div>
+
+
+
+
+
+
+
+        )}
+
+
+
+
+      </ProtectedRouteURL>
+
     </>
   );
 };

@@ -33,6 +33,7 @@ import CustomTextField from "@core/components/mui/TextField";
 import CustomAutocomplete from "@core/components/mui/Autocomplete";
 
 import pageApiHelper from "@/utils/pageApiHelper";
+import ProtectedRouteURL from "@/components/casl component/ProtectedRoute";
 
 // Zod Imports
 const schema = z.object({
@@ -251,6 +252,11 @@ const CreateForm = ({ categoryData }) => {
   };
 
   return (
+
+
+      <ProtectedRouteURL actions={["create"]} subject="Expert">
+
+
     <Card>
       <CardHeader title="New Expert Info" />
       <CardContent>
@@ -685,6 +691,8 @@ const CreateForm = ({ categoryData }) => {
         </form>
       </CardContent>
     </Card>
+
+    </ProtectedRouteURL>
   );
 };
 
