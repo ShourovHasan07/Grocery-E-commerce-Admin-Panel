@@ -141,6 +141,11 @@ const ListTable = ({ tableData }) => {
         header: "Title",
         cell: ({ row }) => <Typography>{row.original.title}</Typography>,
       },
+      {
+        id: "itemCount",
+        header: <div className="text-center">Item Count</div>,
+        cell: ({ row }) => <Typography className="text-center">{row.original.menuItemCount}</Typography>,
+      },
       columnHelper.accessor("status", {
         header: "Status",
         cell: ({ row }) => (

@@ -33,9 +33,6 @@ const RenderExpandIcon = ({ open, transitionDuration }) => (
 const VerticalMenu = ({ scrollMenu }) => {
   const ability = useAbility();
 
-  console.log('Ability in VerticalMenu:', ability.rules);
-
-
   const isLoading = useAbilityLoading();
   const theme = useTheme();
   const verticalNavOptions = useVerticalNav();
