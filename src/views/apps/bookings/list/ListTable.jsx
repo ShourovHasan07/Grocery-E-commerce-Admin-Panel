@@ -1,7 +1,7 @@
 "use client";
 
 // React Imports
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -16,7 +16,7 @@ import IconButton from "@mui/material/IconButton";
 import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
 
-import { format } from 'date-fns';
+import { format } from "date-fns";
 
 import classnames from "classnames";
 
@@ -79,6 +79,7 @@ const ListTable = () => {
   // Session
   const { data: session } = useSession();
   const token = session?.accessToken;
+  const abortControllerRef = useRef(null);
 
   // States for data
   const [data, setData] = useState([]);
@@ -134,11 +135,11 @@ const ListTable = () => {
 
     // Add date filters
     if (filters.dateFrom) {
-      params.dateFrom = format(filters.dateFrom, 'yyyy-MM-dd');
+      params.dateFrom = format(filters.dateFrom, "yyyy-MM-dd");
     }
 
     if (filters.dateTo) {
-      params.dateTo = format(filters.dateTo, 'yyyy-MM-dd');
+      params.dateTo = format(filters.dateTo, "yyyy-MM-dd");
     }
 
     // Add sorting
@@ -148,7 +149,15 @@ const ListTable = () => {
     }
 
     return params;
-  }, [pagination, debouncedSearch, filters.status, filters.dateFrom, filters.dateTo, sorting]);
+  }, [
+    pagination.pageIndex,
+    pagination.pageSize,
+    debouncedSearch,
+    filters.status,
+    filters.dateFrom,
+    filters.dateTo,
+    sorting,
+  ]);
 
   // Fetch data from server
   const fetchData = useCallback(async () => {
@@ -157,11 +166,25 @@ const ListTable = () => {
       return;
     }
 
+    // Cancel any previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create new abort controller for this request
+    abortControllerRef.current = new AbortController();
+
     try {
       setIsLoading(true);
       const queryParams = buildQueryParams();
 
-      const result = await pageApiHelper.get("bookings", queryParams, token);
+      const result = await pageApiHelper.get(
+        "bookings",
+        queryParams,
+        token,
+        {},
+        abortControllerRef.current.signal
+      );
 
       if (result.success) {
         const bookingsData = result.data?.data?.bookings || [];
@@ -174,6 +197,9 @@ const ListTable = () => {
           hasNextPage: paginationData.hasNextPage || false,
           hasPreviousPage: paginationData.hasPreviousPage || false,
         });
+      } else if (result.status === 499) {
+        // Request was cancelled - ignore silently
+        return;
       }
     } catch (err) {
       // console.error("Error fetching bookings:", err);
@@ -186,6 +212,15 @@ const ListTable = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   // Reset to first page when filters change
   useEffect(() => {
@@ -238,7 +273,9 @@ const ListTable = () => {
       }),
       columnHelper.accessor("timeMin", {
         header: "Time (min)",
-        cell: ({ row }) => <Typography>{row.original.timeMin} mins</Typography>,
+        cell: ({ row }) => (
+          <Typography>{row.original.timeMin} mins</Typography>
+        ),
       }),
       columnHelper.accessor("fee", {
         header: "Fee",
@@ -330,10 +367,7 @@ const ListTable = () => {
     >
       <Card>
         <CardHeader title="Booking List" className="pbe-4" />
-        <TableFilters
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-        />
+        <TableFilters filters={filters} onFiltersChange={handleFiltersChange} />
         <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
           <CustomTextField
             select
