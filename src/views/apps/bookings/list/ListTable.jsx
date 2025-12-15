@@ -1,7 +1,7 @@
 "use client";
 
 // React Imports
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -16,20 +16,15 @@ import IconButton from "@mui/material/IconButton";
 import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
 
-import classnames from "classnames";
+import { format } from 'date-fns';
 
-import { rankItem } from "@tanstack/match-sorter-utils";
+import classnames from "classnames";
 
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
-  getFilteredRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFacetedMinMaxValues,
-  getPaginationRowModel,
   getSortedRowModel,
 } from "@tanstack/react-table";
 
@@ -41,7 +36,7 @@ import { formattedDate } from "@/utils/formatters";
 
 // Component Imports
 import TableFilters from "./TableFilters";
-import TablePaginationComponent from "@components/TablePaginationComponent";
+import TablePaginationComponent from "@components/TablePaginationServer";
 import CustomTextField from "@core/components/mui/TextField";
 import LoaderIcon from "@/components/common/Loader";
 
@@ -51,29 +46,31 @@ import { bookingStatusLabel, bookingStatusColor } from "@/utils/helpers";
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
 
-import { useAbility } from '@/contexts/AbilityContext';
+import { useAbility } from "@/contexts/AbilityContext";
 import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
 
 // API Helper
 import pageApiHelper from "@/utils/pageApiHelper";
 
-const fuzzyFilter = (row, columnId, value, addMeta) => {
-  // Rank the item
-  const itemRank = rankItem(row.getValue(columnId), value);
-
-  // Store the itemRank info
-  addMeta({
-    itemRank,
-  });
-
-  // Return if the item should be filtered in/out
-  return itemRank.passed;
-};
-
-
 // Column Definitions
 const columnHelper = createColumnHelper();
 
+// Debounce hook for search optimization
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
 
 const ListTable = () => {
   const ability = useAbility();
@@ -83,48 +80,122 @@ const ListTable = () => {
   const { data: session } = useSession();
   const token = session?.accessToken;
 
-  // States
-  const [rowSelection, setRowSelection] = useState({});
+  // States for data
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [globalFilter, setGlobalFilter] = useState("");
+  // Pagination state
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  const [paginationMeta, setPaginationMeta] = useState({
+    totalCount: 0,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  });
+
+  // Filter states
+  const [filters, setFilters] = useState({
+    search: "",
+    status: "",
+    dateFrom: null,
+    dateTo: null,
+  });
+
+  // Debounced search value
+  const debouncedSearch = useDebounce(filters.search, 500);
+
+  // Sorting state
+  const [sorting, setSorting] = useState([]);
 
   // Loading and error states
   const [isLoading, setIsLoading] = useState(true);
 
-  // loader state for actions
+  // Loader state for actions
   const [loadingId, setLoadingId] = useState(null);
 
-  // Fetch data on component mount
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!token) {
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-        const result = await pageApiHelper.get(
-          "bookings",
-          { pageSize: 2000 },
-          token
-        );
-
-        if (result.success) {
-          const bookingsData = result.data?.data?.bookings || [];
-          setData(bookingsData);
-          setFilteredData(bookingsData);
-        }
-      } catch (err) {
-        console.error("Error fetching bookings:", err);
-      } finally {
-        setIsLoading(false);
-      }
+  // Build query params for API
+  const buildQueryParams = useCallback(() => {
+    const params = {
+      page: pagination.pageIndex + 1,
+      pageSize: pagination.pageSize,
     };
 
+    // Add search filter
+    if (debouncedSearch) {
+      params.search = debouncedSearch;
+    }
+
+    // Add status filter
+    if (filters.status) {
+      params.status = filters.status;
+    }
+
+    // Add date filters
+    if (filters.dateFrom) {
+      params.dateFrom = format(filters.dateFrom, 'yyyy-MM-dd');
+    }
+
+    if (filters.dateTo) {
+      params.dateTo = format(filters.dateTo, 'yyyy-MM-dd');
+    }
+
+    // Add sorting
+    if (sorting.length > 0) {
+      params.sortBy = sorting[0].id;
+      params.sortOrder = sorting[0].desc ? "DESC" : "ASC";
+    }
+
+    return params;
+  }, [pagination, debouncedSearch, filters.status, filters.dateFrom, filters.dateTo, sorting]);
+
+  // Fetch data from server
+  const fetchData = useCallback(async () => {
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const queryParams = buildQueryParams();
+
+      const result = await pageApiHelper.get("bookings", queryParams, token);
+
+      if (result.success) {
+        const bookingsData = result.data?.data?.bookings || [];
+        const paginationData = result.data?.data?.pagination || {};
+
+        setData(bookingsData);
+        setPaginationMeta({
+          totalCount: paginationData.totalCount || 0,
+          totalPages: paginationData.totalPages || 0,
+          hasNextPage: paginationData.hasNextPage || false,
+          hasPreviousPage: paginationData.hasPreviousPage || false,
+        });
+      }
+    } catch (err) {
+      // console.error("Error fetching bookings:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [token, buildQueryParams]);
+
+  // Fetch data when dependencies change
+  useEffect(() => {
     fetchData();
-  }, [token]);
+  }, [fetchData]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, [debouncedSearch, filters.status, filters.dateFrom, filters.dateTo]);
+
+  // Handle filter changes from TableFilters component
+  const handleFiltersChange = useCallback((newFilters) => {
+    setFilters((prev) => ({ ...prev, ...newFilters }));
+  }, []);
 
   const columns = useMemo(
     () => [
@@ -132,12 +203,11 @@ const ListTable = () => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex items-center">
-            {ability.can('read', 'Booking') && (
+            {ability.can("read", "Booking") && (
               <Tooltip title="Detail">
                 <IconButton
                   onClick={() => {
                     const path = `/bookings/${row.original.id}`;
-
                     setLoadingId(`bookings-${row.original.id}`);
                     router.push(path);
                   }}
@@ -154,58 +224,58 @@ const ListTable = () => {
         ),
         enableSorting: false,
       }),
-      {
+      columnHelper.accessor("id", {
         header: "ID",
         cell: ({ row }) => <Typography>{row.original.id}</Typography>,
-      },
-      {
+      }),
+      columnHelper.accessor("user.name", {
         header: "Client Name",
         cell: ({ row }) => <Typography>{row.original.user.name}</Typography>,
-      },
-      {
+      }),
+      columnHelper.accessor("expert.name", {
         header: "Expert Name",
         cell: ({ row }) => <Typography>{row.original.expert.name}</Typography>,
-      },
-      {
+      }),
+      columnHelper.accessor("timeMin", {
         header: "Time (min)",
         cell: ({ row }) => <Typography>{row.original.timeMin} mins</Typography>,
-      },
-      {
+      }),
+      columnHelper.accessor("fee", {
         header: "Fee",
         cell: ({ row }) => <Typography>{row.original.fee}</Typography>,
-      },
-      {
+      }),
+      columnHelper.accessor("serviceCharge", {
         header: "Service Charge",
         cell: ({ row }) => (
           <Typography className="text-center w-full block">
             {row.original.serviceCharge}
           </Typography>
         ),
-      },
-      {
-        header: "discount",
+      }),
+      columnHelper.accessor("discount", {
+        header: "Discount",
         cell: ({ row }) => (
           <Typography className="text-center w-full block">
             {row.original.discount}
           </Typography>
         ),
-      },
-      {
-        header: "total",
+      }),
+      columnHelper.accessor("total", {
+        header: "Total",
         cell: ({ row }) => (
           <Typography className="text-center w-full block">
             {row.original.total}
           </Typography>
         ),
-      },
-      {
+      }),
+      columnHelper.accessor("startAt", {
         header: "Start At",
         cell: ({ row }) => (
           <Typography className="text-center w-full block">
             {formattedDate(row.original.startAt)}
           </Typography>
         ),
-      },
+      }),
       columnHelper.accessor("status", {
         header: "Status",
         cell: ({ row }) => (
@@ -226,62 +296,65 @@ const ListTable = () => {
           <Typography>{formattedDate(row.original.createdAt)}</Typography>
         ),
       }),
-      {
+      columnHelper.accessor("updatedAt", {
         header: "Updated At",
         cell: ({ row }) => (
           <Typography>{formattedDate(row.original.updatedAt)}</Typography>
         ),
-      },
+      }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, filteredData, loadingId],
+    [ability, loadingId, router]
   );
 
   const table = useReactTable({
-    data: filteredData,
+    data,
     columns,
-    filterFns: {
-      fuzzy: fuzzyFilter,
-    },
     state: {
-      rowSelection,
-      globalFilter,
+      sorting,
+      pagination,
     },
-    initialState: {
-      pagination: {
-        pageSize: 10,
-      },
-    },
-    enableRowSelection: true,
-    globalFilterFn: fuzzyFilter,
-    onRowSelectionChange: setRowSelection,
+    // Server-side pagination
+    manualPagination: true,
+    manualSorting: true,
+    pageCount: paginationMeta.totalPages,
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    onGlobalFilterChange: setGlobalFilter,
-    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-    getFacetedMinMaxValues: getFacetedMinMaxValues(),
   });
 
   return (
-    <ProtectedRouteURL actions={['read', 'update', 'create', 'delete']} subject="Booking">
+    <ProtectedRouteURL
+      actions={["read", "update", "create", "delete"]}
+      subject="Booking"
+    >
       <Card>
         <CardHeader title="Booking List" className="pbe-4" />
-        <TableFilters setData={setFilteredData} tableData={data} />
+        <TableFilters
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+        />
         <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
           <CustomTextField
             select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => table.setPageSize(Number(e.target.value))}
+            value={pagination.pageSize}
+            onChange={(e) =>
+              setPagination((prev) => ({
+                ...prev,
+                pageSize: Number(e.target.value),
+                pageIndex: 0,
+              }))
+            }
             className="max-sm:is-full sm:is-[70px]"
           >
             <MenuItem value="10">10</MenuItem>
             <MenuItem value="25">25</MenuItem>
             <MenuItem value="50">50</MenuItem>
+            <MenuItem value="100">100</MenuItem>
           </CustomTextField>
-          <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4"></div>
+          <Typography variant="body2" color="textSecondary">
+            Total: {paginationMeta.totalCount} records
+          </Typography>
         </div>
         <div className="overflow-x-auto">
           <table className={tableStyles.table}>
@@ -302,7 +375,7 @@ const ListTable = () => {
                           >
                             {flexRender(
                               header.column.columnDef.header,
-                              header.getContext(),
+                              header.getContext()
                             )}
                             {{
                               asc: <i className="tabler-chevron-up text-xl" />,
@@ -318,53 +391,75 @@ const ListTable = () => {
                 </tr>
               ))}
             </thead>
-            {table.getFilteredRowModel().rows.length === 0 ? (
+            {isLoading ? (
               <tbody>
                 <tr>
                   <td
                     colSpan={table.getVisibleFlatColumns().length}
                     className="text-center"
                   >
-                    {isLoading ? "Loading..." : "No data available"}
+                    <div className="flex justify-center items-center py-8">
+                      <LoaderIcon size={24} />
+                      <span className="ml-2">Loading...</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            ) : data.length === 0 ? (
+              <tbody>
+                <tr>
+                  <td
+                    colSpan={table.getVisibleFlatColumns().length}
+                    className="text-center"
+                  >
+                    No data available
                   </td>
                 </tr>
               </tbody>
             ) : (
               <tbody>
-                {table
-                  .getRowModel()
-                  .rows.slice(0, table.getState().pagination.pageSize)
-                  .map((row) => {
-                    return (
-                      <tr
-                        key={row.id}
-                        className={classnames({
-                          selected: row.getIsSelected(),
-                        })}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <td key={cell.id}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
+                {table.getRowModel().rows.map((row) => {
+                  return (
+                    <tr
+                      key={row.id}
+                      className={classnames({
+                        selected: row.getIsSelected(),
+                      })}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <td key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
               </tbody>
             )}
           </table>
         </div>
 
         <TablePagination
-          component={() => <TablePaginationComponent table={table} />}
-          count={table.getFilteredRowModel().rows.length}
-          rowsPerPage={table.getState().pagination.pageSize}
-          page={table.getState().pagination.pageIndex}
+          component={() => (
+            <TablePaginationComponent
+              table={table}
+              totalCount={paginationMeta.totalCount}
+            />
+          )}
+          count={paginationMeta.totalCount}
+          rowsPerPage={pagination.pageSize}
+          page={pagination.pageIndex}
           onPageChange={(_, page) => {
-            table.setPageIndex(page);
+            setPagination((prev) => ({ ...prev, pageIndex: page }));
+          }}
+          onRowsPerPageChange={(e) => {
+            setPagination({
+              pageIndex: 0,
+              pageSize: Number(e.target.value),
+            });
           }}
         />
       </Card>
