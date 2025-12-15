@@ -5,10 +5,8 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 
 // Component Imports
-import DialogCloseButton from "../DialogCloseButton";
-
-// Component Imports
 import Pricing from "@components/pricing";
+import DialogCloseButton from "../DialogCloseButton";
 
 const PricingDialog = ({ open, setOpen, data }) => {
   return (

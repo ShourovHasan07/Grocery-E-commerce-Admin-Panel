@@ -15,7 +15,7 @@ import OptionMenu from "@core/components/option-menu";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
-import styles from "@views/apps/logistics/dashboard/styles.module.css";
+import styles from "./styles.css";
 
 const data = [
   {
@@ -104,12 +104,12 @@ const VehicleOverview = () => {
                         : item.progressColor === "info"
                           ? "var(--mui-palette-common-white)"
                           : // eslint-disable-next-line lines-around-comment
-                            // @ts-ignore
-                            theme.palette.getContrastText(
-                              theme.palette[item.progressColor][
-                                item.progressColorVariant
-                              ],
-                            ),
+                          // @ts-ignore
+                          theme.palette.getContrastText(
+                            theme.palette[item.progressColor][
+                            item.progressColorVariant
+                            ],
+                          ),
                   }}
                 >
                   {item.progressData}
