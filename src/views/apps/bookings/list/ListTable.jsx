@@ -1,9 +1,8 @@
 "use client";
 
 // React Imports
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { useSession } from "next-auth/react";
@@ -11,7 +10,6 @@ import { useSession } from "next-auth/react";
 // MUI Imports
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
@@ -56,6 +54,9 @@ import tableStyles from "@core/styles/table.module.css";
 import { useAbility } from '@/contexts/AbilityContext';
 import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
 
+// API Helper
+import pageApiHelper from "@/utils/pageApiHelper";
+
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
   const itemRank = rankItem(row.getValue(columnId), value);
@@ -74,25 +75,56 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const columnHelper = createColumnHelper();
 
 
-const ListTable = ({ tableData }) => {
-  //console.log("Table Data:", tableData);
+const ListTable = () => {
   const ability = useAbility();
-
-  // States
-  const dataObj = tableData?.bookings || [];
-  const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState(...[dataObj]);
-  const [filteredData, setFilteredData] = useState(data);
-  const [globalFilter, setGlobalFilter] = useState("");
-
-  // loader state
-  const [loadingId, setLoadingId] = useState(null);
   const router = useRouter();
 
-
-  //session
+  // Session
   const { data: session } = useSession();
   const token = session?.accessToken;
+
+  // States
+  const [rowSelection, setRowSelection] = useState({});
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [globalFilter, setGlobalFilter] = useState("");
+
+  // Loading and error states
+  const [isLoading, setIsLoading] = useState(true);
+
+  // loader state for actions
+  const [loadingId, setLoadingId] = useState(null);
+
+  // Fetch data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        const result = await pageApiHelper.get(
+          "bookings",
+          { pageSize: 2000 },
+          token
+        );
+
+        if (result.success) {
+          const bookingsData = result.data?.data?.bookings || [];
+          setData(bookingsData);
+          setFilteredData(bookingsData);
+        }
+      } catch (err) {
+        console.error("Error fetching bookings:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [token]);
 
   const columns = useMemo(
     () => [
@@ -293,7 +325,7 @@ const ListTable = ({ tableData }) => {
                     colSpan={table.getVisibleFlatColumns().length}
                     className="text-center"
                   >
-                    No data available
+                    {isLoading ? "Loading..." : "No data available"}
                   </td>
                 </tr>
               </tbody>
@@ -336,7 +368,6 @@ const ListTable = ({ tableData }) => {
           }}
         />
       </Card>
-
     </ProtectedRouteURL>
   );
 };
