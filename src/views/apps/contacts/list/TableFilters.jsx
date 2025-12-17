@@ -1,5 +1,5 @@
 // React Imports
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // MUI Imports
 import CardContent from "@mui/material/CardContent";
@@ -8,57 +8,110 @@ import MenuItem from "@mui/material/MenuItem";
 
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
+import { CONTACT_STATUS } from "@configs/constants";
+import pageApiHelper from "@/utils/pageApiHelper";
 
-import { stringToBoolean } from "@/utils/helpers";
-
-const TableFilters = ({ setData, tableData }) => {
-  // States
-  const [search, setInputSearch] = useState("");
-  const [status, setStatus] = useState("");
+const TableFilters = ({ filters, onFiltersChange, token }) => {
+  const [subjects, setSubjects] = useState([]);
 
   useEffect(() => {
-    const filteredData = tableData?.filter((item) => {
-      if (search && !item?.name?.toLowerCase().includes(search.toLowerCase()))
-        return false;
-      if (status && status != "" && item.status !== stringToBoolean(status))
-        return false;
+    let isMounted = true;
+    const controller = new AbortController();
 
-      return true;
-    });
+    const fetchSubjects = async () => {
+      try {
+        const res = await pageApiHelper.get(
+          "contacts/dropdown",
+          {},
+          token,
+          {},
+          controller.signal
+        );
 
-    setData(filteredData || []);
-  }, [search, status, tableData, setData]);
+        if (res?.success) {
+          const items = res.data?.data?.subjects || [];
+          if (isMounted) setSubjects(items);
+        }
+      } catch (err) {
+        // ignore
+      }
+    };
+
+    fetchSubjects();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, [token]);
+  // Handle individual filter changes
+  const handleSearchChange = useCallback(
+    (e) => {
+      onFiltersChange({ search: e.target.value });
+    },
+    [onFiltersChange]
+  );
+
+  const handleStatusChange = useCallback(
+    (e) => {
+      onFiltersChange({ status: e.target.value });
+    },
+    [onFiltersChange]
+  );
+
+  const handleSubjectChange = useCallback(
+    (e) => {
+      onFiltersChange({ subject: e.target.value });
+    },
+    [onFiltersChange]
+  );
+
 
   return (
     <CardContent>
       <Grid container spacing={6}>
-        <Grid size={{ xs: 12, sm: 4 }}>
+        {/* Search */}
+        <Grid size={{ xs: 12, sm: 3 }}>
           <CustomTextField
             fullWidth
             label="Search"
-            id="text-input-search-user"
-            value={search}
-            onChange={(e) => setInputSearch(e.target.value)}
+            value={filters.search}
+            onChange={handleSearchChange}
             placeholder="Search by name"
-            className="max-sm:is-full"
           />
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 4 }}>
+        {/* Status */}
+        <Grid size={{ xs: 12, sm: 3 }}>
           <CustomTextField
             label="Status"
             select
             fullWidth
-            id="select-status"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            slotProps={{
-              select: { displayEmpty: true },
-            }}
+            value={filters.status}
+            onChange={handleStatusChange}
           >
-            <MenuItem value="">All</MenuItem>
-            <MenuItem value="true">Active</MenuItem>
-            <MenuItem value="false">Inactive</MenuItem>
+            <MenuItem value="all">All</MenuItem>
+            {CONTACT_STATUS.map((status) => (
+              <MenuItem key={status.key} value={status.key}>
+                {status.value}
+              </MenuItem>
+            ))}
+          </CustomTextField>
+        </Grid>
+
+        {/* Subject */}
+        <Grid size={{ xs: 12, sm: 3 }}>
+          <CustomTextField
+            label="Subject"
+            select
+            fullWidth
+            value={filters.subject}
+            onChange={handleSubjectChange}
+          >
+            <MenuItem value="all">All</MenuItem>
+            {subjects.map((s) => (
+              <MenuItem key={s.id} value={s.id}>{s.title}</MenuItem>
+            ))}
           </CustomTextField>
         </Grid>
       </Grid>

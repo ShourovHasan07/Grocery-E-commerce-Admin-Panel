@@ -16,30 +16,22 @@ export async function GET(request) {
     );
   }
 
-  // Extract query params from req.url
-  const { searchParams } = new URL(request.url);
-  const allParamAsObj = Object.fromEntries(searchParams.entries());
-
   try {
-    const result = await routeApiHelper.get(
-      "contacts",
-      allParamAsObj,
-      token,
-    );
+    const result = await routeApiHelper.get("contact-dropdown", {}, token);
 
     if (result.success) {
       return NextResponse.json(
         {
           success: true,
           data: result.data,
-          message: "contacts fetched successfully",
+          message: "contact dropdown fetched successfully",
         },
         { status: 200 },
       );
     }
 
     return NextResponse.json(
-      { success: false, data: [], message: "contacts not found" },
+      { success: false, data: [], message: "contact dropdown not found" },
       { status: 404 },
     );
   } catch (error) {

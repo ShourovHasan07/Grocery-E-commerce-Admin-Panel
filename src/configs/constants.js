@@ -37,4 +37,15 @@ const TRANSACTION_STATUS = [
   }
 ];
 
-export { BOOKING_STATUS, TRANSACTION_STATUS };
+const CONTACT_STATUS = [
+  {
+    key: "false",
+    value: "Pending",
+  },
+  {
+    key: "true",
+    value: "Solved",
+  },
+];
+
+export { BOOKING_STATUS, TRANSACTION_STATUS, CONTACT_STATUS };
