@@ -213,6 +213,18 @@ export const contactStatusColor = (popular) => {
   }
 };
 
+// 👉 Menu Position Color
+export const menuPositionColor = (popular) => {
+  switch (popular) {
+    case 'header':
+      return "success";
+    case 'footer':
+      return "primary";
+    default:
+      return "secondary";
+  }
+};
+
 // 👉 Format Time
 export const timeFormat = (time24h) => {
   let [hours, minutes] = time24h.split(":");

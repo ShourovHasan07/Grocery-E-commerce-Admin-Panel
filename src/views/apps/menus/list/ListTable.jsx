@@ -51,6 +51,7 @@ import LoaderIcon from "@/components/common/Loader";
 import {
   activeStatusLabel,
   activeStatusColor,
+  menuPositionColor,
 } from "@/utils/helpers";
 
 // Style Imports
@@ -141,6 +142,20 @@ const ListTable = ({ tableData }) => {
         header: "Title",
         cell: ({ row }) => <Typography>{row.original.title}</Typography>,
       },
+      columnHelper.accessor("type", {
+        header: "Menu Position",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-3 text-center">
+            <Chip
+              variant="tonal"
+              label={row.original.type}
+              size="small"
+              color={menuPositionColor(row.original.type)}
+              className="capitalize"
+            />
+          </div>
+        ),
+      }),
       {
         id: "itemCount",
         header: <div className="text-center">Item Count</div>,
