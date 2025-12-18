@@ -16,10 +16,13 @@ export async function GET(request) {
     );
   }
 
+  const { searchParams } = new URL(request.url);
+  const allParamAsObj = Object.fromEntries(searchParams.entries());
+
   try {
     const result = await routeApiHelper.get(
       "transactions",
-      { pageSize: 200 },
+      allParamAsObj,
       token,
     );
 
