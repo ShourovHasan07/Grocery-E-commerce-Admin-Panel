@@ -16,8 +16,12 @@ export async function GET(request) {
     );
   }
 
+  // Extract query params from req.url
+  const { searchParams } = new URL(request.url);
+  const allParamAsObj = Object.fromEntries(searchParams.entries());
+
   try {
-    const result = await routeApiHelper.get("admins", { pageSize: 200 }, token);
+    const result = await routeApiHelper.get("admins", allParamAsObj, token);
 
     if (result.success) {
       return NextResponse.json(

@@ -1,7 +1,7 @@
 "use client";
 
 // React Imports
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 
 import { useSession } from "next-auth/react";
 
@@ -12,88 +12,107 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
-import TablePagination from "@mui/material/TablePagination";
 import MenuItem from "@mui/material/MenuItem";
+import TablePagination from "@mui/material/TablePagination";
 
+// Component Imports
 import { toast } from "react-toastify";
 
 import classnames from "classnames";
-
-import { rankItem } from "@tanstack/match-sorter-utils";
 
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
-  getFilteredRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFacetedMinMaxValues,
-  getPaginationRowModel,
   getSortedRowModel,
 } from "@tanstack/react-table";
 
-import CustomAvatar from "@core/components/mui/Avatar"; // Util Imports
-import { getInitials } from "@/utils/getInitials";
+import TableFilters from "./TableFilters";
+import TablePaginationComponent from "@components/TablePaginationServer";
+import CustomTextField from "@core/components/mui/TextField";
+import LoaderIcon from "@/components/common/Loader";
 import ConfirmDialog from "@components/dialogs/ConfirmDialog";
 import AddDrawer from "./AddDrawer";
 
+
 import { useAbility, useAbilityLoading } from '@/contexts/AbilityContext';
-
-// Third-party Imports
-
 import pageApiHelper from "@/utils/pageApiHelper";
-
-// Util Imports
 import { formattedDate } from "@/utils/formatters";
-
-// Component Imports
-import TableFilters from "./TableFilters";
-import TablePaginationComponent from "@components/TablePaginationComponent";
-import CustomTextField from "@core/components/mui/TextField";
-
-// Util Imports
 import {
   activeStatusLabel,
   activeStatusColor,
   popularStatusLabel,
   popularStatusColor,
 } from "@/utils/helpers";
-
-// Style Imports
 import tableStyles from "@core/styles/table.module.css";
 import LayoutLoader from "@/components/common/LayoutLoader";
 import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
-
-
-const fuzzyFilter = (row, columnId, value, addMeta) => {
-  // Rank the item
-  const itemRank = rankItem(row.getValue(columnId), value);
-
-  // Store the itemRank info
-  addMeta({
-    itemRank,
-  });
-
-  // Return if the item should be filtered in/out
-  return itemRank.passed;
-};
+import CustomAvatar from "@core/components/mui/Avatar";
+import { getInitials } from "@/utils/getInitials";
 
 // Column Definitions
 const columnHelper = createColumnHelper();
 
-const ListTable = ({ tableData }) => {
+// Debounce hook for search optimization
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
 
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
+const ListTable = () => {
   const ability = useAbility();
   const isAbilityLoading = useAbilityLoading();
 
-  // States
-  const dataObj = tableData?.categories || [];
-  const [data, setData] = useState(...[dataObj]);
-  const [rowSelection, setRowSelection] = useState({});
-  const [filteredData, setFilteredData] = useState(data);
-  const [globalFilter, setGlobalFilter] = useState("");
+  // Session
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+  const abortControllerRef = useRef(null);
+
+  // States for data
+  const [data, setData] = useState([]);
+  // Pagination state
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  const [paginationMeta, setPaginationMeta] = useState({
+    totalCount: 0,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  });
+
+  // Filter states
+  const [filters, setFilters] = useState({
+    search: "",
+    status: "",
+    isPopular: "",
+  });
+
+  // Debounced search value
+  const debouncedSearch = useDebounce(filters.search, 500);
+
+  // Sorting state
+  const [sorting, setSorting] = useState([]);
+
+  // Loading and error states
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Loader state for actions
+  // const [loadingId, setLoadingId] = useState(null);
 
   const [dialogOpen, setDialogOpen] = useState({
     open: false,
@@ -106,9 +125,116 @@ const ListTable = ({ tableData }) => {
     data: {},
   });
 
-  // Session
-  const { data: session } = useSession();
-  const token = session?.accessToken;
+  // Build query params for API
+  const buildQueryParams = useCallback(() => {
+    const params = {
+      page: pagination.pageIndex + 1,
+      pageSize: pagination.pageSize,
+    };
+
+    // Add search filter
+    if (debouncedSearch) {
+      params.search = debouncedSearch;
+    }
+
+    // Add status filter
+    if (filters.status && filters.status !== "all") {
+      params.status = filters.status;
+    }
+
+    // Add popular filter
+    if (filters.isPopular && filters.isPopular !== "all") {
+      params.isPopular = filters.isPopular;
+    }
+
+    // Add sorting
+    if (sorting.length > 0) {
+      params.sortBy = sorting[0].id;
+      params.sortOrder = sorting[0].desc ? "DESC" : "ASC";
+    }
+
+    return params;
+  }, [
+    pagination.pageIndex,
+    pagination.pageSize,
+    debouncedSearch,
+    filters.status,
+    filters.isPopular,
+    sorting,
+  ]);
+
+  // Fetch data from server
+  const fetchData = useCallback(async () => {
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+
+    // Cancel any previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create new abort controller for this request
+    abortControllerRef.current = new AbortController();
+
+    try {
+      setIsLoading(true);
+      const queryParams = buildQueryParams();
+
+      const result = await pageApiHelper.get(
+        "categories",
+        queryParams,
+        token,
+        {},
+        abortControllerRef.current.signal
+      );
+
+      if (result.success) {
+        const categoriesData = result.data?.data?.categories || [];
+        const paginationData = result.data?.data?.pagination || {};
+
+        setData(categoriesData);
+        setPaginationMeta({
+          totalCount: paginationData.totalCount || 0,
+          totalPages: paginationData.totalPages || 0,
+          hasNextPage: paginationData.hasNextPage || false,
+          hasPreviousPage: paginationData.hasPreviousPage || false,
+        });
+      } else if (result.status === 499) {
+        // Request was cancelled - ignore silently
+        return;
+      }
+    } catch (err) {
+      // console.error("Error fetching categories:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [token, buildQueryParams]);
+
+  // Fetch data when dependencies change
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, [debouncedSearch, filters.status, filters.isPopular]);
+
+  // Handle filter changes from TableFilters component
+  const handleFiltersChange = useCallback((newFilters) => {
+    setFilters((prev) => ({ ...prev, ...newFilters }));
+  }, []);
 
   const handleDelete = async (itemId) => {
     try {
@@ -120,10 +246,6 @@ const ListTable = ({ tableData }) => {
       // Update the data state after successful deletion
       if (res?.success && res?.data?.success) {
         setData((prevData) => prevData.filter((item) => item.id !== itemId));
-        setFilteredData((prevData) =>
-          prevData.filter((item) => item.id !== itemId),
-        );
-
         setDialogOpen((prevState) => ({
           ...prevState,
           open: !prevState.open,
@@ -131,10 +253,11 @@ const ListTable = ({ tableData }) => {
         }));
 
         toast.success("Deleted successfully");
+        // Refresh data after deletion
+        fetchData();
       }
     } catch (error) {
       // console.error('Delete failed:', error);
-
       // Show error in toast
       toast.error(error.message);
     }
@@ -174,19 +297,18 @@ const ListTable = ({ tableData }) => {
                 <i className="tabler-trash text-textSecondary" />
               </IconButton>
             )}
-
           </div>
         ),
         enableSorting: false,
       }),
-      {
+      columnHelper.accessor("id", {
         header: "ID",
         cell: ({ row }) => <Typography>{row.original.id}</Typography>,
-      },
-      {
+      }),
+      columnHelper.accessor("name", {
         header: "Name",
         cell: ({ row }) => <Typography>{row.original.name}</Typography>,
-      },
+      }),
       columnHelper.accessor("image", {
         header: "Image",
         cell: ({ row }) => (
@@ -232,52 +354,40 @@ const ListTable = ({ tableData }) => {
           <Typography>{formattedDate(row.original.createdAt)}</Typography>
         ),
       }),
-      {
+      columnHelper.accessor("updatedAt", {
         header: "Updated At",
         cell: ({ row }) => (
           <Typography>{formattedDate(row.original.updatedAt)}</Typography>
         ),
-      },
+      }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, filteredData],
+    [ability]
   );
 
   const table = useReactTable({
-    data: filteredData,
+    data,
     columns,
-    filterFns: {
-      fuzzy: fuzzyFilter,
-    },
     state: {
-      rowSelection,
-      globalFilter,
+      sorting,
+      pagination,
     },
-    initialState: {
-      pagination: {
-        pageSize: 10,
-      },
-    },
-    enableRowSelection: true,
-    globalFilterFn: fuzzyFilter,
-    onRowSelectionChange: setRowSelection,
+    // Server-side pagination
+    manualPagination: true,
+    manualSorting: true,
+    pageCount: paginationMeta.totalPages,
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    onGlobalFilterChange: setGlobalFilter,
-    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-    getFacetedMinMaxValues: getFacetedMinMaxValues(),
   });
 
   const getAvatar = (params) => {
     const { avatar, name } = params;
 
     if (avatar) {
-      return <CustomAvatar src={avatar} size={50} />;
+      return <CustomAvatar src={avatar} size={34} />;
     } else {
-      return <CustomAvatar size={50}>{getInitials(name)}</CustomAvatar>;
+      return <CustomAvatar size={34}>{getInitials(name)}</CustomAvatar>;
     }
   };
 
@@ -290,17 +400,24 @@ const ListTable = ({ tableData }) => {
         <>
           <Card>
             <CardHeader title="Category List" className="pbe-4" />
-            <TableFilters setData={setFilteredData} tableData={data} />
+            <TableFilters filters={filters} onFiltersChange={handleFiltersChange} />
             <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
               <CustomTextField
                 select
-                value={table.getState().pagination.pageSize}
-                onChange={(e) => table.setPageSize(Number(e.target.value))}
+                value={pagination.pageSize}
+                onChange={(e) =>
+                  setPagination((prev) => ({
+                    ...prev,
+                    pageSize: Number(e.target.value),
+                    pageIndex: 0,
+                  }))
+                }
                 className="max-sm:is-full sm:is-[70px]"
               >
                 <MenuItem value="10">10</MenuItem>
                 <MenuItem value="25">25</MenuItem>
                 <MenuItem value="50">50</MenuItem>
+                <MenuItem value="100">100</MenuItem>
               </CustomTextField>
               <div className="flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4">
                 {ability?.can('create', 'Category') && (
@@ -320,7 +437,6 @@ const ListTable = ({ tableData }) => {
                     Add New Category
                   </Button>
                 )}
-
               </div>
             </div>
             <div className="overflow-x-auto">
@@ -358,7 +474,21 @@ const ListTable = ({ tableData }) => {
                     </tr>
                   ))}
                 </thead>
-                {table.getFilteredRowModel().rows.length === 0 ? (
+                {isLoading ? (
+                  <tbody>
+                    <tr>
+                      <td
+                        colSpan={table.getVisibleFlatColumns().length}
+                        className="text-center"
+                      >
+                        <div className="flex justify-center items-center py-8">
+                          <LoaderIcon size={24} />
+                          <span className="ml-2">Loading...</span>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                ) : data.length === 0 ? (
                   <tbody>
                     <tr>
                       <td
@@ -371,42 +501,51 @@ const ListTable = ({ tableData }) => {
                   </tbody>
                 ) : (
                   <tbody>
-                    {table
-                      .getRowModel()
-                      .rows.slice(0, table.getState().pagination.pageSize)
-                      .map((row) => {
-                        return (
-                          <tr
-                            key={row.id}
-                            className={classnames({
-                              selected: row.getIsSelected(),
-                            })}
-                          >
-                            {row.getVisibleCells().map((cell) => (
-                              <td key={cell.id}>
-                                {flexRender(
-                                  cell.column.columnDef.cell,
-                                  cell.getContext(),
-                                )}
-                              </td>
-                            ))}
-                          </tr>
-                        );
-                      })}
+                    {table.getRowModel().rows.map((row) => {
+                      return (
+                        <tr
+                          key={row.id}
+                          className={classnames({
+                            selected: row.getIsSelected(),
+                          })}
+                        >
+                          {row.getVisibleCells().map((cell) => (
+                            <td key={cell.id}>
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext(),
+                              )}
+                            </td>
+                          ))}
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 )}
               </table>
             </div>
             <TablePagination
-              component={() => <TablePaginationComponent table={table} />}
-              count={table.getFilteredRowModel().rows.length}
-              rowsPerPage={table.getState().pagination.pageSize}
-              page={table.getState().pagination.pageIndex}
+              component={() => (
+                <TablePaginationComponent
+                  table={table}
+                  totalCount={paginationMeta.totalCount}
+                />
+              )}
+              count={paginationMeta.totalCount}
+              rowsPerPage={pagination.pageSize}
+              page={pagination.pageIndex}
               onPageChange={(_, page) => {
-                table.setPageIndex(page);
+                setPagination((prev) => ({ ...prev, pageIndex: page }));
+              }}
+              onRowsPerPageChange={(e) => {
+                setPagination({
+                  pageIndex: 0,
+                  pageSize: Number(e.target.value),
+                });
               }}
             />
           </Card>
+
           <AddDrawer
             drawerData={addDrawerOpen}
             handleClose={() =>
@@ -420,6 +559,7 @@ const ListTable = ({ tableData }) => {
             userData={data}
             setData={setData}
             setType={addDrawerOpen.type}
+            fetchData={fetchData}
           />
 
           <ConfirmDialog
@@ -437,7 +577,6 @@ const ListTable = ({ tableData }) => {
           />
         </>
       )}
-
     </ProtectedRouteURL>
   );
 };

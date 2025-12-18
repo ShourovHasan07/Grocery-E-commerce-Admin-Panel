@@ -1,40 +1,36 @@
 // React Imports
-import { useState, useEffect } from "react";
+import { useCallback } from "react";
 
 // MUI Imports
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid2";
 import MenuItem from "@mui/material/MenuItem";
 
-import { stringToBoolean } from "@/utils/helpers";
-
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
 
-const TableFilters = ({ setData, tableData }) => {
-  // States
-  const [search, setInputSearch] = useState("");
-  const [status, setStatus] = useState("");
-  const [isPopular, setIsPopular] = useState("");
+const TableFilters = ({ filters, onFiltersChange }) => {
+  // Handle individual filter changes
+  const handleSearchChange = useCallback(
+    (e) => {
+      onFiltersChange({ search: e.target.value });
+    },
+    [onFiltersChange]
+  );
 
-  useEffect(() => {
-    const filteredData = tableData?.filter((item) => {
-      if (search && !item.name.toLowerCase().includes(search.toLowerCase()))
-        return false;
-      if (status && status != "" && item.status !== stringToBoolean(status))
-        return false;
-      if (
-        isPopular &&
-        isPopular != "" &&
-        item.isPopular !== stringToBoolean(isPopular)
-      )
-        return false;
+  const handleStatusChange = useCallback(
+    (e) => {
+      onFiltersChange({ status: e.target.value });
+    },
+    [onFiltersChange]
+  );
 
-      return true;
-    });
-
-    setData(filteredData || []);
-  }, [search, status, isPopular, tableData, setData]);
+  const handleIsPopularChange = useCallback(
+    (e) => {
+      onFiltersChange({ isPopular: e.target.value });
+    },
+    [onFiltersChange]
+  );
 
   return (
     <CardContent>
@@ -44,8 +40,8 @@ const TableFilters = ({ setData, tableData }) => {
             fullWidth
             label="Search"
             id="text-input-search-user"
-            value={search}
-            onChange={(e) => setInputSearch(e.target.value)}
+            value={filters.search}
+            onChange={handleSearchChange}
             placeholder="Search by name"
             className="max-sm:is-full"
           />
@@ -57,8 +53,8 @@ const TableFilters = ({ setData, tableData }) => {
             select
             fullWidth
             id="select-popular"
-            value={isPopular}
-            onChange={(e) => setIsPopular(e.target.value)}
+            value={filters.isPopular}
+            onChange={handleIsPopularChange}
             slotProps={{
               select: { displayEmpty: true },
             }}
@@ -75,8 +71,8 @@ const TableFilters = ({ setData, tableData }) => {
             select
             fullWidth
             id="select-status"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
+            value={filters.status}
+            onChange={handleStatusChange}
             slotProps={{
               select: { displayEmpty: true },
             }}

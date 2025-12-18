@@ -129,7 +129,7 @@ const ListTable = () => {
     }
 
     // Add status filter
-    if (filters.status) {
+    if (filters.status && filters.status !== "all") {
       params.status = filters.status;
     }
 

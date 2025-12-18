@@ -380,9 +380,6 @@ const ListTable = () => {
             <MenuItem value="50">50</MenuItem>
             <MenuItem value="100">100</MenuItem>
           </CustomTextField>
-          <Typography variant="body2" color="textSecondary">
-            Total: {paginationMeta.totalCount} records
-          </Typography>
         </div>
         <div className="overflow-x-auto">
           <table className={tableStyles.table}>

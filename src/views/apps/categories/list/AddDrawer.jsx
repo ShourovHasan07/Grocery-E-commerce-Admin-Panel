@@ -60,7 +60,7 @@ const schema = z.object({
 
 const AddDrawer = (props) => {
   // Props
-  const { drawerData, handleClose, userData, setData, setType } = props;
+  const { drawerData, handleClose, userData, setData, setType, fetchData } = props;
 
   const { data } = drawerData;
 
@@ -196,16 +196,9 @@ const AddDrawer = (props) => {
       }
 
       if (res?.success && res?.data?.success) {
-        if (setType === "edit") {
-          const updatedData = userData.map((item) =>
-            item.id === res?.data?.category?.id
-              ? { ...item, ...res?.data?.category }
-              : item,
-          );
-
-          setData(updatedData);
-        } else {
-          setData([res?.data?.category, ...(userData ?? [])]);
+        // Refresh data from server after successful operation
+        if (fetchData) {
+          fetchData();
         }
 
         handleClose();

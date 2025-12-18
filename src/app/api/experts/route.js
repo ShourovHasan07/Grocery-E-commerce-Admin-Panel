@@ -16,10 +16,14 @@ export async function GET(request) {
     );
   }
 
+  // Extract query params from req.url
+  const { searchParams } = new URL(request.url);
+  const allParamAsObj = Object.fromEntries(searchParams.entries());
+
   try {
     const result = await routeApiHelper.get(
       "experts",
-      { pageSize: 200 },
+      allParamAsObj,
       token,
     );
 

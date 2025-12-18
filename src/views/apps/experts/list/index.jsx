@@ -4,15 +4,14 @@ import Grid from "@mui/material/Grid2";
 // Component Imports
 import ListTable from "./ListTable";
 
-const UserList = ({ listData }) => {
-  //console.log("UserList data:", listData);
+const ExpertList = () => {
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>
-        <ListTable tableData={listData} />
+        <ListTable />
       </Grid>
     </Grid>
   );
 };
 
-export default UserList;
+export default ExpertList;

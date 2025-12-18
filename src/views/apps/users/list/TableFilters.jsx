@@ -1,5 +1,5 @@
 // React Imports
-import { useState, useEffect } from "react";
+import { useCallback } from "react";
 
 // MUI Imports
 import CardContent from "@mui/material/CardContent";
@@ -9,25 +9,21 @@ import MenuItem from "@mui/material/MenuItem";
 // Component Imports
 import CustomTextField from "@core/components/mui/TextField";
 
-import { stringToBoolean } from "@/utils/helpers";
+const TableFilters = ({ filters, onFiltersChange }) => {
+  // Handle individual filter changes
+  const handleSearchChange = useCallback(
+    (e) => {
+      onFiltersChange({ search: e.target.value });
+    },
+    [onFiltersChange]
+  );
 
-const TableFilters = ({ setData, tableData }) => {
-  // States
-  const [search, setInputSearch] = useState("");
-  const [status, setStatus] = useState("");
-
-  useEffect(() => {
-    const filteredData = tableData?.filter((item) => {
-      if (search && !item?.name?.toLowerCase().includes(search.toLowerCase()))
-        return false;
-      if (status && status != "" && item.status !== stringToBoolean(status))
-        return false;
-
-      return true;
-    });
-
-    setData(filteredData || []);
-  }, [search, status, tableData, setData]);
+  const handleStatusChange = useCallback(
+    (e) => {
+      onFiltersChange({ status: e.target.value });
+    },
+    [onFiltersChange]
+  );
 
   return (
     <CardContent>
@@ -37,9 +33,9 @@ const TableFilters = ({ setData, tableData }) => {
             fullWidth
             label="Search"
             id="text-input-search-user"
-            value={search}
-            onChange={(e) => setInputSearch(e.target.value)}
-            placeholder="Search by name"
+            value={filters.search}
+            onChange={handleSearchChange}
+            placeholder="Search by name, email or phone"
             className="max-sm:is-full"
           />
         </Grid>
@@ -50,8 +46,8 @@ const TableFilters = ({ setData, tableData }) => {
             select
             fullWidth
             id="select-status"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
+            value={filters.status}
+            onChange={handleStatusChange}
             slotProps={{
               select: { displayEmpty: true },
             }}
