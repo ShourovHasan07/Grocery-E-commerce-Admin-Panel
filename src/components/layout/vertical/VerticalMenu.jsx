@@ -139,9 +139,15 @@ const VerticalMenu = ({ scrollMenu }) => {
 
             {/* Bookings */}
             {ability.can('read', 'Booking') && (
-              <MenuItem href="/bookings" icon={<i className="tabler-brand-booking" />}>
-                Bookings
-              </MenuItem>
+              <>
+                <MenuItem href="/bookings" icon={<i className="tabler-brand-booking" />}>
+                  Bookings
+                </MenuItem>
+
+                <MenuItem href="/expert-payouts" icon={<i className="tabler-transaction-dollar" />}>
+                  Expert Payouts
+                </MenuItem>
+              </>
             )}
 
             {/* Transactions */}

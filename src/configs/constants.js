@@ -37,6 +37,17 @@ const TRANSACTION_STATUS = [
   }
 ];
 
+const PAYOUT_STATUS = [
+  {
+    key: "unpaid",
+    value: "Unpaid",
+  },
+  {
+    key: "paid",
+    value: "Paid",
+  }
+];
+
 const CONTACT_STATUS = [
   {
     key: "false",
@@ -48,4 +59,4 @@ const CONTACT_STATUS = [
   },
 ];
 
-export { BOOKING_STATUS, TRANSACTION_STATUS, CONTACT_STATUS };
+export { BOOKING_STATUS, TRANSACTION_STATUS, PAYOUT_STATUS, CONTACT_STATUS };
