@@ -64,7 +64,7 @@ const TableFilters = ({ filters, onFiltersChange }) => {
             value={filters.status}
             onChange={handleStatusChange}
           >
-            <MenuItem value="">All</MenuItem>
+            <MenuItem value="all">All</MenuItem>
             {BOOKING_STATUS.map((status) => (
               <MenuItem key={status.key} value={status.key}>
                 {status.value}

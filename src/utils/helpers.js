@@ -173,6 +173,33 @@ export const transactionStatusColor = (status) => {
   }
 };
 
+//pending, confirmed, ongoing, completed, cancelled,
+export const payableStatusLabel = (status) => {
+  switch (status) {
+    case "cancelled":
+      return "Cancelled";
+    case "paid":
+      return "Paid";
+    case "unpaid":
+      return "Unpaid";
+    default:
+      return String(status);
+  }
+};
+
+export const payableStatusColor = (status) => {
+  switch (status) {
+    case "cancelled":
+      return "error";
+    case "paid":
+      return "success";
+    case "unpaid":
+      return "warning";
+    default:
+      return "default";
+  }
+};
+
 // 👉 Popular Status
 export const popularStatusLabel = (popular) => {
   switch (popular) {

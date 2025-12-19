@@ -41,7 +41,7 @@ import CustomTextField from "@core/components/mui/TextField";
 import LoaderIcon from "@/components/common/Loader";
 
 // Util Imports
-import { bookingStatusLabel, bookingStatusColor } from "@/utils/helpers";
+import { bookingStatusLabel, bookingStatusColor, payableStatusLabel, payableStatusColor } from "@/utils/helpers";
 
 // Style Imports
 import tableStyles from "@core/styles/table.module.css";
@@ -99,7 +99,7 @@ const ListTable = () => {
   // Filter states
   const [filters, setFilters] = useState({
     search: "",
-    status: "",
+    status: "all",
     dateFrom: null,
     dateTo: null,
   });
@@ -265,11 +265,11 @@ const ListTable = () => {
       }),
       columnHelper.accessor("user.name", {
         header: "Client Name",
-        cell: ({ row }) => <Typography>{row.original.user.name}</Typography>,
+        cell: ({ row }) => <Typography className="text-wrap w-[200px]">{row.original.user.name}</Typography>,
       }),
       columnHelper.accessor("expert.name", {
         header: "Expert Name",
-        cell: ({ row }) => <Typography>{row.original.expert.name}</Typography>,
+        cell: ({ row }) => <Typography className="text-wrap w-[200px]">{row.original.expert.name}</Typography>,
       }),
       columnHelper.accessor("timeMin", {
         header: "Time (min)",
@@ -303,6 +303,28 @@ const ListTable = () => {
           <Typography className="text-center w-full block">
             {row.original.total}
           </Typography>
+        ),
+      }),
+      columnHelper.accessor("expertPayableAmount", {
+        header: () => (
+          <div className="w-[120px] text-center text-wrap">
+            Expert Payable
+          </div>
+        ),
+        cell: ({ row }) => (
+          <div className="text-center flex flex-col items-center">
+            <Typography className="text-center">
+              {row.original.expertPayableAmount}
+            </Typography>
+
+            <Chip
+              variant="tonal"
+              label={payableStatusLabel(row.original.expertPayableStatus)}
+              size="small"
+              color={payableStatusColor(row.original.expertPayableStatus)}
+              className="capitalize"
+            />
+          </div>
         ),
       }),
       columnHelper.accessor("startAt", {
