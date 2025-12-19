@@ -30,14 +30,8 @@ import {
 // Third-party Imports
 import Tooltip from "@mui/material/Tooltip";
 
-// Component Imports
-import TablePagination from "@mui/material/TablePagination";
-
 import TableFilters from "./TableFilters";
 
-import TablePaginationComponent from "@components/TablePaginationComponent";
-
-import CustomTextField from "@core/components/mui/TextField";
 import LoaderIcon from "@/components/common/Loader";
 
 // Util Imports
@@ -83,17 +77,10 @@ const ListTable = () => {
 
   // States for data
   const [data, setData] = useState([]);
-  // Pagination state
+  // Pagination state - disabled to show all data
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
-  });
-
-  const [paginationMeta, setPaginationMeta] = useState({
-    totalCount: 0,
-    totalPages: 0,
-    hasNextPage: false,
-    hasPreviousPage: false,
+    pageSize: 10000,
   });
 
   // Filter states
@@ -120,8 +107,8 @@ const ListTable = () => {
   // Build query params for API
   const buildQueryParams = useCallback(() => {
     const params = {
-      page: pagination.pageIndex + 1,
-      pageSize: pagination.pageSize,
+      page: 1, // Always use page 1 since we're fetching all data
+      pageSize: 10000, // Set to a large number to fetch all data
     };
 
     // Add search filter
@@ -148,22 +135,13 @@ const ListTable = () => {
       params.dateTo = format(filters.dateTo, "yyyy-MM-dd");
     }
 
-    // Add sorting
-    if (sorting.length > 0) {
-      params.sortBy = sorting[0].id;
-      params.sortOrder = sorting[0].desc ? "DESC" : "ASC";
-    }
-
     return params;
   }, [
-    pagination.pageIndex,
-    pagination.pageSize,
     debouncedSearch,
     filters.expert,
     filters.status,
     filters.dateFrom,
-    filters.dateTo,
-    sorting,
+    filters.dateTo
   ]);
 
   // Fetch data from server
@@ -195,15 +173,8 @@ const ListTable = () => {
 
       if (result.success) {
         const bookingsData = result.data?.data?.expertPayouts || [];
-        const paginationData = result.data?.data?.pagination || {};
 
         setData(bookingsData);
-        setPaginationMeta({
-          totalCount: paginationData.totalCount || 0,
-          totalPages: paginationData.totalPages || 0,
-          hasNextPage: paginationData.hasNextPage || false,
-          hasPreviousPage: paginationData.hasPreviousPage || false,
-        });
       } else if (result.status === 499) {
         // Request was cancelled - ignore silently
         return;
@@ -229,7 +200,7 @@ const ListTable = () => {
     };
   }, []);
 
-  // Reset to first page when filters change
+  // Reset to first page when filters change (not needed for non-paginated view but kept for consistency)
   useEffect(() => {
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
   }, [debouncedSearch, filters.status, filters.dateFrom, filters.dateTo]);
@@ -275,17 +246,25 @@ const ListTable = () => {
         cell: ({ row }) => <Typography className="text-wrap w-[200px]">{row.original.expert.name}</Typography>,
       }),
       columnHelper.accessor("totalPayableAmount", {
-        header: "Total Payable Amount",
+        header: () => (
+          <div className="text-center">
+            Total Payable Amount
+          </div>
+        ),
         cell: ({ row }) => (
-          <Typography>
+          <Typography className="text-center">
             {row.original.totalPayableAmount}
           </Typography>
         ),
       }),
       columnHelper.accessor("bookingCount", {
-        header: "Booking Count",
+        header: () => (
+          <div className="text-center">
+            Booking Count
+          </div>
+        ),
         cell: ({ row }) => (
-          <Typography>
+          <Typography className="text-center">
             {row.original.bookingCount}
           </Typography>
         ),
@@ -306,17 +285,31 @@ const ListTable = () => {
     [ability, loadingId, router]
   );
 
+  // Compute totals for footer
+  const totals = useMemo(() => {
+    return {
+      totalPayableAmount: data.reduce(
+        (sum, item) => sum + (Number(item.totalPayableAmount) || 0),
+        0
+      ),
+      bookingCount: data.reduce(
+        (sum, item) => sum + (Number(item.bookingCount) || 0),
+        0
+      ),
+    };
+  }, [data]);
+
   const table = useReactTable({
     data,
     columns,
-    state: {
-      sorting,
-      pagination,
-    },
-    // Server-side pagination
-    manualPagination: true,
-    manualSorting: true,
-    pageCount: paginationMeta.totalPages,
+    // state: {
+    //   sorting,
+    //   pagination,
+    // },
+    // Server-side pagination - disabled but kept for structure
+    manualPagination: false,
+    manualSorting: false,
+    pageCount: -1, // Indicates unknown/unlimited pages
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -331,25 +324,6 @@ const ListTable = () => {
       <Card>
         <CardHeader title="Payout List" className="pbe-4" />
         <TableFilters filters={filters} onFiltersChange={handleFiltersChange} />
-        <div className="flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4">
-          <CustomTextField
-            select
-            value={pagination.pageSize}
-            onChange={(e) =>
-              setPagination((prev) => ({
-                ...prev,
-                pageSize: Number(e.target.value),
-                pageIndex: 0,
-              }))
-            }
-            className="max-sm:is-full sm:is-[70px]"
-          >
-            <MenuItem value="10">10</MenuItem>
-            <MenuItem value="25">25</MenuItem>
-            <MenuItem value="50">50</MenuItem>
-            <MenuItem value="100">100</MenuItem>
-          </CustomTextField>
-        </div>
         <div className="overflow-x-auto">
           <table className={tableStyles.table}>
             <thead>
@@ -411,51 +385,44 @@ const ListTable = () => {
                 </tr>
               </tbody>
             ) : (
-              <tbody>
-                {table.getRowModel().rows.map((row) => {
-                  return (
-                    <tr
-                      key={row.id}
-                      className={classnames({
-                        selected: row.getIsSelected(),
-                      })}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  );
-                })}
-              </tbody>
+              <>
+                <tbody>
+                  {table.getRowModel().rows.map((row) => {
+                    return (
+                      <tr
+                        key={row.id}
+                        className={classnames({
+                          selected: row.getIsSelected(),
+                        })}
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <td key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                  <tr>
+                    <td colSpan={3} className="font-bold text-start">
+                      Total Payable Expert(s): {data.length}
+                    </td>
+                    <td className="text-center font-bold">
+                      {totals.totalPayableAmount.toLocaleString()}
+                    </td>
+                    <td className="text-center font-bold">
+                      {totals.bookingCount.toLocaleString()}
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </>
             )}
           </table>
         </div>
-
-        <TablePagination
-          component={() => (
-            <TablePaginationComponent
-              table={table}
-              totalCount={paginationMeta.totalCount}
-            />
-          )}
-          count={paginationMeta.totalCount}
-          rowsPerPage={pagination.pageSize}
-          page={pagination.pageIndex}
-          onPageChange={(_, page) => {
-            setPagination((prev) => ({ ...prev, pageIndex: page }));
-          }}
-          onRowsPerPageChange={(e) => {
-            setPagination({
-              pageIndex: 0,
-              pageSize: Number(e.target.value),
-            });
-          }}
-        />
       </Card>
     </ProtectedRouteURL>
   );

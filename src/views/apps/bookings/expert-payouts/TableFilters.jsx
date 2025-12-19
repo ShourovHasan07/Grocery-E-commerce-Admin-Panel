@@ -13,6 +13,9 @@ import CustomTextField from "@core/components/mui/TextField";
 import { PAYOUT_STATUS } from "@configs/constants";
 import AppReactDatepicker from "@/libs/styles/AppReactDatepicker";
 
+// Util Imports
+import pageApiHelper from "@/utils/pageApiHelper";
+
 const TableFilters = ({ filters, onFiltersChange }) => {
   const { data: session } = useSession();
   const token = session?.accessToken;
@@ -59,7 +62,7 @@ const TableFilters = ({ filters, onFiltersChange }) => {
       if (token) {
         try {
           const result = await pageApiHelper.get(
-            "admins/create-edit-options",
+            "expert-dropdown",
             {},
             token,
           );
