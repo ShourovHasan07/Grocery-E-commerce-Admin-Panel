@@ -153,7 +153,7 @@ const ListTable = ({ tableData }) => {
               </Tooltip>
             )}
 
-            {row.original.type !== "predefine" && (
+            {row.original.type.includes(["predefine", "predefine_rte"]) && (
               <Tooltip title="Delete" arrow placement="top">
                 <IconButton
                   onClick={() =>
@@ -205,14 +205,16 @@ const ListTable = ({ tableData }) => {
       columnHelper.accessor("type", {
         header: "Type",
         cell: ({ row }) => (
-          <div className="flex items-center gap-3 text-center">
+          <div className="flex items-center text-center flex-col">
             <Chip
               variant="tonal"
-              label={row.original.type}
+              label={row.original.type.replace(/_/g, ' ')}
               size="small"
               color={row.original.type === "predefine" ? "info" : "primary"}
               className="capitalize"
             />
+            {row.original.key === "terms_conditions_client" && <span className="text-info">Client Terms & Conditions</span>}
+            {row.original.key === "terms_conditions_expert" && <span className="text-info">Expert Terms & Conditions</span>}
           </div>
         ),
       }),

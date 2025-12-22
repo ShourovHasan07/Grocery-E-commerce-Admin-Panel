@@ -2,6 +2,7 @@
 import Grid from "@mui/material/Grid2";
 
 import EditForm from "./EditForm";
+import EditFormTerms from "./EditFormTerms";
 import AboutEditForm from "./AboutEditForm";
 
 const PageEdit = ({ pageData }) => {
@@ -9,6 +10,7 @@ const PageEdit = ({ pageData }) => {
     <Grid container>
       <Grid size={{ xs: 12 }}>
         {pageData.type === "rte" && <EditForm page={pageData} />}
+        {pageData.type === "predefine_rte" && <EditFormTerms page={pageData} />}
         {pageData.type === "predefine" && pageData.key === "about_us" && (
           <AboutEditForm page={pageData} />
         )}
