@@ -13,7 +13,9 @@ import CardHeader from "@mui/material/CardHeader";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
-import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
+
+import { toast } from "react-toastify";
 
 import { format } from "date-fns";
 
@@ -100,15 +102,14 @@ const ListTable = () => {
 
   // Loading and error states
   const [isLoading, setIsLoading] = useState(true);
-
-  // Loader state for actions
   const [loadingId, setLoadingId] = useState(null);
+  const [paymentProcessing, setPaymentProcessing] = useState(false);
 
   // Build query params for API
   const buildQueryParams = useCallback(() => {
     const params = {
-      page: 1, // Always use page 1 since we're fetching all data
-      pageSize: 10000, // Set to a large number to fetch all data
+      page: 1,
+      pageSize: 10000,
     };
 
     // Add search filter
@@ -176,7 +177,6 @@ const ListTable = () => {
 
         setData(bookingsData);
       } else if (result.status === 499) {
-        // Request was cancelled - ignore silently
         return;
       }
     } catch (err) {
@@ -209,6 +209,34 @@ const ListTable = () => {
   const handleFiltersChange = useCallback((newFilters) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
   }, []);
+
+  // Handle Payout Processing
+  const handlePayout = useCallback(
+    async () => {
+      if (!token) return;
+
+      setPaymentProcessing(true);
+      try {
+        const bulkResult = await pageApiHelper.post(
+          "expert-payouts/pay",
+          {},
+          token
+        );
+
+        if (bulkResult && bulkResult.success) {
+          fetchData();
+
+          toast.success("Payout processed successfully");
+        }
+
+      } catch (err) {
+        // optional: show notification
+      } finally {
+        setPaymentProcessing(false);
+      }
+    },
+    [token, fetchData]
+  );
 
   const columns = useMemo(
     () => [
@@ -243,7 +271,16 @@ const ListTable = () => {
       }),
       columnHelper.accessor("expert.name", {
         header: "Expert Name",
-        cell: ({ row }) => <Typography className="text-wrap w-[200px]">{row.original.expert.name}</Typography>,
+        cell: ({ row }) =>
+          <div className="flex flex-col">
+            <Typography className="text-wrap w-[250px]">
+              {row.original.expert.name}
+            </Typography>
+            <Typography variant="body2" className="text-wrap w-[200px] text-gray-500">
+              {row.original.expert.email}
+            </Typography>
+          </div>
+
       }),
       columnHelper.accessor("totalPayableAmount", {
         header: () => (
@@ -325,6 +362,27 @@ const ListTable = () => {
         <CardHeader title="Payout List" className="pbe-4" />
         <TableFilters filters={filters} onFiltersChange={handleFiltersChange} />
         <div className="overflow-x-auto">
+          <div className="sm:flex sm:justify-between items-center px-4 pb-2 gap-2">
+            <p className="text-lg">Total to be paid: {totals.totalPayableAmount.toLocaleString()} ({totals.bookingCount.toLocaleString()})</p>
+            <div>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handlePayout}
+                disabled={paymentProcessing || totals.totalPayableAmount === 0}
+              >
+                {paymentProcessing ? (
+                  <div className="flex items-center">
+                    <LoaderIcon size={16} />
+                    <span className="ml-2">Processing...</span>
+                  </div>
+                ) : (
+                  "Process Payout"
+                )}
+              </Button>
+            </div>
+
+          </div>
           <table className={tableStyles.table}>
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -406,18 +464,6 @@ const ListTable = () => {
                       </tr>
                     );
                   })}
-                  <tr>
-                    <td colSpan={3} className="font-bold text-start">
-                      Total Payable Expert(s): {data.length}
-                    </td>
-                    <td className="text-center font-bold">
-                      {totals.totalPayableAmount.toLocaleString()}
-                    </td>
-                    <td className="text-center font-bold">
-                      {totals.bookingCount.toLocaleString()}
-                    </td>
-                    <td></td>
-                  </tr>
                 </tbody>
               </>
             )}
