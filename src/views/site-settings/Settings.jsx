@@ -148,6 +148,33 @@ const Settings = () => {
           />
         );
 
+      case 'checkbox':
+        return (
+          <Controller
+            key={name}
+            name={name}
+            control={control}
+            render={({ field }) => {
+              const isChecked = field.value !== undefined && field.value !== null
+                ? (typeof field.value === 'string' ? field.value === 'true' : Boolean(field.value))
+                : (typeof value === 'string' ? value === 'true' : Boolean(value ?? false));
+
+              return (
+                <FormControlLabel
+                  {...field}
+                  control={
+                    <Checkbox
+                      checked={isChecked}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                    />
+                  }
+                  label={name.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                />
+              );
+            }}
+          />
+        );
+
       case 'text':
       default:
         return (

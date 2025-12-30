@@ -20,7 +20,7 @@ const initialData = {
   firstName: "John",
   lastName: "Doe",
   email: "john.doe@example.com",
-  organization: "AnnaNovas IT Ltd",
+  organization: "Zalpha Tech",
   phoneNumber: "+1 (917) 543-9876",
   address: "123 Main St, New York, NY 10001",
   state: "New York",
@@ -146,7 +146,7 @@ const AccountDetails = () => {
                 fullWidth
                 label="Organization"
                 value={formData.organization}
-                placeholder="AnnaNovas IT Ltd"
+                placeholder="Zalpha Tech"
                 onChange={(e) =>
                   handleFormChange("organization", e.target.value)
                 }

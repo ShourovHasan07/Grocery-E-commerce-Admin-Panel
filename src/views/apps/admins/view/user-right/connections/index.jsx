@@ -60,14 +60,14 @@ const socialAccountsArr = [
   {
     title: "Twitter",
     isConnected: true,
-    username: "@AnnaNovas IT Ltd",
+    username: "@Zalpha Tech",
     logo: "/images/logos/twitter.png",
     href: "https://twitter.com/pixinvents",
   },
   {
     title: "Linkedin",
     isConnected: true,
-    username: "@AnnaNovas IT Ltd",
+    username: "@Zalpha Tech",
     logo: "/images/logos/linkedin.png",
     href: "https://www.linkedin.com/company/pixinvent",
   },

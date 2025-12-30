@@ -36,7 +36,7 @@ const RenderVerticalExpandIcon = ({ open, transitionDuration }) => (
   </StyledVerticalNavExpandIcon>
 );
 
-const HorizontalMenu = ({}) => {
+const HorizontalMenu = ({ }) => {
   // Hooks
   const verticalNavOptions = useVerticalNav();
   const theme = useTheme();
@@ -469,7 +469,7 @@ const HorizontalMenu = ({}) => {
           </MenuItem>
           <MenuItem
             icon={<i className="tabler-link" />}
-            href="https://annanovas.com"
+            href="https://zalphatech.com"
             target="_blank"
             suffix={<i className="tabler-external-link text-xl" />}
           >
