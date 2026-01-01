@@ -469,7 +469,7 @@ const HorizontalMenu = ({ }) => {
           </MenuItem>
           <MenuItem
             icon={<i className="tabler-link" />}
-            href="https://zalphatech.com"
+            href="https://askvalor.co.uk"
             target="_blank"
             suffix={<i className="tabler-external-link text-xl" />}
           >

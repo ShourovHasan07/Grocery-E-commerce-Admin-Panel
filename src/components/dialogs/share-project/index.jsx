@@ -243,7 +243,7 @@ const ShareProject = ({ open, setOpen }) => {
             <Typography
               color="text.primary"
               className="font-medium"
-            >{`Public to ${themeConfig.templateName} - Zalpha Tech`}</Typography>
+            >{`Public to ${themeConfig.templateName} - Askvalor LTD`}</Typography>
           </div>
           <Button
             variant="contained"

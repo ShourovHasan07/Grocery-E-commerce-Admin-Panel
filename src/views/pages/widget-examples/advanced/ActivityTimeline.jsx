@@ -94,7 +94,7 @@ const ActivityTimeline = () => {
                     Lester McCarthy (Client)
                   </Typography>
                   <Typography variant="body2">
-                    CEO of Zalpha Tech
+                    CEO of Askvalor LTD
                   </Typography>
                 </div>
               </div>

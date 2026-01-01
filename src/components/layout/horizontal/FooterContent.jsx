@@ -26,11 +26,11 @@ const FooterContent = () => {
       <p>
         <span className="text-textSecondary">{`© ${new Date().getFullYear()}, Developed by `}</span>
         <Link
-          href="https://zalphatech.com/"
+          href="https://askvalor.co.uk"
           target="_blank"
           className="text-primary uppercase"
         >
-          Zalpha Tech
+          Askvalor LTD
         </Link>
       </p>
     </div>

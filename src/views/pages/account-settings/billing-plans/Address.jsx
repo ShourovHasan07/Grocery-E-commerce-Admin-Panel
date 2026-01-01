@@ -30,7 +30,7 @@ const Address = () => {
                 fullWidth
                 label="Company Name"
                 variant="outlined"
-                placeholder="Zalpha Tech"
+                placeholder="Askvalor LTD"
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
