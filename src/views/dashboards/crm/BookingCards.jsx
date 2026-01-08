@@ -16,36 +16,62 @@ const BookingCards = () => {
   const token = session?.accessToken;
   const [loading, setLoading] = useState(true);
   const [bookingStats, setBookingStats] = useState(null);
+    const [dashBoardData, setDashBoardData] = useState(null);
 
-  useEffect(() => {
-    const fetchBookingStats = async () => {
-      if (token) {
-        try {
-          const result = await pageApiHelper.get(
-            "dashboard/bookings",
-            {},
-            token,
-          );
 
-          if (result.success && result?.data?.bookings) {
-            setBookingStats(result.data.bookings);
-          }
-        } catch (error) {
-          // console.log("Error fetching booking stats:", error);
-        } finally {
-          setLoading(false);
+
+
+
+
+
+useEffect(() => {
+  const fetchBookingStats = async () => {
+    if (!token) return; //  token  return
+
+    try {
+      const response = await fetch(
+        "http://localhost:4000/admin/dashboard/stats",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, //  token 
+          },
         }
-      }
-    };
+      );
 
-    fetchBookingStats();
-  }, [token]);
+      const result = await response.json();
+
+      console.log("Booking Stats:", result);
+
+      if (response.ok && result) {
+        //  backend success response 
+        setBookingStats(result);
+        setDashBoardData(result);
+      } else {
+        console.error("Error fetching stats:", result);
+      }
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
+
+
+
+  fetchBookingStats();
+}, [token]);
+
 
 
   return (
     <>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-        <BarChartRevenueGrowth loading={loading} data={bookingStats?.monthly || []} />  
+        <BarChartRevenueGrowth loading={loading} data={dashBoardData?.totalIncome || []} />  
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <CardStatVertical

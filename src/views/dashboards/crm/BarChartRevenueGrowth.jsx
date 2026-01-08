@@ -20,6 +20,8 @@ const AppReactApexCharts = dynamic(
 const series = [{ data: [32, 52, 72, 94, 116, 94, 72] }];
 
 const BarChartRevenueGrowth = ({ loading, data }) => {
+ console.log("BarChartRevenueGrowth data:", data);
+
   // Hook
   const theme = useTheme();
 
@@ -122,7 +124,7 @@ const BarChartRevenueGrowth = ({ loading, data }) => {
       <CardContent className="flex justify-between gap-2">
         <div className="flex flex-col justify-between">
           <div className="flex flex-col gap-y-2">
-            <Typography variant="h5">Total Sales </Typography>
+            <Typography variant="h5">Total income  </Typography>
             <Typography>This Monthly</Typography>
           </div>
           <div className="flex flex-col gap-y-2 items-start">
@@ -133,8 +135,8 @@ const BarChartRevenueGrowth = ({ loading, data }) => {
               </div>
             ) : (
               <>
-                <Typography variant="h3">{data?.count || 0}</Typography>
-                <Chip variant="tonal" size="small" color="success" label={data?.percentage || "0%"} />
+                <Typography variant="h3">{data || 0}</Typography>
+                <Chip variant="tonal" size="small" color="success" label={data || "0%"} />
               </>
             )}
           </div>
