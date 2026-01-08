@@ -45,7 +45,7 @@ const BookingCards = () => {
   return (
     <>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-        <BarChartRevenueGrowth loading={loading} data={bookingStats?.monthly || []} />
+        <BarChartRevenueGrowth loading={loading} data={bookingStats?.monthly || []} />  
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <CardStatVertical

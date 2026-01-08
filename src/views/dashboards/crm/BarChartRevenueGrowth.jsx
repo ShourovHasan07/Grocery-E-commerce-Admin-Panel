@@ -122,7 +122,7 @@ const BarChartRevenueGrowth = ({ loading, data }) => {
       <CardContent className="flex justify-between gap-2">
         <div className="flex flex-col justify-between">
           <div className="flex flex-col gap-y-2">
-            <Typography variant="h5">Total Bookings</Typography>
+            <Typography variant="h5">Total Sales </Typography>
             <Typography>This Monthly</Typography>
           </div>
           <div className="flex flex-col gap-y-2 items-start">

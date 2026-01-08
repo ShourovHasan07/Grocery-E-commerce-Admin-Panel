@@ -16,7 +16,7 @@
  * Another way is to clear the cookie from the browser's Application/Storage tab and then reload the page.
  */
 const themeConfig = {
-  templateName: "AskValor",
+  templateName: "Grocery Ecommerce Admin Panel",
   homePageUrl: "/dashboard",
   settingsCookieName: "ask_valor_next_app",
   mode: "light", // 'system', 'light', 'dark'
