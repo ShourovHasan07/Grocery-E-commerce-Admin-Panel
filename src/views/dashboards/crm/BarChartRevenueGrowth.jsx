@@ -20,7 +20,7 @@ const AppReactApexCharts = dynamic(
 const series = [{ data: [32, 52, 72, 94, 116, 94, 72] }];
 
 const BarChartRevenueGrowth = ({ loading, data }) => {
- console.log("BarChartRevenueGrowth data:", data);
+ //console.log("BarChartRevenueGrowth data:", data);
 
   // Hook
   const theme = useTheme();

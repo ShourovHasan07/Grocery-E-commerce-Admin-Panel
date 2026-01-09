@@ -38,14 +38,14 @@ import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
 // Validation Schema
 const schema = z
   .object({
-    roleId: z.number().min(1, "Role field is required"),
+    //roleId: z.number().min(1, "Role field is required"),
     name: z.string().min(3, "Name must be at least 3 characters"),
     email: z.string().email("Please enter a valid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirm_password: z
       .string()
       .min(6, "Confirm Password must be at least 6 characters"),
-    phone: z.string().default(""),
+    //phone: z.string().default(""),
     status: z.boolean().default(true),
   })
   .refine((data) => data.password === data.confirm_password, {
@@ -71,10 +71,10 @@ const CreateForm = ({ tableData }) => {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      roleId: "",
+     // roleId: "",
       name: "",
       email: "",
-      phone: "",
+     // phone: "",
       password: "",
       confirm_password: "",
       status: true,
@@ -85,46 +85,56 @@ const CreateForm = ({ tableData }) => {
   const { data: session } = useSession();
   const token = session?.accessToken;
 
-  const onSubmit = async (formData) => {
-    setIsSubmitting(true);
+ const onSubmit = async (formData) => {
+  setIsSubmitting(true);
 
-    try {
-      const form = new FormData();
+  try {
+    // JSON body 
+    const body = {
+      // roleId: formData.roleId, // uncomment if backend expects this
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      // phone: formData.phone || "", // optional
+      password: formData.password,
+      status: formData.status, // boolean
+    };
 
-      form.append("roleId", formData.roleId);
-      form.append("name", formData.name.trim());
-      form.append("email", formData.email.trim());
-      form.append("phone", formData.phone);
-      form.append("password", formData.password);
-      form.append("status", formData.status.toString());
+    const response = await fetch("http://localhost:4000/admin/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // JSON 
+        Authorization: `Bearer ${token}`,   // JWT token
+      },
+      body: JSON.stringify(body), // JSON string convert
+    });
 
-      const headerConfig = {
-        headers: { "Content-Type": "multipart/form-data" },
-      };
+    const result = await response.json();
+    //console.log("Server Response:", result);
 
-      const res = await pageApiHelper.post(`admins`, form, token, headerConfig);
-
-      if (!res?.success && res?.status === 400) {
-        const errors = res?.data?.data?.errors || {};
-
+    // 400 error handle
+    if (!response.ok) {
+      if (response.status === 400) {
+        const errors = result?.data?.errors || {};
         Object.keys(errors).forEach((key) => {
           setError(key, { type: "server", message: errors[key] });
         });
-
-        return;
       }
-
-      if (res?.success && res?.data?.success) {
-        toast.success("Admin created successfully");
-        reset();
-        router.push("/admins");
-      }
-    } catch (error) {
-      toast.error(error.message || "Something went wrong");
-    } finally {
-      setIsSubmitting(false);
+      return;
     }
-  };
+
+    // Success
+    toast.success("Admin created successfully");
+    reset();
+    router.push("/admins");
+  } catch (error) {
+    console.error(error);
+    toast.error(error.message || "Something went wrong");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+
 
   return (
     <ProtectedRouteURL actions={["create"]} subject="Admin">
@@ -134,7 +144,7 @@ const CreateForm = ({ tableData }) => {
           <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={{ md: 6 }}>
               <Grid size={{ md: 6 }}>
-                <Controller
+                {/* <Controller
                   name="roleId"
                   control={control}
                   rules={{ required: true }}
@@ -158,7 +168,7 @@ const CreateForm = ({ tableData }) => {
                       ))}
                     </CustomTextField>
                   )}
-                />
+                /> */}
                 <Controller
                   name="name"
                   control={control}
@@ -200,7 +210,7 @@ const CreateForm = ({ tableData }) => {
               </Grid>
 
               <Grid size={{ md: 6 }}>
-                <Controller
+                {/* <Controller
                   name="phone"
                   control={control}
                   rules={{ required: false }}
@@ -217,7 +227,7 @@ const CreateForm = ({ tableData }) => {
                       })}
                     />
                   )}
-                />
+                /> */}
 
                 <Controller
                   name="password"

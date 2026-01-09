@@ -6,55 +6,73 @@ import { authOptions } from "@/libs/auth";
 import AdminEdit from "@/views/apps/admins/edit/index";
 import pageApiHelper from "@/utils/pageApiHelper";
 
-const getAdminData = async (id) => {
-  // Vars
-  const session = await getServerSession(authOptions);
 
-  if (session.accessToken) {
-    try {
-      // Fetching the categories data
-      const result = await pageApiHelper.get(
-        `admins/${id}`,
-        {},
-        session.accessToken,
-      );
+const getAdminData = async (id, abortControllerRef) => {
+  try {
+    // session 
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
 
-      if (result.success) {
-        return result.data;
-      }
+    if (!token) return null;
 
-      return null;
-    } catch (error) {
-      return null;
-    }
-  }
+    // abort signal
+    const signal = abortControllerRef?.current?.signal;
 
-  return null;
-};
+    // fetch request
+    const response = await fetch(`http://localhost:4000/admin/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      signal, // important for canceling request
+    });
 
-const getAdminOptions = async () => {
-  const session = await getServerSession(authOptions);
-
-  if (session?.accessToken) {
-    try {
-      const result = await pageApiHelper.get(
-        "admins/create-edit-options",
-        { status: "active" },
-        session.accessToken,
-      );
-
-      if (result.success) {
-        return result.data;
-      }
-
-      return null;
-    } catch (error) {
+    if (!response.ok) {
+      console.error("Error fetching admin data:", response.status);
       return null;
     }
-  }
 
-  return null;
+    const result = await response.json();
+    //console.log("Admin Data Response:", result);
+
+    return result || null;
+  } catch (error) {
+    if (error.name === "AbortError") {
+      console.log("Request cancelled");
+    } else {
+      console.error("Fetch admin data error:", error);
+    }
+    return null;
+  }
 };
+
+
+
+
+
+//   const session = await getServerSession(authOptions);
+
+//   if (session?.accessToken) {
+//     try {
+//       const result = await pageApiHelper.get(
+//         "admins/create-edit-options",
+//         { status: "active" },
+//         session.accessToken,
+//       );
+
+//       if (result.success) {
+//         return result.data;
+//       }
+
+//       return null;
+//     } catch (error) {
+//       return null;
+//     }
+//   }
+
+//   return null;
+// };
 
 export const metadata = {
   title: "Admins - AskValor",
@@ -62,15 +80,12 @@ export const metadata = {
 
 const ExpertEditApp = async ({ params }) => {
   const { id } = await params;
-  const res = await getAdminData(id);
-  const adminData = res?.data?.admin || {};
+  const result = await getAdminData(id);
+  const adminData = result|| {};
 
-  const result = await getAdminOptions();
-  const roles = result?.data?.roles || [];
+  
 
-  // console.log(adminData)
-
-  return <AdminEdit adminData={adminData} roles={roles} />;
+  return <AdminEdit adminData={adminData}  />;
 };
 
 export default ExpertEditApp;

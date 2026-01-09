@@ -32,6 +32,8 @@ const CardStatsVertical = (props) => {
     url,
   } = props;
 
+  //console.log("CardStatsVertical data:", data);
+
   return (
     <Card className="bs-full">
       <CardContent className="flex flex-col gap-y-3 items-start">
@@ -47,7 +49,7 @@ const CardStatsVertical = (props) => {
           {loading ? (
             <Skeleton variant="rounded" width={30} height={30} />
           ) : (
-            <Typography variant="h4" color="text.primary">{data?.count || 0}</Typography>
+            <Typography variant="h4" color="text.primary">{data || 0}</Typography>
           )}
 
 

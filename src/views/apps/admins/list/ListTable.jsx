@@ -162,53 +162,67 @@ const ListTable = () => {
   ]);
 
   // Fetch data from server
-  const fetchData = useCallback(async () => {
-    if (!token) {
-      setIsLoading(false);
-      return;
-    }
+const fetchData = useCallback(async () => {
+  if (!token) {
+    setIsLoading(false);
+    return;
+  }
 
-    // Cancel any previous request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
+  // Cancel previous request
+  if (abortControllerRef.current) {
+    abortControllerRef.current.abort();
+  }
 
-    // Create new abort controller for this request
-    abortControllerRef.current = new AbortController();
+  abortControllerRef.current = new AbortController();
 
-    try {
-      setIsLoading(true);
-      const queryParams = buildQueryParams();
+  try {
+    setIsLoading(true);
 
-      const result = await pageApiHelper.get(
-        "admins",
-        queryParams,
-        token,
-        {},
-        abortControllerRef.current.signal
-      );
+    const queryParams = buildQueryParams(); // if needed later
 
-      if (result.success) {
-        const adminsData = result.data?.data?.admins || [];
-        const paginationData = result.data?.data?.pagination || {};
-
-        setData(adminsData);
-        setPaginationMeta({
-          totalCount: paginationData.totalCount || 0,
-          totalPages: paginationData.totalPages || 0,
-          hasNextPage: paginationData.hasNextPage || false,
-          hasPreviousPage: paginationData.hasPreviousPage || false,
-        });
-      } else if (result.status === 499) {
-        // Request was cancelled - ignore silently
-        return;
+    const response = await fetch(
+      "http://localhost:4000/admin",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        signal: abortControllerRef.current.signal, //  important
       }
-    } catch (err) {
-      // console.error("Error fetching admins:", err);
-    } finally {
-      setIsLoading(false);
+    );
+
+    // Handle cancelled request
+    if (!response.ok) {
+      if (response.status === 499) return;
+      throw new Error("Failed to fetch admins");
     }
-  }, [token, buildQueryParams]);
+
+    const result = await response.json();
+
+    //console.log("Admins List Result:", result);
+
+    // API returns direct array
+    const adminsData = Array.isArray(result) ? result : [];
+
+    setData(adminsData); 
+
+    // Temporary pagination (since API has no pagination)
+    setPaginationMeta({
+      totalCount: adminsData.length,
+      totalPages: 1,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    });
+
+  } catch (err) {
+    if (err.name === "AbortError") return;
+    // console.error("Error fetching admins:", err);
+  } finally {
+    setIsLoading(false);
+  }
+}, [token, buildQueryParams]);
+
 
   // Fetch data when dependencies change
   useEffect(() => {
@@ -302,14 +316,11 @@ const ListTable = () => {
         header: "Email",
         cell: ({ row }) => <Typography>{row.original.email}</Typography>,
       }),
-      columnHelper.accessor("phone", {
-        header: "Phone",
-        cell: ({ row }) => <Typography>{row.original.phone}</Typography>,
-      }),
+     
       columnHelper.accessor("role.displayName", {
         header: "Role",
         cell: ({ row }) => (
-          <Typography>{row.original?.role?.displayName}</Typography>
+          <Typography>{row.original?.role}</Typography>
         ),
       }),
       columnHelper.accessor("status", {
@@ -369,31 +380,41 @@ const ListTable = () => {
     }
   };
 
-  const handleDelete = async (itemId) => {
-    try {
-      const deleteEndpoint = `admins/${itemId}`;
+ const handleDelete = async (itemId) => {
+  try {
+    const deleteEndpoint = `http://localhost:4000/admin/${itemId}`;
 
-      // call the delete API
-      const res = await pageApiHelper.delete(deleteEndpoint, token);
+    const res = await fetch(deleteEndpoint, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      // Update the data state after successful deletion
-      if (res?.success && res?.data?.success) {
-        setData((prevData) => prevData.filter((item) => item.id !== itemId));
-        setDialogOpen((prevState) => ({
-          ...prevState,
-          open: !prevState.open,
-        }));
+    const result = await res.json();
+    //console.log("API Response:", result);
 
-        toast.success("Deleted  successfully");
-        // Refresh data after deletion
-        fetchData();
-      }
-    } catch (error) {
-      // console.error('Delete failed:', error);
-      // Show error in toast
-      toast.error(error.message);
+    // check the API response message
+    if (result.message === "Admin deleted successfully") {
+      // Update state correctly
+      setData((prevData) => prevData.filter((item) => item._id !== itemId));
+
+      // Close dialog explicitly
+      setDialogOpen({ open: false });
+
+      toast.success("Deleted successfully");
+
+      // Optionally refetch data
+      fetchData();
+    } else {
+      toast.error(result.message || "Delete failed");
     }
-  };
+  } catch (error) {
+    toast.error(error.message || "Something went wrong");
+    console.error(error);
+  }
+};
 
   return (
     <>

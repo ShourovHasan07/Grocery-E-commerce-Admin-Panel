@@ -14,4 +14,4 @@ const productList = () => {
   );
 };
 
-export default ExpertList;
+export default productList;

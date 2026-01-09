@@ -34,7 +34,7 @@ import pageApiHelper from "@/utils/pageApiHelper";
 // Zod Imports
 
 const schema = z.object({
-  roleId: z.number().min(1, "Role field is required"),
+ // roleId: z.number().min(1, "Role field is required"),
   name: z
     .string()
     .min(1, "This field is required")
@@ -43,11 +43,14 @@ const schema = z.object({
     .string()
     .min(1, "This field is required")
     .email("Please enter a valid email address"),
-  phone: z.string().default(""),
+  //phone: z.string().default(""),
   status: z.boolean().default(true),
 });
 
 const EditForm = ({ adminData, roles }) => {
+
+  //console.log("EditForm adminData:", adminData);
+
   const router = useRouter();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,50 +73,51 @@ const EditForm = ({ adminData, roles }) => {
 
   // form submission
   const onSubmit = async (formData) => {
-    setIsSubmitting(true);
+  setIsSubmitting(true);
 
-    try {
-      const form = new FormData();
+  try {
+    const body = {
+      // roleId: formData.roleId, // uncomment if needed
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      
+      status: formData.status, // boolean
+    };
 
-      form.append("roleId", formData.roleId);
-      form.append("name", formData.name.trim());
-      form.append("email", formData.email.trim());
-      form.append("phone", formData.phone?.trim());
-      form.append("status", formData.status.toString());
+     const adminId = parseInt(adminData.id, 10);
 
-      const res = await pageApiHelper.put(
-        `admins/${adminData.id}`,
-        form,
-        token,
-      );
+    const res = await fetch(`http://localhost:4000/admin/${adminId}`, {
+      method: "PUT", // Usually update should be PUT/PATCH
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
 
-      if (!res?.success && res?.status === 400) {
-        let errors = res?.data?.data?.errors || [];
+    const result = await res.json();
 
-        if (errors) {
-          Object.keys(errors).forEach((key) => {
-            setError(key, {
-              type: "server",
-              message: errors[key],
-            });
-          });
-        }
-
-        return;
-      }
-
-      if (res?.success && res?.data?.data?.success) {
-        toast.success("Admin updated successfully");
-
-        // Optionally, redirect or perform other actions after successful creation
-        router.push("/admins");
-      }
-    } catch (error) {
-      toast.error(error.message || "Something went wrong");
-    } finally {
-      setIsSubmitting(false);
+    if (!res.ok) {
+      // Validation errors from server
+      const errors = result?.data?.errors || {};
+      Object.keys(errors).forEach((key) => {
+        setError(key, { type: "server", message: errors[key] });
+      });
+      return;
     }
-  };
+
+    // Success
+    toast.success("Admin updated successfully");
+    router.push("/admins");
+
+  } catch (error) {
+    toast.error(error.message || "Something went wrong");
+    console.error(error);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   return (
     <Card>
@@ -122,7 +126,7 @@ const EditForm = ({ adminData, roles }) => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={{ md: 6 }}>
             <Grid size={{ md: 6 }}>
-              <Controller
+              {/* <Controller
                 name="roleId"
                 control={control}
                 rules={{ required: true }}
@@ -146,7 +150,7 @@ const EditForm = ({ adminData, roles }) => {
                     ))}
                   </CustomTextField>
                 )}
-              />
+              /> */}
 
               <Controller
                 name="name"
@@ -187,7 +191,7 @@ const EditForm = ({ adminData, roles }) => {
                 )}
               />
 
-              <Controller
+              {/* <Controller
                 name="phone"
                 control={control}
                 rules={{ required: false }}
@@ -204,7 +208,7 @@ const EditForm = ({ adminData, roles }) => {
                     })}
                   />
                 )}
-              />
+              /> */}
 
               <Controller
                 name="status"

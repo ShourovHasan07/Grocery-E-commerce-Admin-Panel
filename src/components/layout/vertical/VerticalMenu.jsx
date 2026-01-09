@@ -119,13 +119,13 @@ const VerticalMenu = ({ scrollMenu }) => {
             )}
 
             {/* Experts */}
-            {(ability.can('create', 'Expert') || ability.can('read', 'Expert')) && (
-              <SubMenu label="Experts" icon={<i className="tabler-users" />}>
-                {ability.can('create', 'Expert') && (
-                  <MenuItem href="/experts/create">New Expert</MenuItem>
+            {(ability.can('create', 'Products') || ability.can('read', 'Products')) && (
+              <SubMenu label="Products" icon={<i className="tabler-users" />}>
+                {ability.can('create', 'Products') && (
+                  <MenuItem href="/products/create"> Add Product </MenuItem>
                 )}
-                {ability.can('read', 'Expert') && (
-                  <MenuItem href="/experts">Expert List</MenuItem>
+                {ability.can('read', 'Products') && (
+                  <MenuItem href="/products"> Product List</MenuItem>
                 )}
               </SubMenu>
             )}

@@ -42,7 +42,7 @@ useEffect(() => {
 
       const result = await response.json();
 
-      console.log("Booking Stats:", result);
+      //console.log("Booking Stats:", result);
 
       if (response.ok && result) {
         //  backend success response 
@@ -75,8 +75,8 @@ useEffect(() => {
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <CardStatVertical
-          title="Total Ongoing"
-          subtitle="Today"
+          title="Total income this month"
+          subtitle="This Month"
           avatarColor="info"
           avatarIcon="tabler-credit-card"
           avatarSkin="light"
@@ -86,13 +86,13 @@ useEffect(() => {
           chipColor="info"
           chipVariant="tonal"
           loading={loading}
-          data={bookingStats?.ongoingToday || {}}
+          data={dashBoardData?.getThisMonthIncome || []}
           url={`/bookings?status=ongoing&startDate=&endDate=`}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <CardStatVertical
-          title="Total Completed"
+          title="Total Orders"
           subtitle="Today"
           avatarColor="success"
           avatarIcon="tabler-credit-card"
@@ -103,13 +103,31 @@ useEffect(() => {
           chipColor="success"
           chipVariant="tonal"
           loading={loading}
-          data={bookingStats?.completedToday || {}}
+            data={dashBoardData?.totalOrders || []}
+          url={`/bookings?status=completed&startDate=&endDate=`}
+        />
+      </Grid>
+
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <CardStatVertical
+          title="Total products"
+          subtitle="Today"
+          avatarColor="success"
+          avatarIcon="tabler-credit-card"
+          avatarSkin="light"
+          avatarSize={44}
+
+          // chipText="+24.67%"
+          chipColor="success"
+          chipVariant="tonal"
+          loading={loading}
+            data={dashBoardData?.totalProducts || []}
           url={`/bookings?status=completed&startDate=&endDate=`}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <CardStatVertical
-          title="Total Cancelled"
+          title="Total Users"
           subtitle="Today"
           avatarColor="error"
           avatarIcon="tabler-credit-card"
@@ -119,7 +137,7 @@ useEffect(() => {
           chipColor="error"
           chipVariant="error"
           loading={loading}
-          data={bookingStats?.cancelledToday || {}}
+           data={dashBoardData?.totalUsers || []}
           url={`/bookings?status=cancelled&startDate=&endDate=`}
         />
       </Grid>
