@@ -1,78 +1,50 @@
 import { getServerSession } from "next-auth/next";
-
 import { authOptions } from "@/libs/auth";
-import apiHelper from "@/utils/apiHelper";
 
-// Component Imports
-import ExpertEdit from "@/views/apps/experts/edit";
-import pageApiHelper from "@/utils/pageApiHelper";
+// Component
+import ProductEdit from "@/views/apps/products/edit";
 
-const getExpertData = async (id) => {
-  // Vars
+/* ---------------- FETCH PRODUCT ---------------- */
+const getProductData = async (id) => {
   const session = await getServerSession(authOptions);
 
-  if (session.accessToken) {
-    try {
-      // Fetching the categories data
-      const result = await pageApiHelper.get(
-        `experts/${id}/edit`,
-        {},
-        session.accessToken,
-      );
+  if (!session?.accessToken) return null;
 
-      if (result.success) {
-        return result.data;
-      }
+  try {
+    const res = await fetch(`http://localhost:4000/products/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+      cache: "no-store", // important for edit page
+    });
 
-      return null;
-    } catch (error) {
-      return null;
-    }
+    if (!res.ok) return null;
+
+    const result = await res.json();
+    return result?.data || result;
+  } catch (error) {
+    console.error("Fetch product error:", error);
+    return null;
   }
-
-  return null;
 };
 
-// expert category options data
-const getCategoryData = async () => {
-  // Vars
-  const session = await getServerSession(authOptions);
-
-  if (session.accessToken) {
-    try {
-      // Fetching the categories data
-      const result = await pageApiHelper.get(
-        "experts/create-edit-options",
-        {},
-        session.accessToken,
-      );
-
-      if (result.success) {
-        return result.data;
-      }
-
-      return null;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  return null;
-};
-
+/* ---------------- METADATA ---------------- */
 export const metadata = {
-  title: "Experts - AskValor",
+  title: "Edit Product - Admin",
 };
 
-const ExpertEditApp = async ({ params }) => {
-  const { id } = await params;
-  const editExpert = await getExpertData(id);
-  const result = await getCategoryData();
+/* ---------------- PAGE ---------------- */
+const ProductsEditApp = async ({ params }) => {
+  const { id } = params;
 
-  const categories = result?.data?.categories || [];
-  const expertData = editExpert?.data?.expert || {};
+  const editProduct = await getProductData(id);
 
-  return <ExpertEdit expertData={expertData} categoryData={categories} />;
+  if (!editProduct) {
+    return <div className="p-6">Product not found</div>;
+  }
+
+  return <ProductEdit editProduct={editProduct} />;
 };
 
-export default ExpertEditApp;
+export default ProductsEditApp;

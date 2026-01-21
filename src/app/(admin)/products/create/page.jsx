@@ -4,7 +4,7 @@ import { authOptions } from "@/libs/auth";
 import pageApiHelper from "@/utils/pageApiHelper";
 
 // Component Imports
-import ExpertCreate from "@/views/apps/experts/create";
+import ProductCreate from "@/views/apps/products/create";
 
 // expert category options data
 const getCategoryData = async () => {
@@ -39,13 +39,13 @@ export const metadata = {
   title: "Experts - AskValor",
 };
 
-const ExpertCreateApp = async () => {
+const ProductCreateApp = async () => {
   // Vars
   const result = await getCategoryData();
 
   const categories = result?.data?.categories || [];
 
-  return <ExpertCreate categoryData={categories} />;
+  return <ProductCreate categoryData={categories} />;
 };
 
-export default ExpertCreateApp;
+export default ProductCreateApp;

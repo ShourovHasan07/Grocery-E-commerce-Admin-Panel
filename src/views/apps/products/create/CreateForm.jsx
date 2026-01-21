@@ -1,695 +1,393 @@
 "use client";
 
-// React Imports
-import { useRef, useState } from "react";
-
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-
 import { useSession } from "next-auth/react";
 
-// MUI Imports
-import Card from "@mui/material/Card";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  Button,
+
+} from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import Button from "@mui/material/Button";
-import CardHeader from "@mui/material/CardHeader";
-import CardContent from "@mui/material/CardContent";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Chip from "@mui/material/Chip";
 
-// Third-party Imports
-import { toast } from "react-toastify";
 import { Controller, useForm } from "react-hook-form";
-
-// Components Imports
 import { z } from "zod";
-
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
 
 import CustomTextField from "@core/components/mui/TextField";
-import CustomAutocomplete from "@core/components/mui/Autocomplete";
 
-import pageApiHelper from "@/utils/pageApiHelper";
-import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
-
-// Zod Imports
+/* ---------------- ZOD SCHEMA ---------------- */
 const schema = z.object({
-  name: z
-    .string({ message: "This field is required" })
-    .min(1, "This field is required")
-    .min(3, "Name must be at least 3 characters long"),
-  email: z
-    .string({ message: "This field is required" })
-    .min(1, "This field is required")
-    .email("Please enter a valid email address"),
-  userName: z
-    .string({ message: "This field is required" })
-    .min(1, "This field is required")
-    .min(3, "User Name must be at least 3 characters long"),
+  name: z.string().min(3),
+  category: z.string(),
+  vendor: z.string(),
 
-  // password: z
-  //   .string()
-  //   .min(1, "This field is required")
-  //   .min(6, "Password must be at least 6 characters long"),
-  // confirm_password: z
-  //   .string()
-  //   .min(1, "This field is required")
-  //   .min(6, "Confirm Password must be at least 6 characters long"),
-  // hourlyRate: z
-  //   .string()
-  //   .min(1, "This field is required")
-  //   .transform((val) => val === "" || val === undefined ? undefined : Number(val))
-  //   .refine((val) => val === undefined || !isNaN(val), "Must be a valid number")
-  //   .refine((val) => val === undefined || val >= 0, "Hourly rate must be a positive number"),
-  // rating: z
-  //   .string({ message: "This field is required" })
-  //   .min(1, "This field is required")
-  //   .transform((val) =>
-  //     val === "" || val === undefined ? undefined : Number(val),
-  //   )
-  //   .refine((val) => val === undefined || !isNaN(val), "Must be a valid number")
-  //   .refine(
-  //     (val) => val === undefined || val >= 0,
-  //     "Rating must be a positive number",
-  //   )
-  //   .refine((val) => val === undefined || val <= 5, "Rating must not exceed 5"),
-  image: z
-    .any()
-    .refine((file) => !file || (file instanceof FileList && file.length > 0), {
-      message: "Image is required",
-    })
-    .refine(
-      (file) =>
-        !file ||
-        (file instanceof FileList &&
-          ["image/jpeg", "image/png", "image/svg+xml"].includes(file[0]?.type)),
-      {
-        message: "Only .jpg, .jpeg, .png, and .svg formats are supported",
-      },
-    ),
-  status: z.boolean().default(true),
-  isVerified: z.boolean().default(false),
-  phone: z.string().nullable().default(""),
-  address: z.string().nullable().default(""),
-  aboutMe: z.string().nullable().default(""),
-  title: z.string().nullable().default(""),
-  categories: z
-    .array(
-      z.object({
-        id: z.number(),
-        name: z.string(),
-      }),
-    )
-    .default([]),
+  price: z.string(),
+  oldPrice: z.string().optional(),
+  discount: z.string().optional(),
+
+  badge: z.string().optional(),
+  rating: z.string().optional(),
+  reviewCount: z.string().optional(),
+
+  shortDescription: z.string(),
+  description: z.string(),
+
+  stock: z.string(),
+  type: z.string(),
+
+  manufactureDate: z.string(),
+  lifeTimeDays: z.string(),
+
+  sku: z.string(),
+  ingredients: z.string().optional(),
+  warnings: z.string().optional(),
+  suggestedUse: z.string().optional(),
+
+  packagingInfo: z.string().optional(),
+  deliveryInfo: z.string().optional(),
+
+  image: z.any().refine((file) => file?.length > 0, "Image required"),
 });
 
-const CreateForm = ({ categoryData }) => {
-  // States
-  const [isPasswordShown, setIsPasswordShown] = useState(false);
-  const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Hooks
+/* ---------------- COMPONENT ---------------- */
+export default function CreateProductForm() {
   const router = useRouter();
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+
+  const [loading, setLoading] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const fileRef = useRef(null);
 
   const {
     control,
-    reset,
     handleSubmit,
+    reset,
     formState: { errors },
-    setError,
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
-      email: "",
-      userName: "",
-      password: "",
-      confirm_password: "",
-      phone: "",
-      address: "",
-      aboutMe: "",
-      title: "",
-      image: "",
-      hourlyRate: "",
+      category: "",
+      vendor: "",
+      price: "",
+      oldPrice: "",
+      discount: "",
+      badge: "",
       rating: "",
-      status: true,
-      isVerified: false,
-      categories: [],
+      reviewCount: "",
+      shortDescription: "",
+      description: "",
+      stock: "",
+      type: "",
+      manufactureDate: "",
+      lifeTimeDays: "",
+      sku: "",
+      ingredients: "",
+      warnings: "",
+      suggestedUse: "",
+      packagingInfo: "",
+      deliveryInfo: "",
+      image: "",
     },
   });
 
-  const handleClickShowPassword = () => setIsPasswordShown((show) => !show);
-
-  const handleClickShowConfirmPassword = () =>
-    setIsConfirmPasswordShown((show) => !show);
-
-  const handleImageChange = (files, onChange) => {
+  /* ---------------- IMAGE PREVIEW ---------------- */
+  const handleImage = (files, onChange) => {
     if (files?.[0]) {
       const reader = new FileReader();
-
-      reader.onload = (e) => {
-        setImagePreview(e.target.result);
-      };
-
+      reader.onload = (e) => setPreview(e.target.result);
       reader.readAsDataURL(files[0]);
-    } else {
-      setImagePreview(null);
     }
-
     onChange(files);
   };
 
-  const fileInputRef = useRef(null);
-  const [imagePreview, setImagePreview] = useState(null);
-
-  //form submission
-  const { data: session } = useSession();
-  const token = session?.accessToken;
-
-  const onSubmit = async (formData) => {
-    setIsSubmitting(true);
+  /* ---------------- SUBMIT ---------------- */
+  const onSubmit = async (data) => {
+    setLoading(true);
 
     try {
-      const form = new FormData();
+      const formData = new FormData();
 
-      form.append("name", formData.name.trim());
-      form.append("email", formData.email.trim());
-      form.append("userName", formData.userName.trim());
-      form.append("status", formData.status.toString());
-      form.append("isVerified", formData.status.toString());
-      form.append("password", Math.random(12));
-      form.append("phone", formData.phone ? formData.phone.trim() : "");
-      form.append("address", formData.address ? formData.address.trim() : "");
-      form.append("aboutMe", formData.aboutMe ? formData.aboutMe.trim() : "");
-      form.append("title", formData.title ? formData.title.trim() : "");
-      form.append("hourlyRate", 0);
-
-      // form.append("rating", formData.rating);
-
-      // Append image if exists
-      if (formData.image?.[0]) {
-        form.append("image", formData.image[0]);
-      }
-
-      formData.categories.forEach((category, index) => {
-        form.append(`categories[${index}]`, category.id);
+      Object.keys(data).forEach((key) => {
+        if (key === "image") {
+          formData.append("image", data.image[0]);
+        } else {
+          formData.append(key, data[key]);
+        }
       });
 
-      const headerConfig = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      };
-
-      const res = await pageApiHelper.post(
-        `experts/create`,
-        form,
-        token,
-        headerConfig,
+      const res = await fetch(
+        "http://localhost:4000/admin/products/create",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
       );
 
-      if (!res?.success && res?.status === 400) {
-        let errors = res?.data?.errors || [];
+      const result = await res.json();
 
-        if (errors) {
-          Object.keys(errors).forEach((key) => {
-            setError(key, {
-              type: "server",
-              message: errors[key],
-            });
-          });
-        }
-
-        return;
+      if (!res.ok) {
+        throw new Error(result.message || "Failed");
       }
 
-      if (res?.success && res?.data?.success) {
-        handleReset();
-        toast.success("Expert created successfully");
-
-        // Optionally, redirect or perform other actions after successful creation
-        router.push("/experts");
-      }
-    } catch (error) {
-      toast.error(error.message || "Something went wrong");
+      toast.success("Product created successfully");
+      reset();
+      setPreview(null);
+      router.push("/products");
+    } catch (err) {
+      toast.error(err.message);
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
-  const handleReset = () => {
-    setImagePreview(null);
-    reset();
-
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
+  /* ---------------- UI ---------------- */
   return (
 
-    <ProtectedRouteURL actions={["create"]} subject="Expert">
-      <Card>
-        <CardHeader title="New Expert Info" />
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Grid container spacing={{ md: 6 }}>
-              <Grid size={{ md: 6 }}>
-                <Controller
-                  name="name"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      fullWidth
-                      className="mb-4"
-                      label="Name"
-                      placeholder="name"
-                      {...(errors.name && {
-                        error: true,
-                        helperText: errors.name.message,
-                      })}
-                    />
-                  )}
-                />
 
-                <Controller
-                  name="email"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      fullWidth
-                      type="email"
-                      className="mb-4"
-                      label="Email"
-                      placeholder="email"
-                      {...(errors.email && {
-                        error: true,
-                        helperText: errors.email.message,
-                      })}
-                    />
-                  )}
-                />
+<Card>
+  <CardHeader title="Create Product" />
+  <CardContent>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={4}>
 
-                {/* <Controller
-                name="password"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    className="mb-4"
-                    label="Password"
-                    placeholder="············"
-                    id="form-validation-scheme-password"
-                    type={isPasswordShown ? "text" : "password"}
-                    slotProps={{
-                      input: {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              edge="end"
-                              onClick={handleClickShowPassword}
-                              onMouseDown={(e) => e.preventDefault()}
-                              aria-label="toggle password visibility"
-                            >
-                              <i
-                                className={
-                                  isPasswordShown
-                                    ? "tabler-eye-off"
-                                    : "tabler-eye"
-                                }
-                              />
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      },
-                    }}
-                    {...(errors.password && {
-                      error: true,
-                      helperText: errors.password.message,
-                    })}
-                  />
-                )}
+        {/* ===== BASIC INFO ===== */}
+        <Grid size={{ xs: 12 }}>
+          <h3 className="font-semibold text-lg">Basic Information</h3>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField {...field} label="Product Name" fullWidth />
+            )}
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Controller
+            name="category"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField {...field} label="Category" fullWidth />
+            )}
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Controller
+            name="vendor"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField {...field} label="Vendor" fullWidth />
+            )}
+          />
+        </Grid>
+
+        {/* ===== PRICING ===== */}
+        <Grid size={{ xs: 12 }}>
+          <h3 className="font-semibold text-lg">Pricing</h3>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Controller
+            name="price"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField {...field} label="Price" type="number" fullWidth />
+            )}
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Controller
+            name="oldPrice"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField {...field} label="Old Price" type="number" fullWidth />
+            )}
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Controller
+            name="discount"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField {...field} label="Discount %" type="number" fullWidth />
+            )}
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Controller
+            name="badge"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField {...field} label="Badge (New / Hot)" fullWidth />
+            )}
+          />
+        </Grid>
+
+        {/* ===== DESCRIPTION ===== */}
+        <Grid size={{ xs: 12 }}>
+          <h3 className="font-semibold text-lg">Description</h3>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Controller
+            name="shortDescription"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField {...field} label="Short Description" fullWidth />
+            )}
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12 }}>
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField
+                {...field}
+                label="Full Description"
+                multiline
+                minRows={4}
+                fullWidth
               />
+            )}
+          />
+        </Grid>
 
-              <Controller
-                name="confirm_password"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    className="mb-4"
-                    label="Confirm Password"
-                    placeholder="············"
-                    id="form-validation-scheme-password-confirmed"
-                    type={isConfirmPasswordShown ? "text" : "password"}
-                    slotProps={{
-                      input: {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              edge="end"
-                              onClick={handleClickShowConfirmPassword}
-                              onMouseDown={(e) => e.preventDefault()}
-                              aria-label="toggle password visibility"
-                            >
-                              <i
-                                className={
-                                  isConfirmPasswordShown
-                                    ? "tabler-eye-off"
-                                    : "tabler-eye"
-                                }
-                              />
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      },
-                    }}
-                    {...(errors.confirm_password && {
-                      error: true,
-                      helperText: errors.confirm_password.message,
-                    })}
-                  />
-                )}
-              /> */}
+        {/* ===== INVENTORY ===== */}
+        <Grid size={{ xs: 12 }}>
+          <h3 className="font-semibold text-lg">Inventory</h3>
+        </Grid>
 
-                <Controller
-                  name="userName"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      fullWidth
-                      className="mb-4"
-                      label="User Name"
-                      placeholder="User name"
-                      {...(errors.userName && {
-                        error: true,
-                        helperText: errors.userName.message,
-                      })}
-                    />
-                  )}
-                />
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Controller
+            name="stock"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField {...field} label="Stock" type="number" fullWidth />
+            )}
+          />
+        </Grid>
 
-                <Controller
-                  name="aboutMe"
-                  control={control}
-                  rules={{ required: false }}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      fullWidth
-                      multiline
-                      minRows={8}
-                      className="mb-4"
-                      label="About Me"
-                      placeholder="About Me"
-                      {...(errors.aboutMe && {
-                        error: true,
-                        helperText: errors.aboutMe.message,
-                      })}
-                    />
-                  )}
-                />
-              </Grid>
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Controller
+            name="type"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField {...field} label="Product Type" fullWidth />
+            )}
+          />
+        </Grid>
 
-              <Grid size={{ md: 6 }}>
-                <Controller
-                  name="phone"
-                  control={control}
-                  rules={{ required: false }}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      fullWidth
-                      className="mb-4"
-                      label="Phone"
-                      placeholder="phone"
-                      {...(errors.phone && {
-                        error: true,
-                        helperText: errors.phone.message,
-                      })}
-                    />
-                  )}
-                />
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Controller
+            name="sku"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField {...field} label="SKU" fullWidth />
+            )}
+          />
+        </Grid>
 
-                <Controller
-                  name="address"
-                  control={control}
-                  rules={{ required: false }}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      fullWidth
-                      className="mb-4"
-                      label="Address"
-                      placeholder="address"
-                      {...(errors.address && {
-                        error: true,
-                        helperText: errors.address.message,
-                      })}
-                    />
-                  )}
-                />
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Controller
+            name="rating"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField {...field} label="Rating (0-5)" type="number" fullWidth />
+            )}
+          />
+        </Grid>
 
-                <Controller
-                  name="title"
-                  control={control}
-                  rules={{ required: false }}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      fullWidth
-                      className="mb-4"
-                      label="Title"
-                      placeholder="title"
-                      {...(errors.title && {
-                        error: true,
-                        helperText: errors.title.message,
-                      })}
-                    />
-                  )}
-                />
+        {/* ===== DATES ===== */}
+        <Grid size={{ xs: 12 }}>
+          <h3 className="font-semibold text-lg">Manufacture Info</h3>
+        </Grid>
 
-                <Grid container spacing={2}>
-                  {/* <Grid size={{ md: 6 }}>
-                  <Controller
-                    name="hourlyRate"
-                    control={control}
-                    rules={{ required: false }}
-                    render={({ field }) => (
-                      <CustomTextField
-                        {...field}
-                        fullWidth
-                        className="mb-4"
-                        label="Hourly Rate (min 0)"
-                        placeholder="hourly rate"
-                        type="number"
-                        inputProps={{
-                          min: 0,
-                          step: 0.5
-                        }}
-                        {...(errors.hourlyRate && {
-                          error: true,
-                          helperText: errors.hourlyRate.message,
-                        })}
-                      />
-                    )}
-                  />
-                </Grid> */}
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Controller
+            name="manufactureDate"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField
+                {...field}
+                label="Manufacture Date"
+                type="date"
+                InputLabelProps={{ shrink: true }}
+                fullWidth
+              />
+            )}
+          />
+        </Grid>
 
-                  {/* <Grid size={{ md: 12 }}>
-                  <Controller
-                    name="rating"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <CustomTextField
-                        {...field}
-                        fullWidth
-                        className="mb-4"
-                        label="Rating Out of 5"
-                        placeholder="Enter rating (0-5)"
-                        type="number"
-                        inputProps={{
-                          min: 0,
-                          max: 5,
-                          step: 0.1,
-                        }}
-                        {...(errors.rating && {
-                          error: true,
-                          helperText: errors.rating.message,
-                        })}
-                      />
-                    )}
-                  />
-                </Grid> */}
-                </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Controller
+            name="lifeTimeDays"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField {...field} label="Lifetime (Days)" type="number" fullWidth />
+            )}
+          />
+        </Grid>
 
-                <Controller
-                  name="categories"
-                  control={control}
-                  render={({ field }) => (
-                    <CustomAutocomplete
-                      {...field}
-                      multiple
-                      className="mb-4"
-                      options={categoryData || []}
-                      id="categories"
-                      getOptionLabel={(option) => option.name || ""}
-                      renderInput={(params) => (
-                        <CustomTextField
-                          {...params}
-                          label="Categories"
-                          placeholder="Select categories"
-                          error={!!errors.categories}
-                          helperText={errors.categories?.message}
-                        />
-                      )}
-                      renderTags={(catValue, getCatProps) =>
-                        catValue.map((option, index) => (
-                          <Chip
-                            label={option.name}
-                            {...getCatProps({ index })}
-                            key={option.id}
-                            size="small"
-                          />
-                        ))
-                      }
-                      onChange={(_, value) => field.onChange(value)}
-                      value={field.value || []}
-                      isOptionEqualToValue={(option, value) =>
-                        option.id === value.id
-                      }
-                    />
-                  )}
-                />
+        {/* ===== IMAGE ===== */}
+        <Grid size={{ xs: 12 }}>
+          <h3 className="font-semibold text-lg">Product Image</h3>
+        </Grid>
 
-                <Controller
-                  name="image"
-                  control={control}
-                  render={({ field: { onChange, value, ...field } }) => (
-                    <div className="space-y-2">
-                      <CustomTextField
-                        {...field}
-                        type="file"
-                        fullWidth
-                        label="Upload Image"
-                        variant="outlined"
-                        size="small"
-                        inputRef={fileInputRef}
-                        inputProps={{
-                          accept: "image/*",
-                          onChange: (e) =>
-                            handleImageChange(e.target.files, onChange),
-                        }}
-                        error={!!errors.image}
-                        helperText={errors.image?.message}
-                      />
-                      {imagePreview && (
-                        <div className="mt-2">
-                          <img
-                            src={imagePreview}
-                            alt="Preview"
-                            className="max-h-[50px] rounded-md"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  )}
-                />
-                <div className="flex items-center gap-2 mt-2">
-                  <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => {
-                      return (
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              checked={Boolean(field.value)}
-                              onChange={(e) => field.onChange(e.target.checked)}
-                            />
-                          }
-                          label="Active"
-                        />
-                      );
-                    }}
-                  />
+        <Grid size={{ xs: 12 }}>
+          <Controller
+            name="image"
+            control={control}
+            render={({ field }) => (
+              <CustomTextField
+                type="file"
+                fullWidth
+                inputRef={fileRef}
+                inputProps={{
+                  accept: "image/*",
+                  onChange: (e) =>
+                    handleImage(e.target.files, field.onChange),
+                }}
+              />
+            )}
+          />
+          {preview && (
+            <img src={preview} className="mt-3 h-20 rounded-md border" />
+          )}
+        </Grid>
 
-                  <Controller
-                    name="isVerified"
-                    control={control}
-                    render={({ field }) => {
-                      return (
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              color="success"
-                              checked={Boolean(field.value)}
-                              onChange={(e) => field.onChange(e.target.checked)}
-                            />
-                          }
-                          label="Verified"
-                        />
-                      );
-                    }}
-                  />
-                </div>
-              </Grid>
+        {/* ===== ACTIONS ===== */}
+        <Grid size={{ xs: 12 }} className="flex gap-3 mt-4">
+          <Button type="submit" variant="contained" disabled={loading}>
+            {loading ? "Saving..." : "Create Product"}
+          </Button>
+          <Button variant="outlined" color="secondary" onClick={() => reset()}>
+            Reset
+          </Button>
+        </Grid>
 
-              <Grid size={{ xs: 12 }} className="flex gap-4">
-                <Button
-                  variant="contained"
-                  type="submit"
-                  disabled={isSubmitting}
-                  endIcon={
-                    isSubmitting ? (
-                      <i className="tabler-rotate-clockwise-2 motion-safe:animate-spin" />
-                    ) : null
-                  }
-                >
-                  Submit
-                </Button>
+      </Grid>
+    </form>
+  </CardContent>
+</Card>
 
-                <Button
-                  variant="tonal"
-                  color="secondary"
-                  type="reset"
-                  onClick={handleReset}
-                  disabled={isSubmitting}
-                >
-                  Reset
-                </Button>
-
-                <Button
-                  variant="tonal"
-                  color="error"
-                  component={Link}
-                  href={"/experts"}
-                >
-                  Cancel
-                </Button>
-              </Grid>
-            </Grid>
-          </form>
-        </CardContent>
-      </Card>
-    </ProtectedRouteURL>
   );
-};
-
-export default CreateForm;
+}

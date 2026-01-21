@@ -1,64 +1,50 @@
-// Next Imports
 import { getServerSession } from "next-auth/next";
-
-import Grid from "@mui/material/Grid2";
-
 import { authOptions } from "@/libs/auth";
 
-import pageApiHelper from "@/utils/pageApiHelper";
+// Component
+import Productdetails from "@/views/apps/products/productsDetails by ID/list/index";
 
-// Component Imports
-import LeftOverview from "@/views/apps/experts/view/left-overview";
-import RightOverview from "@/views/apps/experts/view/right-overview";
-
-const getExpertData = async (id) => {
-  // Vars
+/* ---------------- FETCH PRODUCT ---------------- */
+const getProductData = async (id) => {
   const session = await getServerSession(authOptions);
 
-  if (session.accessToken) {
-    try {
-      // Fetching the categories data
-      const result = await pageApiHelper.get(
-        `experts/${id}`,
-        {},
-        session.accessToken,
-      );
+  if (!session?.accessToken) return null;
 
-      if (result.success) {
-        return result.data;
-      }
+  try {
+    const res = await fetch(`http://localhost:4000/products/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+      cache: "no-store", // important for edit page
+    });
 
-      return null;
-    } catch (error) {
-      // console.error('Error fetching categories:', error);
+    if (!res.ok) return null;
 
-      return null;
-    }
+    const result = await res.json();
+    return result?.data || result;
+  } catch (error) {
+    console.error("Fetch product error:", error);
+    return null;
+  }
+};
+
+/* ---------------- METADATA ---------------- */
+export const metadata = {
+  title: "getProduct data by id  - Admin",
+};
+
+/* ---------------- PAGE ---------------- */
+const ProductsDatabyID = async ({ params }) => {
+  const { id } = params;
+
+  const editProduct = await getProductData(id);
+
+  if (!editProduct) {
+    return <div className="p-6">Product not found</div>;
   }
 
-  return null;
+  return <Productdetails  editProduct={editProduct} />;
 };
 
-export const metadata = {
-  title: "Expert Detail - AskValor",
-};
-
-const ExpertView = async ({ params }) => {
-  // Vars
-  const { id } = await params;
-
-  const { data } = await getExpertData(id);
-
-  return (
-    <Grid container spacing={6}>
-      <Grid size={{ xs: 12 }}>
-        <LeftOverview expertData={data.expert} />
-      </Grid>
-      <Grid size={{ xs: 12 }}>
-        <RightOverview expert={data.expert} />
-      </Grid>
-    </Grid>
-  );
-};
-
-export default ExpertView;
+export default ProductsDatabyID;

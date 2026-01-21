@@ -59,6 +59,7 @@ import tableStyles from "@core/styles/table.module.css";
 import { useAbility, useAbilityLoading } from '@/contexts/AbilityContext';
 import LayoutLoader from "@/components/common/LayoutLoader";
 import ProtectedRouteURL from "@/components/casl/ProtectedRoute";
+import { toast } from "react-toastify";
 
 // Column Definitions
 const columnHelper = createColumnHelper();
@@ -197,9 +198,9 @@ const ListTable = () => {
     }
 
     const result = await res.json();
-    console.log("Products API Response:", result);
+   // console.log("Products API Response:", result);
 
-    // 👇 backend অনুযায়ী adjust করো
+    // 
     setData(result);
 
 setPaginationMeta({
@@ -253,31 +254,44 @@ setPaginationMeta({
     }
   };
 
-  const handleDelete = async (itemId) => {
-    try {
-      const deleteEndpoint = `experts/${itemId}`;
+ const handleDelete = async (itemId) => {
+  if (!itemId) return;
 
-      // call the delete API
-      const res = await pageApiHelper.delete(deleteEndpoint, token);
+  try {
+    const deleteEndpoint = `http://localhost:4000/products/${itemId}`;
 
-      // Update the data state after successful deletion
-      if (res?.success && res?.data?.success) {
-        setData((prevData) => prevData.filter((item) => item.id !== itemId));
-        setDialogOpen((prevState) => ({
-          ...prevState,
-          open: !prevState.open,
-        }));
+    const res = await fetch(deleteEndpoint, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-        toast.success("Deleted successfully");
-        // Refresh data after deletion
-        fetchData();
-      }
-    } catch (error) {
-      // console.error('Delete failed:', error);
-      // Show error in toast
-      toast.error(error.message);
+    console.log("Delete API Response Status:", res.status);
+
+    if (res.ok) {
+      // Remove deleted item from state immediately
+      setData((prevData) => prevData.filter((item) => item.id !== itemId));
+
+      // Close dialog
+      setDialogOpen({ open: false, id: null });
+
+      // Show success toast
+      toast.success("Product deleted successfully");
+
+      // Optional: refetch data
+      fetchData();
+    } else {
+      const result = await res.json();
+      throw new Error(result.message || "Delete failed");
     }
-  };
+  } catch (error) {
+    console.error("Delete failed:", error);
+    toast.error(error.message || "Delete failed");
+  }
+};
+
 
   const columns = useMemo(
     () => [
@@ -290,7 +304,7 @@ setPaginationMeta({
               <Tooltip title="Detail">
                 <IconButton
                   onClick={() => {
-                    const path = `/experts/${row.original.id}`;
+                    const path = `/products/${row.original.id}`;
 
                     setLoadingId(`detail-${row.original.id}`);
                     router.push(path);
@@ -308,10 +322,10 @@ setPaginationMeta({
             {ability?.can('update', 'expert') && (
               <>
                 {/* Review Rating */}
-                <Tooltip title="Review Rating" arrow placement="top">
+                <Tooltip title="update " arrow placement="top">
                   <IconButton
                     onClick={() => {
-                      const path = `/experts/${row.original.id}/reviews`;
+                      const path = `/products/${row.original.id}/edit`;
 
                       setLoadingId(`rev-${row.original.id}`);
                       router.push(path);
@@ -320,7 +334,7 @@ setPaginationMeta({
                     {loadingId === `rev-${row.original.id}` ? (
                       <LoaderIcon topColor="border-t-primary" />
                     ) : (
-                      <i className="tabler-brand-revolut text-primary" />
+                      <i className="tabler-edit text-textPrimary" /> 
                     )}
                   </IconButton>
                 </Tooltip>

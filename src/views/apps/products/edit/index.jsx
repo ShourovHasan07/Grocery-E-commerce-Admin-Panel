@@ -3,14 +3,14 @@ import Grid from "@mui/material/Grid2";
 
 import EditForm from "./EditForm";
 
-const ExpertEdit = ({ expertData, categoryData }) => {
+const ProductEdit = ({ editProduct,  }) => {
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>
-        <EditForm expertData={expertData} categoryData={categoryData} />
+        <EditForm editProduct={editProduct} />
       </Grid>
     </Grid>
   );
 };
 
-export default ExpertEdit;
+export default ProductEdit;
